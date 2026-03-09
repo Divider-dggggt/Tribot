@@ -1,0 +1,25 @@
+# =========================
+# Node / React
+# =========================
+
+frontend/node_modules
+frontend/dist
+frontend/.vite
+frontend/.env
+
+# =========================
+# Python
+# =========================
+
+backend/app/__pycache__/
+backend/*.pyc
+backend/.pytest_cache
+backend/.mypy_cache
+backend/.venv
+
+# =========================
+# Docker
+# =========================
+
+docker-data
+*.log
