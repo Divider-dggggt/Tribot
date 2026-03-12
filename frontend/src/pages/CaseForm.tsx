@@ -1,10 +1,15 @@
 import React, { ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 export const CaseForm = (): ReactElement => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = (data: Record<string, string>) => console.log(data);
+  const navigate = useNavigate();
+  const onSubmit = (data: Record<string, string>) => {
+    console.log(data)
+    navigate("/", { state: { message: "Successfully created case", severity: "success" } });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
