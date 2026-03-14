@@ -170,16 +170,18 @@ export const CaseForm = (): ReactElement => {
             </Box>
 
             {/* Buttons */}
-            <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+            <Stack direction="row" spacing={2} sx={{ mt: 4, width: '100%' }}>
               <Button 
                 type="submit" 
                 variant="contained" 
                 size="large"
                 sx={{ 
+                  flex: 1,
                   bgcolor: '#9333ea', 
                   '&:hover': { bgcolor: '#7e22ce' },
                   textTransform: 'none',
                   fontWeight: 'bold',
+                  justifyContent: 'center',
                   px: 4,
                   py: 1.5,
                   borderRadius: 2
@@ -193,6 +195,7 @@ export const CaseForm = (): ReactElement => {
                 size="large"
                 onClick={() => navigate('/')}
                 sx={{ 
+                  minWidth: 140,
                   color: '#374151',
                   borderColor: '#d1d5db',
                   '&:hover': { borderColor: '#9ca3af', bgcolor: '#f9fafb' },
