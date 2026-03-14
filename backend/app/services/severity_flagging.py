@@ -17,58 +17,79 @@ NEGATION_PATTERNS = [
 ]
 
 HIGH_SEVERITY_PATTERNS = {
-    "chest_pain": [
-        r"\bchest pain\b",
-        r"\bpain in (the )?chest\b",
-    ],
-    "severe_shortness_of_breath": [
-        r"\bsevere shortness of breath\b",
-        r"\bextreme shortness of breath\b",
-        r"\bmarked shortness of breath\b",
-        r"\bshortness of breath\b",
-        r"\bdifficulty breathing\b",
-        r"\btrouble breathing\b",
-        r"\bsevere breathlessness\b",
-        r"\bextreme breathlessness\b",
-        r"\bmarked breathlessness\b",
-    ],
-    "stroke_symptoms": [
-        r"\bstroke symptoms\b",
-        r"\bsymptoms of stroke\b",
-        r"\bshows symptoms of stroke\b",
-        r"\bshowing symptoms of stroke\b",
-        r"\bsuspected stroke\b",
-        r"\bpossible stroke\b",
-    ],
-    "seizures": [
-        r"\bseizure\b",
-        r"\bseizures\b",
-        r"\bconvulsion\b",
-        r"\bconvulsions\b",
-        r"\bfitting\b",
-        r"\bfit\b",
-    ],
-    "severe_bleeding": [
-        r"\bsevere bleeding\b",
-        r"\bheavy bleeding\b",
-        r"\bprofuse bleeding\b",
-        r"\bmassive bleeding\b",
-        r"\bbleeding heavily\b",
-    ],
-    "anaphylaxis": [
-        r"\banaphylaxis\b",
-        r"\banaphylactic reaction\b",
-        r"\bsevere allergic reaction\b",
-    ],
-    "loss_of_consciousness": [
-        r"\bloss of consciousness\b",
-        r"\blost consciousness\b",
-        r"\bunconscious\b",
-        r"\bpassed out\b",
-        r"\bblacked out\b",
-        r"\bblack out\b",
-        r"\bsyncope\b",
-    ],
+    "chest_pain": {
+        "ats_category": 2,
+        "patterns": [
+            r"\bchest pain\b",
+            r"\bpain in (the )?chest\b",
+        ],
+    },
+    "severe_shortness_of_breath": {
+        "ats_category": 2,
+        "patterns": [
+            r"\bsevere shortness of breath\b",
+            r"\bextreme shortness of breath\b",
+            r"\bmarked shortness of breath\b",
+            r"\bshortness of breath\b",
+            r"\bdifficulty breathing\b",
+            r"\btrouble breathing\b",
+            r"\bsevere breathlessness\b",
+            r"\bextreme breathlessness\b",
+            r"\bmarked breathlessness\b",
+        ],
+    },
+    "stroke_symptoms": {
+        "ats_category": 2,
+        "patterns": [
+            r"\bstroke symptoms\b",
+            r"\bsymptoms of stroke\b",
+            r"\bshows symptoms of stroke\b",
+            r"\bshowing symptoms of stroke\b",
+            r"\bsuspected stroke\b",
+            r"\bpossible stroke\b",
+        ],
+    },
+    "seizures": {
+        "ats_category": 2,
+        "patterns": [
+            r"\bseizure\b",
+            r"\bseizures\b",
+            r"\bconvulsion\b",
+            r"\bconvulsions\b",
+            r"\bfitting\b",
+            r"\bfit\b",
+        ],
+    },
+    "severe_bleeding": {
+        "ats_category": 2,
+        "patterns": [
+            r"\bsevere bleeding\b",
+            r"\bheavy bleeding\b",
+            r"\bprofuse bleeding\b",
+            r"\bmassive bleeding\b",
+            r"\bbleeding heavily\b",
+        ],
+    },
+    "anaphylaxis": {
+        "ats_category": 2,
+        "patterns": [
+            r"\banaphylaxis\b",
+            r"\banaphylactic reaction\b",
+            r"\bsevere allergic reaction\b",
+        ],
+    },
+    "loss_of_consciousness": {
+        "ats_category": 2,
+        "patterns": [
+            r"\bloss of consciousness\b",
+            r"\blost consciousness\b",
+            r"\bunconscious\b",
+            r"\bpassed out\b",
+            r"\bblacked out\b",
+            r"\bblack out\b",
+            r"\bsyncope\b",
+        ],
+    },
 }
 
 NEGATION_RE = re.compile("|".join(NEGATION_PATTERNS), re.IGNORECASE)
@@ -91,14 +112,34 @@ def is_negated(text: str, match_start: int, window_chars: int = 40) -> bool:
 
 
 def flag_high_severity(text: str) -> dict:
+    """
+    Returns:
+    {
+      "is_high_severity": bool,
+      "recommended_ats_category": int | None,
+      "matched_categories": {
+        "stroke_symptoms": 2,
+        "chest_pain": 2
+      },
+      "flags": {
+        "stroke_symptoms": ["shows symptoms of stroke"],
+        "chest_pain": ["chest pain"]
+      }
+    }
+    """
     text = normalize_text(text)
     flags = defaultdict(list)
+    matched_categories = {}
 
-    for label, pattern_list in HIGH_SEVERITY_PATTERNS.items():
+    for label, config in HIGH_SEVERITY_PATTERNS.items():
+        ats_category = config["ats_category"]
+        pattern_list = config["patterns"]
+
         for pattern in pattern_list:
             for match in re.finditer(pattern, text, flags=re.IGNORECASE):
                 if not is_negated(text, match.start()):
                     flags[label].append(match.group(0))
+                    matched_categories[label] = ats_category
 
     deduped_flags = {}
     for label, matches in flags.items():
@@ -111,8 +152,14 @@ def flag_high_severity(text: str) -> dict:
                 unique_matches.append(m)
         deduped_flags[label] = unique_matches
 
+    recommended_ats_category = None
+    if matched_categories:
+        recommended_ats_category = min(matched_categories.values())
+
     return {
         "is_high_severity": len(deduped_flags) > 0,
+        "recommended_ats_category": recommended_ats_category,
+        "matched_categories": matched_categories,
         "flags": deduped_flags,
     }
 
