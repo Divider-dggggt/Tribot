@@ -16,6 +16,7 @@ backend/*.pyc
 backend/.pytest_cache
 backend/.mypy_cache
 backend/.venv
+launch.json
 
 # =========================
 # Docker
@@ -23,3 +24,15 @@ backend/.venv
 
 docker-data
 *.log
+
+# =========================
+# Pipeline
+# =========================
+
+
+
+# =========================
+# other
+# =========================
+
+.DS_Store
