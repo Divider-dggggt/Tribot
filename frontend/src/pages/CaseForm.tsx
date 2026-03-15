@@ -46,6 +46,7 @@ export const CaseForm = (): ReactElement => {
       name: data.patientName,
       date: new Date().toLocaleString(),
       priority: randomPriority as ATSLevel,
+      details: data.details,
     }));
     navigate("/", { state: { message: "Successfully created case", severity: "success" } });
   };

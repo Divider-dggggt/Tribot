@@ -11,4 +11,5 @@ export interface TriageCase {
   name: string;
   date: string;
   priority: ATSLevel;
+  details: string;
 }

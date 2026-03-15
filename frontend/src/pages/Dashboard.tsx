@@ -10,7 +10,7 @@ import {
   Card, 
   CardContent,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   Chip,
   Divider
@@ -18,6 +18,8 @@ import {
 import { ATSLevel } from "../types/triage";
 import { useSelector } from "react-redux";
 import { getTriageCases } from "../store/triage/triageSlice";
+import { CaseSummary } from "../components/CaseSummary";
+import { getPriorityColor } from "../utils/color";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -33,6 +35,7 @@ export const Dashboard = (): ReactElement => {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
+  const [selectedCaseIdx, setSelectedCaseIdx] = useState<number | undefined>();
   const triageCases = useSelector(getTriageCases);
   const sortedTriageCases = [...triageCases].sort(
     (a, b) => a.priority - b.priority
@@ -57,16 +60,9 @@ export const Dashboard = (): ReactElement => {
     setSnackOpen(false);
   };
 
-  const getPriorityColor = (priority: ATSLevel) => {
-    switch (priority) {
-      case ATSLevel['ATS-1']: return { bg: '#fee2e2', color: '#dc2626' };
-      case ATSLevel['ATS-2']: return { bg: '#ffedd5', color: '#ea580c' };
-      case ATSLevel['ATS-3']: return { bg: '#fef3c7', color: '#d97706' };
-      case ATSLevel['ATS-4']: return { bg: '#dcfce7', color: '#16a34a' };
-      case ATSLevel['ATS-5']: return { bg: '#dbeafe', color: '#2563eb' };
-      default: return { bg: '#f3f4f6', color: '#374151' };
-    }
-  };
+  if (selectedCaseIdx !== undefined) {
+    return <CaseSummary case={sortedTriageCases[selectedCaseIdx]} />;
+  }
 
   return (
     <Box>
@@ -120,7 +116,12 @@ export const Dashboard = (): ReactElement => {
               const atsPriority = item.priority;
               return (
               <React.Fragment key={`${item.id},${index}`}>
-                <ListItem sx={{ py: 2, px: 3 }}>
+                <ListItemButton
+                  onClick={() => {
+                    setSelectedCaseIdx(index);
+                  }}
+                  sx={{ py: 2, px: 3 }}
+                >
                   <ListItemText 
                     primary={
                       <Typography variant="subtitle1" fontWeight="medium">
@@ -148,7 +149,7 @@ export const Dashboard = (): ReactElement => {
                       px: 1
                     }} 
                   />
-                </ListItem>
+                </ListItemButton>
                 {index < sortedTriageCases.length - 1 && <Divider />}
               </React.Fragment>
             )})}
