@@ -6,3 +6,7 @@ passlib[argon2]
 pydantic[email]
 python-dotenv
 argon2-cffi
+
+openai
+pydantic
+PyYAML

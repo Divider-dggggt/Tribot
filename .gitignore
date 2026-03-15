@@ -17,6 +17,7 @@ backend/.pytest_cache
 backend/.mypy_cache
 backend/.venv
 launch.json
+backend/app/services/soap_generator/__pycache__/
 
 # =========================
 # Docker
