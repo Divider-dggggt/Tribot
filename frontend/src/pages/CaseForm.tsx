@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addTriageCase } from "../store/triage/triageSlice";
 import { ATSLevel } from "../types/triage";
+import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
+import { formatCaseDateTime } from "../utils/date";
 
 // Simple Send Icon
 const SendIcon = () => (
@@ -44,7 +46,7 @@ export const CaseForm = (): ReactElement => {
     dispatch(addTriageCase({
       id: data.patientID,
       name: data.patientName,
-      date: new Date().toLocaleString(),
+      date: formatCaseDateTime(),
       priority: randomPriority as ATSLevel,
       details: data.details,
     }));
@@ -52,7 +54,7 @@ export const CaseForm = (): ReactElement => {
   };
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
+    <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: 'auto' }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
           Create New Case
@@ -72,7 +74,7 @@ export const CaseForm = (): ReactElement => {
                 Patient Information
               </Typography>
               <Grid container spacing={3}>
-                <Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
                     Patient ID
                   </Typography>
@@ -87,7 +89,7 @@ export const CaseForm = (): ReactElement => {
                     InputProps={{ sx: { borderRadius: 2 } }}
                   />
                 </Grid>
-                <Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
                     Patient Name
                   </Typography>
@@ -163,7 +165,9 @@ export const CaseForm = (): ReactElement => {
                   borderRadius: 2
                 }}
               >
-                <XIcon />
+                <Box component="span" sx={{ color: '#dc2626', display: 'inline-flex' }}>
+                  <XIcon />
+                </Box>
                 Cancel
               </Button>
             </Stack>
