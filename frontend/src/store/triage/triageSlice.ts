@@ -1,13 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '..';
-import { ATSLevel } from '../../types/triage';
-
-interface TriageCase {
-  id: string;
-  name: string;
-  date: string;
-  priority: ATSLevel;
-}
+import { TriageCase } from '../../types/triage';
 
 interface TriageState {
   cases: TriageCase[];

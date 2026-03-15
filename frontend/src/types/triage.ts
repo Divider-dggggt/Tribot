@@ -5,3 +5,10 @@ export enum ATSLevel {
   "ATS-4",
   "ATS-5",
 };
+
+export interface TriageCase {
+  id: string;
+  name: string;
+  date: string;
+  priority: ATSLevel;
+}
