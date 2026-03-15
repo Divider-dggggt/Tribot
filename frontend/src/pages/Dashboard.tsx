@@ -15,6 +15,7 @@ import {
   Chip,
   Divider
 } from "@mui/material";
+import { ATSLevel } from "../types/triage";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -24,45 +25,20 @@ const PlusIcon = () => (
   </svg>
 );
 
-type AtsLevel = "ATS-1" | "ATS-2" | "ATS-3" | "ATS-4" | "ATS-5";
-type LegacyPriority = "HIGH" | "MEDIUM" | "LOW";
-type CasePriority = AtsLevel | LegacyPriority;
-
 interface RecentCase {
   id: number;
   name: string;
   date: string;
-  priority: CasePriority;
+  priority: ATSLevel;
 }
-
-const legacyPriorityToAts: Record<LegacyPriority, AtsLevel> = {
-  HIGH: "ATS-1",
-  MEDIUM: "ATS-3",
-  LOW: "ATS-5",
-};
-
-const atsOrder: Record<AtsLevel, number> = {
-  "ATS-1": 1,
-  "ATS-2": 2,
-  "ATS-3": 3,
-  "ATS-4": 4,
-  "ATS-5": 5,
-};
-
-const toAtsLevel = (priority: CasePriority): AtsLevel => {
-  if (priority in legacyPriorityToAts) {
-    return legacyPriorityToAts[priority as LegacyPriority];
-  }
-  return priority as AtsLevel;
-};
 
 // Mock Data
 const recentCases: RecentCase[] = [
-  { id: 1, name: 'Sarah Johnson', date: '2026-03-03 at 14:32', priority: 'ATS-1' },
-  { id: 2, name: 'Michael Chen', date: '2026-03-03 at 13:15', priority: 'ATS-3' },
-  { id: 3, name: 'Emma Williams', date: '2026-03-02 at 16:45', priority: 'ATS-5' },
-  { id: 4, name: 'James Brown', date: '2026-03-02 at 11:20', priority: 'ATS-2' },
-  { id: 5, name: 'Olivia Davis', date: '2026-03-01 at 09:40', priority: 'ATS-4' },
+  { id: 1, name: 'Sarah Johnson', date: '2026-03-03 at 14:32', priority: ATSLevel["ATS-1"] },
+  { id: 2, name: 'Michael Chen', date: '2026-03-03 at 13:15', priority: ATSLevel["ATS-3"] },
+  { id: 3, name: 'Emma Williams', date: '2026-03-02 at 16:45', priority: ATSLevel["ATS-5"] },
+  { id: 4, name: 'James Brown', date: '2026-03-02 at 11:20', priority: ATSLevel["ATS-2"] },
+  { id: 5, name: 'Olivia Davis', date: '2026-03-01 at 09:40', priority: ATSLevel["ATS-4"] },
 ];
 
 export const Dashboard = (): ReactElement => {
@@ -72,7 +48,7 @@ export const Dashboard = (): ReactElement => {
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
   const sortedRecentCases = [...recentCases].sort(
-    (a, b) => atsOrder[toAtsLevel(a.priority)] - atsOrder[toAtsLevel(b.priority)]
+    (a, b) => a.priority - b.priority
   );
 
   useEffect(() => {
@@ -94,13 +70,13 @@ export const Dashboard = (): ReactElement => {
     setSnackOpen(false);
   };
 
-  const getPriorityColor = (priority: AtsLevel) => {
+  const getPriorityColor = (priority: ATSLevel) => {
     switch (priority) {
-      case 'ATS-1': return { bg: '#fee2e2', color: '#dc2626' };
-      case 'ATS-2': return { bg: '#ffedd5', color: '#ea580c' };
-      case 'ATS-3': return { bg: '#fef3c7', color: '#d97706' };
-      case 'ATS-4': return { bg: '#dcfce7', color: '#16a34a' };
-      case 'ATS-5': return { bg: '#dbeafe', color: '#2563eb' };
+      case ATSLevel['ATS-1']: return { bg: '#fee2e2', color: '#dc2626' };
+      case ATSLevel['ATS-2']: return { bg: '#ffedd5', color: '#ea580c' };
+      case ATSLevel['ATS-3']: return { bg: '#fef3c7', color: '#d97706' };
+      case ATSLevel['ATS-4']: return { bg: '#dcfce7', color: '#16a34a' };
+      case ATSLevel['ATS-5']: return { bg: '#dbeafe', color: '#2563eb' };
       default: return { bg: '#f3f4f6', color: '#374151' };
     }
   };
@@ -148,7 +124,7 @@ export const Dashboard = (): ReactElement => {
           </Box>
           <List disablePadding>
             {sortedRecentCases.map((item, index) => {
-              const atsPriority = toAtsLevel(item.priority);
+              const atsPriority = item.priority;
               return (
               <React.Fragment key={item.id}>
                 <ListItem sx={{ py: 2, px: 3 }}>
@@ -169,7 +145,7 @@ export const Dashboard = (): ReactElement => {
                     } 
                   />
                   <Chip 
-                    label={atsPriority} 
+                    label={ATSLevel[atsPriority]} 
                     size="small"
                     sx={{ 
                       bgcolor: getPriorityColor(atsPriority).bg, 
