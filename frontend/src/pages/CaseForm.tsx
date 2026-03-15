@@ -35,7 +35,7 @@ export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
-  const symptoms = watch('symptoms', '');
+  const details = watch('details', '');
 
   const onSubmit = (data: Record<string, string>) => {
     // TODO: fetch API request from backend for triage
@@ -104,24 +104,24 @@ export const CaseForm = (): ReactElement => {
               </Grid>
             </Box>
 
-            {/* Symptom Description */}
+            {/* Case Details */}
             <Box sx={{ mb: 4 }}>
               <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                Symptom Description
+                Case Details
               </Typography>
               <TextField
                 fullWidth
-                placeholder="Describe the patient's symptoms in detail..."
-                {...register("symptoms", { required: "Required" })}
+                placeholder="Enter case details here"
+                {...register("details", { required: "Required" })}
                 multiline
                 rows={8}
-                error={!!errors.symptoms}
-                helperText={errors.symptoms?.message as string}
+                error={!!errors.details}
+                helperText={errors.details?.message as string}
                 variant="outlined"
                 InputProps={{ sx: { borderRadius: 2 } }}
               />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                {symptoms.length} characters
+                {details.length} characters
               </Typography>
             </Box>
 
