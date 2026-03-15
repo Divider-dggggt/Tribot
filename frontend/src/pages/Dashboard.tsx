@@ -16,6 +16,8 @@ import {
   Divider
 } from "@mui/material";
 import { ATSLevel } from "../types/triage";
+import { useSelector } from "react-redux";
+import { getTriageCases } from "../store/triage/triageSlice";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -25,29 +27,14 @@ const PlusIcon = () => (
   </svg>
 );
 
-interface RecentCase {
-  id: number;
-  name: string;
-  date: string;
-  priority: ATSLevel;
-}
-
-// Mock Data
-const recentCases: RecentCase[] = [
-  { id: 1, name: 'Sarah Johnson', date: '2026-03-03 at 14:32', priority: ATSLevel["ATS-1"] },
-  { id: 2, name: 'Michael Chen', date: '2026-03-03 at 13:15', priority: ATSLevel["ATS-3"] },
-  { id: 3, name: 'Emma Williams', date: '2026-03-02 at 16:45', priority: ATSLevel["ATS-5"] },
-  { id: 4, name: 'James Brown', date: '2026-03-02 at 11:20', priority: ATSLevel["ATS-2"] },
-  { id: 5, name: 'Olivia Davis', date: '2026-03-01 at 09:40', priority: ATSLevel["ATS-4"] },
-];
-
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
   const navigate = useNavigate();
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
-  const sortedRecentCases = [...recentCases].sort(
+  const triageCases = useSelector(getTriageCases);
+  const sortedTriageCases = [...triageCases].sort(
     (a, b) => a.priority - b.priority
   );
 
@@ -122,11 +109,17 @@ export const Dashboard = (): ReactElement => {
               Latest patient triage assessments
             </Typography>
           </Box>
+          {sortedTriageCases.length === 0 && <Typography
+            variant="body2"
+            sx={{ marginLeft: 2, marginTop: 2 }}
+          >
+            No cases yet
+          </Typography>}
           <List disablePadding>
-            {sortedRecentCases.map((item, index) => {
+            {sortedTriageCases.map((item, index) => {
               const atsPriority = item.priority;
               return (
-              <React.Fragment key={item.id}>
+              <React.Fragment key={`${item.id},${index}`}>
                 <ListItem sx={{ py: 2, px: 3 }}>
                   <ListItemText 
                     primary={
@@ -156,7 +149,7 @@ export const Dashboard = (): ReactElement => {
                     }} 
                   />
                 </ListItem>
-                {index < sortedRecentCases.length - 1 && <Divider />}
+                {index < sortedTriageCases.length - 1 && <Divider />}
               </React.Fragment>
             )})}
           </List>

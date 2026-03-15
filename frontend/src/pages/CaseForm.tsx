@@ -8,12 +8,12 @@ import {
   Card, 
   CardContent,
   Grid,
-  MenuItem,
-  FormControlLabel,
-  Checkbox,
   Stack
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addTriageCase } from "../store/triage/triageSlice";
+import { ATSLevel } from "../types/triage";
 
 // Simple Send Icon
 const SendIcon = () => (
@@ -32,12 +32,21 @@ const XIcon = () => (
 );
 
 export const CaseForm = (): ReactElement => {
+  const dispatch = useDispatch();
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const symptoms = watch('symptoms', '');
 
   const onSubmit = (data: Record<string, string>) => {
-    console.log(data);
+    // TODO: fetch API request from backend for triage
+    const priorities = Object.values(ATSLevel).filter((key) => typeof key === "number");
+    const randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
+    dispatch(addTriageCase({
+      id: data.patientID,
+      name: data.patientName,
+      date: new Date().toLocaleString(),
+      priority: randomPriority as ATSLevel,
+    }));
     navigate("/", { state: { message: "Successfully created case", severity: "success" } });
   };
 

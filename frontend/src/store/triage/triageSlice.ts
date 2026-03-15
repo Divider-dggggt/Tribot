@@ -1,8 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '..';
+import { ATSLevel } from '../../types/triage';
+
+interface TriageCase {
+  id: string;
+  name: string;
+  date: string;
+  priority: ATSLevel;
+}
 
 interface TriageState {
-  cases: any[];
+  cases: TriageCase[];
 }
 
 const initialState: TriageState = {
@@ -15,7 +23,7 @@ export const triageSlice = createSlice({
   name,
   initialState,
   reducers: {
-    addTriageCase: (state, action) => {
+    addTriageCase: (state, action: PayloadAction<TriageCase>) => {
       state.cases.push(action.payload);
     },
   },
