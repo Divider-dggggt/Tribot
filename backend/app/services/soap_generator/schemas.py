@@ -41,3 +41,4 @@ class SOAPResult(BaseModel):
     scenario_number: str = ""
     summary_header: str = ""
     soap: SOAPBody
+    brief_summary: str = ""  # 2–3 sentence user-facing summary (简报)

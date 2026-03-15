@@ -37,6 +37,7 @@ Important rules:
    - "Not stated."
 8. Use concise professional clinical language.
 9. Output JSON only. No markdown fences. No extra commentary.
+10. After the "soap" object, include "brief_summary": a short (2–3 sentences) summary in plain language for the patient/family or quick reading. Focus on: who, main concern, and what happens next. Do not use jargon; keep it brief and readable.
 """
 
 USER_PROMPT_TEMPLATE = """
@@ -70,8 +71,10 @@ Return JSON in exactly this schema:
     }},
     "assessment": [],
     "plan": []
-  }}
+  }},
+  "brief_summary": ""
 }}
+The "brief_summary" must be 2–3 short sentences in plain language for the user (who, main concern, what happens next). No jargon.
 """
 
 
@@ -150,6 +153,12 @@ class SOAPGenerator:
         if not plan:
             plan = ["Awaiting medical assessment."]
 
+        brief_summary = raw.get("brief_summary")
+        if not isinstance(brief_summary, str):
+            brief_summary = ""
+        else:
+            brief_summary = brief_summary.strip()
+
         return {
             "scenario_number": raw.get("scenario_number") or (req.scenario_number or ""),
             "summary_header": raw.get("summary_header") or (req.scenario_summary_header or ""),
@@ -177,6 +186,7 @@ class SOAPGenerator:
                 "assessment": assessment,
                 "plan": plan,
             },
+            "brief_summary": brief_summary,
         }
 
     def _resolve_request_model(self, request: SOAPRequest) -> str:
