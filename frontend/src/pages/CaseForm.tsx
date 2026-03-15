@@ -32,11 +32,7 @@ const XIcon = () => (
 );
 
 export const CaseForm = (): ReactElement => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
-    defaultValues: {
-      triageLevel: "ATS-3",
-    },
-  });
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const symptoms = watch('symptoms', '');
 
@@ -66,7 +62,7 @@ export const CaseForm = (): ReactElement => {
                 Patient Information
               </Typography>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid>
                   <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
                     Patient ID
                   </Typography>
@@ -81,7 +77,7 @@ export const CaseForm = (): ReactElement => {
                     InputProps={{ sx: { borderRadius: 2 } }}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid>
                   <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
                     Patient Name
                   </Typography>
@@ -118,55 +114,6 @@ export const CaseForm = (): ReactElement => {
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
                 {symptoms.length} characters
               </Typography>
-            </Box>
-
-            {/* ATS Triage Level */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                ATS Triage Level
-              </Typography>
-              <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
-                Triage Category
-              </Typography>
-              <TextField
-                fullWidth
-                select
-                {...register("triageLevel", { required: "Required" })}
-                error={!!errors.triageLevel}
-                helperText={errors.triageLevel?.message as string}
-                variant="outlined"
-                InputProps={{ sx: { borderRadius: 2 } }}
-              >
-                <MenuItem value="ATS-1">ATS-1 (High)</MenuItem>
-                <MenuItem value="ATS-2">ATS-2</MenuItem>
-                <MenuItem value="ATS-3">ATS-3 (Medium)</MenuItem>
-                <MenuItem value="ATS-4">ATS-4</MenuItem>
-                <MenuItem value="ATS-5">ATS-5 (Low)</MenuItem>
-              </TextField>
-            </Box>
-
-            {/* Additional Information */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                Additional Information (Optional)
-              </Typography>
-              
-              <FormControlLabel
-                control={<Checkbox {...register("medicalHistory")} sx={{ color: '#9ca3af', '&.Mui-checked': { color: '#9333ea' } }} />}
-                label={<Typography variant="body2" fontWeight="medium">Patient has relevant medical history</Typography>}
-                sx={{ mb: 2 }}
-              />
-
-              <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1, mt: 2 }}>
-                Current Medications
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="List current medications (if any)"
-                {...register("medications")}
-                variant="outlined"
-                InputProps={{ sx: { borderRadius: 2 } }}
-              />
             </Box>
 
             {/* Buttons */}
