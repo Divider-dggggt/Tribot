@@ -8,12 +8,14 @@ import {
   Card, 
   CardContent,
   Grid,
-  MenuItem,
-  FormControlLabel,
-  Checkbox,
   Stack
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addTriageCase } from "../store/triage/triageSlice";
+import { ATSLevel } from "../types/triage";
+import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
+import { formatCaseDateTime } from "../utils/date";
 
 // Simple Send Icon
 const SendIcon = () => (
@@ -32,21 +34,27 @@ const XIcon = () => (
 );
 
 export const CaseForm = (): ReactElement => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
-    defaultValues: {
-      triageLevel: "ATS-3",
-    },
-  });
+  const dispatch = useDispatch();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
-  const symptoms = watch('symptoms', '');
+  const details = watch('details', '');
 
   const onSubmit = (data: Record<string, string>) => {
-    console.log(data);
+    // TODO: fetch API request from backend for triage
+    const priorities = Object.values(ATSLevel).filter((key) => typeof key === "number");
+    const randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
+    dispatch(addTriageCase({
+      id: data.patientID,
+      name: data.patientName,
+      date: formatCaseDateTime(),
+      priority: randomPriority as ATSLevel,
+      details: data.details,
+    }));
     navigate("/", { state: { message: "Successfully created case", severity: "success" } });
   };
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
+    <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: 'auto' }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
           Create New Case
@@ -66,7 +74,7 @@ export const CaseForm = (): ReactElement => {
                 Patient Information
               </Typography>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
                     Patient ID
                   </Typography>
@@ -81,7 +89,7 @@ export const CaseForm = (): ReactElement => {
                     InputProps={{ sx: { borderRadius: 2 } }}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
                     Patient Name
                   </Typography>
@@ -99,74 +107,25 @@ export const CaseForm = (): ReactElement => {
               </Grid>
             </Box>
 
-            {/* Symptom Description */}
+            {/* Case Details */}
             <Box sx={{ mb: 4 }}>
               <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                Symptom Description
+                Case Details
               </Typography>
               <TextField
                 fullWidth
-                placeholder="Describe the patient's symptoms in detail..."
-                {...register("symptoms", { required: "Required" })}
+                placeholder="Enter case details here"
+                {...register("details", { required: "Required" })}
                 multiline
                 rows={8}
-                error={!!errors.symptoms}
-                helperText={errors.symptoms?.message as string}
+                error={!!errors.details}
+                helperText={errors.details?.message as string}
                 variant="outlined"
                 InputProps={{ sx: { borderRadius: 2 } }}
               />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                {symptoms.length} characters
+                {details.length} characters
               </Typography>
-            </Box>
-
-            {/* ATS Triage Level */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                ATS Triage Level
-              </Typography>
-              <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
-                Triage Category
-              </Typography>
-              <TextField
-                fullWidth
-                select
-                {...register("triageLevel", { required: "Required" })}
-                error={!!errors.triageLevel}
-                helperText={errors.triageLevel?.message as string}
-                variant="outlined"
-                InputProps={{ sx: { borderRadius: 2 } }}
-              >
-                <MenuItem value="ATS-1">ATS-1 (High)</MenuItem>
-                <MenuItem value="ATS-2">ATS-2</MenuItem>
-                <MenuItem value="ATS-3">ATS-3 (Medium)</MenuItem>
-                <MenuItem value="ATS-4">ATS-4</MenuItem>
-                <MenuItem value="ATS-5">ATS-5 (Low)</MenuItem>
-              </TextField>
-            </Box>
-
-            {/* Additional Information */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                Additional Information (Optional)
-              </Typography>
-              
-              <FormControlLabel
-                control={<Checkbox {...register("medicalHistory")} sx={{ color: '#9ca3af', '&.Mui-checked': { color: '#9333ea' } }} />}
-                label={<Typography variant="body2" fontWeight="medium">Patient has relevant medical history</Typography>}
-                sx={{ mb: 2 }}
-              />
-
-              <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1, mt: 2 }}>
-                Current Medications
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="List current medications (if any)"
-                {...register("medications")}
-                variant="outlined"
-                InputProps={{ sx: { borderRadius: 2 } }}
-              />
             </Box>
 
             {/* Buttons */}
@@ -206,7 +165,9 @@ export const CaseForm = (): ReactElement => {
                   borderRadius: 2
                 }}
               >
-                <XIcon />
+                <Box component="span" sx={{ color: '#dc2626', display: 'inline-flex' }}>
+                  <XIcon />
+                </Box>
                 Cancel
               </Button>
             </Stack>

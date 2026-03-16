@@ -96,7 +96,22 @@ function Layout() {
       >
         <Toolbar sx={{ display: 'flex', alignItems: 'center', px: 2 }}>
           {/* Logo Placeholder */}
-          <Box sx={{ display: 'flex', alignItems: 'center', color: '#7c3aed', fontWeight: 'bold', fontSize: '1.2rem' }}>
+          <Box
+            component={Link}
+            to="/"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              color: '#7c3aed',
+              fontWeight: 'bold',
+              fontSize: '1.2rem',
+              textDecoration: 'none',
+              borderRadius: 1,
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            }}
+          >
             <div style={{ width: 32, height: 32, backgroundColor: '#7c3aed', borderRadius: 8, marginRight: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>

@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   Alert, 
   Snackbar, 
@@ -10,11 +10,20 @@ import {
   Card, 
   CardContent,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   Chip,
-  Divider
+  Divider,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import { ATSLevel } from "../types/triage";
+import { useSelector } from "react-redux";
+import { getTriageCases } from "../store/triage/triageSlice";
+import { CaseSummary } from "../components/CaseSummary";
+import { getPriorityColor } from "../utils/color";
+import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
+import { parseCaseDateTime } from "../utils/date";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -24,56 +33,93 @@ const PlusIcon = () => (
   </svg>
 );
 
-type AtsLevel = "ATS-1" | "ATS-2" | "ATS-3" | "ATS-4" | "ATS-5";
-type LegacyPriority = "HIGH" | "MEDIUM" | "LOW";
-type CasePriority = AtsLevel | LegacyPriority;
+const SortIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="4" y1="7" x2="14" y2="7"></line>
+    <line x1="4" y1="12" x2="18" y2="12"></line>
+    <line x1="4" y1="17" x2="10" y2="17"></line>
+    <polyline points="18 5 20 3 22 5"></polyline>
+    <line x1="20" y1="3" x2="20" y2="13"></line>
+  </svg>
+);
 
-interface RecentCase {
-  id: number;
-  name: string;
-  date: string;
-  priority: CasePriority;
-}
+type SortOption = "severity" | "createdTime" | "alphabetical";
 
-const legacyPriorityToAts: Record<LegacyPriority, AtsLevel> = {
-  HIGH: "ATS-1",
-  MEDIUM: "ATS-3",
-  LOW: "ATS-5",
+const getCaseTimestamp = (date: string, fallbackOrder: number): number => {
+  const parsedTimestamp = parseCaseDateTime(date);
+  return Number.isNaN(parsedTimestamp) ? fallbackOrder : parsedTimestamp;
 };
 
-const atsOrder: Record<AtsLevel, number> = {
-  "ATS-1": 1,
-  "ATS-2": 2,
-  "ATS-3": 3,
-  "ATS-4": 4,
-  "ATS-5": 5,
-};
-
-const toAtsLevel = (priority: CasePriority): AtsLevel => {
-  if (priority in legacyPriorityToAts) {
-    return legacyPriorityToAts[priority as LegacyPriority];
+const getNextSortOption = (currentSortOption: SortOption): SortOption => {
+  if (currentSortOption === "severity") {
+    return "createdTime";
   }
-  return priority as AtsLevel;
+  if (currentSortOption === "createdTime") {
+    return "alphabetical";
+  }
+  return "severity";
 };
 
-// Mock Data
-const recentCases: RecentCase[] = [
-  { id: 1, name: 'Sarah Johnson', date: '2026-03-03 at 14:32', priority: 'ATS-1' },
-  { id: 2, name: 'Michael Chen', date: '2026-03-03 at 13:15', priority: 'ATS-3' },
-  { id: 3, name: 'Emma Williams', date: '2026-03-02 at 16:45', priority: 'ATS-5' },
-  { id: 4, name: 'James Brown', date: '2026-03-02 at 11:20', priority: 'ATS-2' },
-  { id: 5, name: 'Olivia Davis', date: '2026-03-01 at 09:40', priority: 'ATS-4' },
-];
+const getSortLabel = (sortOption: SortOption): string => {
+  if (sortOption === "severity") {
+    return "Severity Level";
+  }
+  if (sortOption === "createdTime") {
+    return "Creation Time";
+  }
+  return "Alphabetical";
+};
+
+const getNameSortGroup = (name: string): number => {
+  const firstChar = name.trim().charAt(0);
+  if (/^[a-z]$/i.test(firstChar)) {
+    return 0;
+  }
+  if (/^\d$/.test(firstChar)) {
+    return 1;
+  }
+  return 2;
+};
+
+const compareCaseNameWithPriority = (aName: string, bName: string): number => {
+  const aTrimmedName = aName.trim();
+  const bTrimmedName = bName.trim();
+  const groupDifference = getNameSortGroup(aTrimmedName) - getNameSortGroup(bTrimmedName);
+
+  if (groupDifference !== 0) {
+    return groupDifference;
+  }
+
+  return aTrimmedName.localeCompare(bTrimmedName, undefined, {
+    sensitivity: "base",
+    numeric: true,
+  });
+};
 
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
-  const sortedRecentCases = [...recentCases].sort(
-    (a, b) => atsOrder[toAtsLevel(a.priority)] - atsOrder[toAtsLevel(b.priority)]
-  );
+  const [sortOption, setSortOption] = useState<SortOption>("severity");
+  const triageCases = useSelector(getTriageCases);
+  const sortedTriageCases = [...triageCases]
+    .map((item, originalIndex) => ({ item, originalIndex }))
+    .sort((a, b) => {
+      if (sortOption === "severity") {
+        return a.item.priority - b.item.priority;
+      }
+      if (sortOption === "createdTime") {
+        const aTimestamp = getCaseTimestamp(a.item.date, a.originalIndex);
+        const bTimestamp = getCaseTimestamp(b.item.date, b.originalIndex);
+        return bTimestamp - aTimestamp;
+      }
+      const nameCompareResult = compareCaseNameWithPriority(a.item.name, b.item.name);
+      return nameCompareResult !== 0 ? nameCompareResult : a.originalIndex - b.originalIndex;
+    })
+    .map(({ item }) => item);
 
   useEffect(() => {
     if (location.state?.message) {
@@ -94,19 +140,31 @@ export const Dashboard = (): ReactElement => {
     setSnackOpen(false);
   };
 
-  const getPriorityColor = (priority: AtsLevel) => {
-    switch (priority) {
-      case 'ATS-1': return { bg: '#fee2e2', color: '#dc2626' };
-      case 'ATS-2': return { bg: '#ffedd5', color: '#ea580c' };
-      case 'ATS-3': return { bg: '#fef3c7', color: '#d97706' };
-      case 'ATS-4': return { bg: '#dcfce7', color: '#16a34a' };
-      case 'ATS-5': return { bg: '#dbeafe', color: '#2563eb' };
-      default: return { bg: '#f3f4f6', color: '#374151' };
-    }
+  const handleSortClick = () => {
+    setSortOption((previousSortOption) => getNextSortOption(previousSortOption));
   };
 
+  const selectedCaseIdxParam = searchParams.get("case");
+  const selectedCaseIdx = selectedCaseIdxParam !== null ? Number(selectedCaseIdxParam) : undefined;
+  const selectedCase =
+    selectedCaseIdx !== undefined &&
+    Number.isInteger(selectedCaseIdx) &&
+    selectedCaseIdx >= 0 &&
+    selectedCaseIdx < sortedTriageCases.length
+      ? sortedTriageCases[selectedCaseIdx]
+      : undefined;
+
+  if (selectedCase !== undefined) {
+    return (
+      <CaseSummary
+        case={selectedCase}
+        onBack={() => navigate("/")}
+      />
+    );
+  }
+
   return (
-    <Box>
+    <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
           Dashboard
@@ -138,20 +196,50 @@ export const Dashboard = (): ReactElement => {
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
         <CardContent sx={{ p: 0 }}>
-          <Box sx={{ p: 2, borderBottom: '1px solid #e5e7eb' }}>
-            <Typography variant="h6" fontWeight="bold">
-              Recent Cases
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Latest patient triage assessments
-            </Typography>
+          <Box sx={{ p: 2, borderBottom: '1px solid #e5e7eb', display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
+            <Box>
+              <Typography variant="h6" fontWeight="bold">
+                Recent Cases
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Latest patient triage assessments
+              </Typography>
+            </Box>
+            <Tooltip title={`Current: ${getSortLabel(sortOption)}`}>
+              <IconButton
+                size="small"
+                onClick={handleSortClick}
+                aria-label="sort recent cases"
+                sx={{
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 1.5,
+                  color: "#6b7280",
+                  "&:hover": {
+                    bgcolor: "#f9fafb",
+                  },
+                }}
+              >
+                <SortIcon />
+              </IconButton>
+            </Tooltip>
           </Box>
+          {sortedTriageCases.length === 0 && <Typography
+            variant="body2"
+            sx={{ marginLeft: 2, marginTop: 2 }}
+          >
+            No cases yet
+          </Typography>}
           <List disablePadding>
-            {sortedRecentCases.map((item, index) => {
-              const atsPriority = toAtsLevel(item.priority);
+            {sortedTriageCases.map((item, index) => {
+              const atsPriority = item.priority;
               return (
-              <React.Fragment key={item.id}>
-                <ListItem sx={{ py: 2, px: 3 }}>
+              <React.Fragment key={`${item.id},${index}`}>
+                <ListItemButton
+                  onClick={() => {
+                    navigate({ pathname: "/", search: `?case=${index}` });
+                  }}
+                  sx={{ py: 2, px: 3 }}
+                >
                   <ListItemText 
                     primary={
                       <Typography variant="subtitle1" fontWeight="medium">
@@ -169,7 +257,7 @@ export const Dashboard = (): ReactElement => {
                     } 
                   />
                   <Chip 
-                    label={atsPriority} 
+                    label={ATSLevel[atsPriority]} 
                     size="small"
                     sx={{ 
                       bgcolor: getPriorityColor(atsPriority).bg, 
@@ -179,8 +267,8 @@ export const Dashboard = (): ReactElement => {
                       px: 1
                     }} 
                   />
-                </ListItem>
-                {index < sortedRecentCases.length - 1 && <Divider />}
+                </ListItemButton>
+                {index < sortedTriageCases.length - 1 && <Divider />}
               </React.Fragment>
             )})}
           </List>
