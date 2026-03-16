@@ -11,8 +11,8 @@ import {
   Stack
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addTriageCase } from "../store/triage/triageSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
 import { ATSLevel } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
@@ -35,6 +35,7 @@ const XIcon = () => (
 
 export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
+  const triageCases = useSelector(getTriageCases);
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const details = watch('details', '');
@@ -43,14 +44,20 @@ export const CaseForm = (): ReactElement => {
     // TODO: fetch API request from backend for triage
     const priorities = Object.values(ATSLevel).filter((key) => typeof key === "number");
     const randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
-    dispatch(addTriageCase({
+    const newCase = {
       id: data.patientID,
       name: data.patientName,
       date: formatCaseDateTime(),
       priority: randomPriority as ATSLevel,
       details: data.details,
-    }));
-    navigate("/", { state: { message: "Successfully created case", severity: "success" } });
+    };
+    const severitySortedCases = [...triageCases, newCase].sort(
+      (a, b) => a.priority - b.priority
+    );
+    const newCaseIndex = severitySortedCases.findIndex((currentCase) => currentCase === newCase);
+
+    dispatch(addTriageCase(newCase));
+    navigate({ pathname: "/", search: `?case=${newCaseIndex}` });
   };
 
   return (
