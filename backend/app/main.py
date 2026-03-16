@@ -220,6 +220,20 @@ def create_case_endpoint(case: CaseCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create case: {str(e)}")
 
+
+@app.get("/models/{model_name}")
+def get_model_metrics(model_name: str):
+    """
+    Fetch evaluation metrics for a model by name.
+    """
+    try:
+        metrics = db.get_model_metrics_by_name(model_name)
+        if not metrics:
+            raise HTTPException(status_code=404, detail="Model not found")
+        return metrics
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch model metrics: {str(e)}")
+
 @app.get("/health")
 def health():
     """Health check"""

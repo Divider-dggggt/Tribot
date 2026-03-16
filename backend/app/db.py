@@ -129,6 +129,39 @@ def add_model_eval(model_name: str, f1_score: float, precision: float, recall: f
         "confusion_matrix": row[5]
     }
 
+def get_model_metrics_by_name(model_name: str):
+    """
+    Fetch evaluation metrics of a model by its name and returns f1_score, precision, recall, and confusion matrix.
+    """
+    conn = _connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        SELECT model_id, model_name, f1_score, precision, recall, conf_mat
+        FROM model_versions
+        WHERE model_name = %s;
+        """,
+        (model_name,)
+    )
+
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if not row:
+        return None
+
+    return {
+        "model_id": row[0],
+        "model_name": row[1],
+        "f1_score": row[2],
+        "precision": row[3],
+        "recall": row[4],
+        "confusion_matrix": row[5]
+    }
+
 def add_classification_model(case_id: int, model_id: int, ats_classification: int, confidence_score: float):
     conn = _connection()
     cur = conn.cursor()
