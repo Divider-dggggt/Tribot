@@ -18,6 +18,7 @@ backend/.mypy_cache
 backend/.venv
 launch.json
 backend/app/services/soap_generator/__pycache__/
+backend/app/services/soap_generator/scenarios.json
 
 # =========================
 # Docker
