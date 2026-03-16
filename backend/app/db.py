@@ -2,7 +2,6 @@ import os
 import psycopg2
 import json
 
-
 def _connection():
     return psycopg2.connect(
         host=os.environ["DB_HOST"],
@@ -10,8 +9,6 @@ def _connection():
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"],
     )
-
-# Users functions
 
 def get_all_users():
     conn = _connection()
@@ -38,7 +35,6 @@ def get_user_by_id(user_id):
         return None
     return {"id": row[0], "name": row[1], "email": row[2], "role": row[3], "created_at": row[4]}
 
-
 def create_user(name, email, password, role):
     conn = _connection()
     cur = conn.cursor()
@@ -52,7 +48,6 @@ def create_user(name, email, password, role):
     cur.close()
     conn.close()
     return {"id": row[0], "name": row[1], "email": row[2], "role": row[3], "created_at": row[4]}
-
 
 def update_user(user_id, name=None, email=None, password=None, role=None):
     existing = get_user_by_id(user_id)
@@ -86,7 +81,6 @@ def update_user(user_id, name=None, email=None, password=None, role=None):
         return None
     return {"id": row[0], "name": row[1], "email": row[2], "role": row[3], "created_at": row[4]}
 
-
 def delete_user(user_id):
     conn = _connection()
     cur = conn.cursor()
@@ -98,7 +92,6 @@ def delete_user(user_id):
     if not row:
         return None
     return {"id": row[0]}
-
 
 def update_soap_summary(case_id: int, soap_summary: str):
     conn = _connection()
@@ -115,6 +108,26 @@ def update_soap_summary(case_id: int, soap_summary: str):
     cur.close()
     conn.close()
 
+def add_model_eval(model_name: str, f1_score: float, precision: float, recall: float, conf_mat: json):
+    conn = _connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO model_versions (model_name, f1_score, precision, recall, conf_mat) VALUES (%s, %s, %s, %s, %s) "
+        "RETURNING model_id, model_name, f1_score, precision, recall, conf_mat",
+        (model_name, f1_score, precision, recall, conf_mat)
+    )
+    row = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {
+        "model_id": row[0],
+        "model_name": row[1],
+        "f1_score": row[2],
+        "precision": row[3],
+        "recall": row[4],
+        "confusion_matrix": row[5]
+    }
 
 def add_classification_model(case_id: int, model_id: int, ats_classification: int, confidence_score: float):
     conn = _connection()
