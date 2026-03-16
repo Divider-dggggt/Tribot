@@ -57,7 +57,10 @@ export const CaseForm = (): ReactElement => {
     const newCaseIndex = severitySortedCases.findIndex((currentCase) => currentCase === newCase);
 
     dispatch(addTriageCase(newCase));
-    navigate({ pathname: "/", search: `?case=${newCaseIndex}` });
+    navigate(
+      { pathname: "/", search: `?case=${newCaseIndex}` },
+      { state: { message: "Successfully created case", severity: "success" } }
+    );
   };
 
   return (

@@ -126,9 +126,9 @@ export const Dashboard = (): ReactElement => {
       setSnackMessage(location.state.message);
       setSnackSeverity(location.state.severity || "success");
       setSnackOpen(true);
-      window.history.replaceState({}, "");
+      window.history.replaceState({}, "", `${location.pathname}${location.search}`);
     }
-  }, [location.state]);
+  }, [location.pathname, location.search, location.state]);
 
   const handleSnackClose = (
     event?: React.SyntheticEvent | Event,
@@ -154,12 +154,23 @@ export const Dashboard = (): ReactElement => {
       ? sortedTriageCases[selectedCaseIdx]
       : undefined;
 
+  const successSnackbar = (
+    <Snackbar open={snackOpen} autoHideDuration={4000} onClose={handleSnackClose}>
+      <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: '100%' }}>
+        {snackMessage}
+      </Alert>
+    </Snackbar>
+  );
+
   if (selectedCase !== undefined) {
     return (
-      <CaseSummary
-        case={selectedCase}
-        onBack={() => navigate("/")}
-      />
+      <>
+        <CaseSummary
+          case={selectedCase}
+          onBack={() => navigate("/")}
+        />
+        {successSnackbar}
+      </>
     );
   }
 
@@ -275,11 +286,7 @@ export const Dashboard = (): ReactElement => {
         </CardContent>
       </Card>
 
-      <Snackbar open={snackOpen} autoHideDuration={4000} onClose={handleSnackClose}>
-        <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: '100%' }}>
-          {snackMessage}
-        </Alert>
-      </Snackbar>
+      {successSnackbar}
     </Box>
   );
 };
