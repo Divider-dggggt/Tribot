@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from passlib.context import CryptContext
 import os
 from typing import Optional, List
-from app.services.severity_flagging import flag_high_severity
+from app.services.triage_classifier.severity_flagging import flag_high_severity
 import json
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db:5432/app_db")
