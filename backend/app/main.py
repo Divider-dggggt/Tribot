@@ -1,14 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer
 from pydantic import BaseModel, EmailStr, constr
 from . import db
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from passlib.context import CryptContext
 import os
 from typing import Optional, List
 from app.services.triage_classifier.severity_flagging import flag_high_severity
 import json
+from jose import JWTError, jwt
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db:5432/app_db")
 
@@ -33,6 +35,16 @@ engine = create_engine(DATABASE_URL, echo=True)
 # Password hashing
 #pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+SECRET_KEY = "CHANGE_THIS_SECRET_KEY"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+security = HTTPBearer()
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
 
 class ProcessCaseRequest(BaseModel):
     case_id: int
@@ -74,6 +86,88 @@ class CaseFullOut(BaseModel):
     confidence_score: float
     flagged_keywords: str
 
+def authenticate_user(email: str, password: str):
+
+    user = db.get_user_by_email(email)
+
+    if not user:
+        return None
+
+    if not pwd_context.verify(password, user["password"]):
+        return None
+
+    return user
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+@app.post("/login")
+def login(user: LoginRequest):
+
+    auth_user = authenticate_user(user.email, user.password)
+
+    if not auth_user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    token = create_access_token({
+        "user_id": auth_user["id"],
+        "role": auth_user["role"]
+    })
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "role": auth_user["role"]
+    }
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        if db.is_token_revoked(token):
+            raise HTTPException(status_code=401, detail="Logged Out, Please log in again")
+
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: int = payload.get("user_id")
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        user = db.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found or deleted")
+        return user
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
+
+def role_required(*roles):
+    def dependency(user=Depends(get_current_user)):
+        if user["role"] not in roles:
+            raise HTTPException(status_code=403, detail=f"{roles} access required")
+        return user
+    return dependency
+
+def admin_required(user=Depends(get_current_user)):
+    if user["role"] != "Admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+def clinician_required(user=Depends(get_current_user)):
+    if user["role"] != "Clinician":
+        raise HTTPException(status_code=403, detail="Clinician access required")
+    return user
+
+@app.get("/me", response_model=UserOut)
+def read_current_user(current_user: dict = Depends(get_current_user)):
+    return current_user
+
+@app.post("/logout")
+def logout(user=Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+    # Add token to revoked_tokens
+    db.revoke_token(token)
+    return {"msg": "Logged out successfully"}
+
 @app.get("/users", response_model=List[UserOut])
 def get_users():
     """Fetch all users"""
@@ -92,7 +186,7 @@ def get_user(user_id: int):
     return user
 
 @app.post("/users", response_model=UserOut)
-def create_user(user: UserCreate):
+def create_user(user: UserCreate, admin=Depends(admin_required)):
     """Create a new user"""
     try:
         hashed_password = pwd_context.hash(user.password)
@@ -181,7 +275,7 @@ def classification_algo(text: str) -> dict:
     }
 
 @app.post("/cases", response_model=CaseFullOut)
-def create_case_endpoint(case: CaseCreate):
+def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician"))):
     try:
         soap_text = soap_summary(case.case_details)
         classification_res = classification_algo(case.case_details)
@@ -220,6 +314,20 @@ def create_case_endpoint(case: CaseCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create case: {str(e)}")
 
+@app.get("/cases/{case_id}")
+def get_case(case_id: int):
+    """
+    Fetch a case by ID with SOAP summary, classification, and severity flags.
+    """
+    case = db.get_case_by_id(case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    # Optional: check if user has permission to view the case
+    '''if user["role"] != "Admin" and user["id"] != case["user_id"]:
+        raise HTTPException(status_code=403, detail="Access denied")'''
+
+    return case
 
 @app.get("/models/{model_name}")
 def get_model_metrics(model_name: str):
@@ -236,5 +344,8 @@ def get_model_metrics(model_name: str):
 
 @app.get("/health")
 def health():
-    """Health check"""
-    return {"status": "ok"}
+    """
+    Health check endpoint.
+    Returns simple status indicating system is running.
+    """
+    return {"status": "ok", "message": "System is running smoothly"}

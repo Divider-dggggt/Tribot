@@ -8,9 +8,12 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (name, email, password, role) VALUES
-('user1', 'user1@example.com', 'demo1', 'Admin'),
-('user2', 'user2@example.com', 'demo2', 'Clinician');
-
+(
+'Admin',
+'admin@example.com',
+'$argon2id$v=19$m=65536,t=3,p=4$TMnZO4fQWqsVovRey1kLgQ$1PRETjl0mi3jRUA0qmmPBwA5+MEYo6YIP8AOEyN4Jtc',
+'Admin'
+);
 
 CREATE TABLE cases (
     case_id SERIAL PRIMARY KEY,
@@ -130,4 +133,9 @@ CREATE TABLE severity_flags (
     flag_category INT NOT NULL, -- 1-5
     flag_reason TEXT,
     PRIMARY KEY (case_id, flag_category)
+);
+
+CREATE TABLE revoked_tokens (
+    token TEXT PRIMARY KEY,
+    revoked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

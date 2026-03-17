@@ -20,6 +20,9 @@ backend/app/services/soap_generator/scenarios.json
 
 __pycache__/
 
+.idea/
+venv/
+
 # =========================
 # Docker
 # =========================

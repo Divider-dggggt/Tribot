@@ -215,4 +215,106 @@ def add_case(user_id: int, case_details: str, severity_flagged: bool = False):
         "severity_flagged": row[3]
     }
 
+def get_case_by_id(case_id: int):
+    conn = _connection()
+    cur = conn.cursor()
+
+    # Fetch case
+    cur.execute(
+        "SELECT case_id, user_id, case_details, severity_flagged, created_at "
+        "FROM cases WHERE case_id = %s;",
+        (case_id,)
+    )
+    case_row = cur.fetchone()
+    if not case_row:
+        cur.close()
+        conn.close()
+        return None
+
+    # Fetch SOAP summary
+    cur.execute(
+        "SELECT soap_summary FROM soap_summaries WHERE case_id = %s;",
+        (case_id,)
+    )
+    soap_row = cur.fetchone()
+    soap_summary = soap_row[0] if soap_row else ""
+
+    # Fetch classification
+    cur.execute(
+        "SELECT model_id, ats_classification, confidence_score "
+        "FROM classification_model WHERE case_id = %s;",
+        (case_id,)
+    )
+    classification_row = cur.fetchone()
+    classification = {
+        "model_id": classification_row[0],
+        "ats_classification": classification_row[1],
+        "confidence_score": classification_row[2]
+    } if classification_row else {}
+
+    # Fetch severity flags
+    cur.execute(
+        "SELECT flag_category, flag_reason FROM severity_flags WHERE case_id = %s;",
+        (case_id,)
+    )
+    severity_rows = cur.fetchall()
+    severity_flags = [
+        {"flag_category": r[0], "flag_reason": r[1]} for r in severity_rows
+    ]
+
+    cur.close()
+    conn.close()
+
+    return {
+        "case_id": case_row[0],
+        "user_id": case_row[1],
+        "case_details": case_row[2],
+        "severity_flagged": case_row[3],
+        "created_at": case_row[4],
+        "soap_summary": soap_summary,
+        "classification": classification,
+        "severity_flags": severity_flags
+    }
+
+def get_user_by_email(email: str):
+    conn = _connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT id, name, email, password, role FROM users WHERE email = %s;",
+        (email,)
+    )
+
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if not row:
+        return None
+
+    return {
+        "id": row[0],
+        "name": row[1],
+        "email": row[2],
+        "password": row[3],
+        "role": row[4]
+    }
+
+def revoke_token(token: str):
+    conn = _connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO revoked_tokens (token) VALUES (%s)", (token,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def is_token_revoked(token: str) -> bool:
+    conn = _connection()
+    cur = conn.cursor()
+    cur.execute("SELECT token FROM revoked_tokens WHERE token = %s", (token,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return result is not None
 
