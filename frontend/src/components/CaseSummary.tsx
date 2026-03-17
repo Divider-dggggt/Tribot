@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
 import React, { ReactElement } from "react";
 import { ATSLevel, TriageCase } from "../types/triage";
 import { getPriorityColor } from "../utils/color";
@@ -29,6 +29,7 @@ const ArrowLeftIcon = () => (
 export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const { case: triageCase, onBack } = props;
   const priorityColor = getPriorityColor(triageCase.priority);
+  const confidencePercentage = Math.round((triageCase.confidence ?? 0) * 100);
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -132,6 +133,15 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
               >
                 {ATSLevel[triageCase.priority]}
               </Typography>
+              <Chip
+                label={`Confidence ${confidencePercentage}%`}
+                sx={{
+                  mt: 2,
+                  fontWeight: "bold",
+                  bgcolor: "#ffffffcc",
+                  color: priorityColor.color,
+                }}
+              />
             </Card>
           </Box>
           <Divider sx={{ mb: 2 }} />

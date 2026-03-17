@@ -49,6 +49,7 @@ export const CaseForm = (): ReactElement => {
       name: data.patientName,
       date: formatCaseDateTime(),
       priority: randomPriority as ATSLevel,
+      confidence: Math.random(),
       details: data.details,
     };
     const severitySortedCases = [...triageCases, newCase].sort(
