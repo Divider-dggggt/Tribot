@@ -109,24 +109,13 @@ CREATE TABLE soap_summaries (
     soap_summary TEXT
 );
 
-CREATE TABLE model_versions (
-    model_id SERIAL PRIMARY KEY,
-    model_name TEXT NOT NULL,
-    f1_score FLOAT,
-    precision FLOAT,
-    recall FLOAT,
-    conf_mat JSONB, -- confusion matrix can be stored as JSON
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE classification_model (
     case_id INT REFERENCES cases(case_id),
-    model_id INT REFERENCES model_versions(model_id),
+    model_name TEXT,
     ats_classification INT, -- ATS category
     confidence_score FLOAT,
-    PRIMARY KEY (case_id, model_id)
+    PRIMARY KEY (case_id)
 );
-
 
 CREATE TABLE severity_flags (
     case_id INT REFERENCES cases(case_id),

@@ -154,7 +154,7 @@ def get_model_metrics_by_name(model_name: str):
         return None
 
     return {
-        "model_id": row[0],
+        "model_name": row[0],
         "model_name": row[1],
         "f1_score": row[2],
         "precision": row[3],
@@ -162,12 +162,12 @@ def get_model_metrics_by_name(model_name: str):
         "confusion_matrix": row[5]
     }
 
-def add_classification_model(case_id: int, model_id: int, ats_classification: int, confidence_score: float):
+def add_classification_model(case_id: int, model_name: str, ats_classification: int, confidence_score: float):
     conn = _connection()
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO classification_model (case_id, model_id, ats_classification, confidence_score) VALUES (%s, %s, %s, %s) RETURNING case_id, model_id, ats_classification, confidence_score;",
-        (case_id, model_id, ats_classification, confidence_score)
+        "INSERT INTO classification_model (case_id, model_name, ats_classification, confidence_score) VALUES (%s, %s, %s, %s) RETURNING case_id, model_name, ats_classification, confidence_score;",
+        (case_id, model_name, ats_classification, confidence_score)
     )
     row = cur.fetchone()
     conn.commit()
@@ -175,7 +175,7 @@ def add_classification_model(case_id: int, model_id: int, ats_classification: in
     conn.close()
     return {
         "case_id": row[0],
-        "model_id": row[1],
+        "model_name": row[1],
         "ats_classification": row[2],
         "confidence_score": row[3]
     }
@@ -241,13 +241,13 @@ def get_case_by_id(case_id: int):
 
     # Fetch classification
     cur.execute(
-        "SELECT model_id, ats_classification, confidence_score "
+        "SELECT model_name, ats_classification, confidence_score "
         "FROM classification_model WHERE case_id = %s;",
         (case_id,)
     )
     classification_row = cur.fetchone()
     classification = {
-        "model_id": classification_row[0],
+        "model_name": classification_row[0],
         "ats_classification": classification_row[1],
         "confidence_score": classification_row[2]
     } if classification_row else {}

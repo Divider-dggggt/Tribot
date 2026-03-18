@@ -11,6 +11,7 @@ from typing import Optional, List
 from app.services.triage_classifier.severity_flagging import flag_high_severity
 import json
 from jose import JWTError, jwt
+from pathlib import Path
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db:5432/app_db")
 
@@ -73,7 +74,6 @@ class UserOut(UserBase):
     created_at: datetime
 
 class CaseCreate(BaseModel):
-    user_id: int
     case_details: str
 
 class CaseFullOut(BaseModel):
@@ -153,10 +153,6 @@ def admin_required(user=Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
 
-def clinician_required(user=Depends(get_current_user)):
-    if user["role"] != "Clinician":
-        raise HTTPException(status_code=403, detail="Clinician access required")
-    return user
 
 @app.get("/me", response_model=UserOut)
 def read_current_user(current_user: dict = Depends(get_current_user)):
@@ -169,7 +165,7 @@ def logout(user=Depends(get_current_user), token: str = Depends(oauth2_scheme)):
     return {"msg": "Logged out successfully"}
 
 @app.get("/users", response_model=List[UserOut])
-def get_users():
+def get_users(admin=Depends(admin_required)):
     """Fetch all users"""
     try:
         users = db.get_all_users()
@@ -178,7 +174,7 @@ def get_users():
         raise HTTPException(status_code=500, detail="Unable to fetch users")
 
 @app.get("/users/{user_id}", response_model=UserOut)
-def get_user(user_id: int):
+def get_user(user_id: int, admin=Depends(admin_required)):
     """Fetch user by ID"""
     user = db.get_user_by_id(user_id)
     if not user:
@@ -216,7 +212,7 @@ def update_user(user_id: int, user: UserUpdate):
     return updated_user
 
 @app.delete("/users/{user_id}")
-def delete_user(user_id: int):
+def delete_user(user_id: int, admin=Depends(admin_required)):
     """Delete user by ID"""
     deleted = db.delete_user(user_id)
     if not deleted:
@@ -225,7 +221,35 @@ def delete_user(user_id: int):
 
 def soap_summary(text: str) -> str:
     #to call SOAP Summary model (Boqian)
-    soap_text = ""
+    soap = {
+        "subjective": "Patient reports severe chest pain radiating to the left arm.",
+        "objective": {
+            "heart_rate": "110 bpm",
+            "blood_pressure": "150/95 mmHg",
+            "respiratory_rate": "24 breaths per minute",
+            "oxygen_saturation": "94%"
+        },
+        "assessment": "Possible acute coronary syndrome. ATS Category 2.",
+        "plan": "Immediate ECG and cardiology review."
+    }
+
+    soap_text = f"""
+    S – Subjective
+    {soap['subjective']}
+    
+    O – Objective
+    Heart rate: {soap['objective']['heart_rate']}
+    Blood pressure: {soap['objective']['blood_pressure']}
+    Respiratory rate: {soap['objective']['respiratory_rate']}
+    Oxygen saturation: {soap['objective']['oxygen_saturation']}
+
+    A – Assessment
+    {soap['assessment']}
+
+    P – Plan
+    {soap['plan']}
+    """.strip()
+
     return soap_text
 
 def triage_classification(text: str) -> str:
@@ -237,30 +261,10 @@ def classification_algo(text: str) -> dict:
 
     ## Assuming traige_classification also returning model eval details
 
-    sample_model = {
-        "model_name": "Triage_1",
-        "f1_score": 0.82,
-        "precision": 0.84,
-        "recall": 0.80,
-        "conf_mat": {
-            "true_positive": 120,
-            "true_negative": 95,
-            "false_positive": 18,
-            "false_negative": 22
-        }
-    }
-    model = db.add_model_eval(
-        model_name=sample_model["model_name"],
-        f1_score=sample_model["f1_score"],
-        precision=sample_model["precision"],
-        recall=sample_model["recall"],
-        conf_mat=json.dumps(sample_model["conf_mat"])
-    )
-
     ## Some logic between two models and then return the results below replacing demo values
 
     return {
-        "model_id": model["model_id"],
+        "model_name": "baseline_model",
         "ats_category": 2,
         "confidence_score": 0.85,
         "severity_flags": True,
@@ -274,15 +278,15 @@ def classification_algo(text: str) -> dict:
         }
     }
 
-@app.post("/cases", response_model=CaseFullOut)
-def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician"))):
+@app.post("/triage", response_model=CaseFullOut)
+def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
     try:
         soap_text = soap_summary(case.case_details)
         classification_res = classification_algo(case.case_details)
         severity_info = classification_res["severity_flags"]
 
         new_case = db.add_case(
-            user_id=case.user_id,
+            user_id=user["id"],
             case_details=case.case_details,
             severity_flagged=severity_info
         )
@@ -291,7 +295,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
 
         db.add_classification_model(
             case_id=case_id,
-            model_id=classification_res["model_id"],
+            model_name=classification_res["model_name"],
             ats_classification=classification_res["ats_category"],
             confidence_score=classification_res["confidence_score"]
         )
@@ -315,7 +319,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
         raise HTTPException(status_code=500, detail=f"Failed to create case: {str(e)}")
 
 @app.get("/cases/{case_id}")
-def get_case(case_id: int):
+def get_case(case_id: int, user=Depends(get_current_user)):
     """
     Fetch a case by ID with SOAP summary, classification, and severity flags.
     """
@@ -329,18 +333,24 @@ def get_case(case_id: int):
 
     return case
 
-@app.get("/models/{model_name}")
-def get_model_metrics(model_name: str):
-    """
-    Fetch evaluation metrics for a model by name.
-    """
-    try:
-        metrics = db.get_model_metrics_by_name(model_name)
-        if not metrics:
-            raise HTTPException(status_code=404, detail="Model not found")
-        return metrics
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch model metrics: {str(e)}")
+@app.get("/model-metrics/{model_name}")
+def get_model_metrics(model_name: str, admin=Depends(admin_required)):
+
+    file_path = Path("app/services/triage_classifier/models/model_eval.json")
+
+    print("Path:", file_path.resolve())
+
+    with open(file_path) as f:
+        data = json.load(f)
+
+    if model_name not in data:
+        raise HTTPException(status_code=404, detail="Model not found")
+
+    return {
+        "model_name": model_name,
+        "metrics": data[model_name]
+    }
+
 
 @app.get("/health")
 def health():
