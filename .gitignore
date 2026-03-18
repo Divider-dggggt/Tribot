@@ -11,11 +11,17 @@ frontend/.env
 # Python
 # =========================
 
-backend/app/__pycache__/
 backend/*.pyc
 backend/.pytest_cache
 backend/.mypy_cache
 backend/.venv
+launch.json
+backend/app/services/soap_generator/scenarios.json
+
+__pycache__/
+
+.idea/
+venv/
 
 # =========================
 # Docker
@@ -23,3 +29,15 @@ backend/.venv
 
 docker-data
 *.log
+
+# =========================
+# Pipeline
+# =========================
+
+
+
+# =========================
+# other
+# =========================
+
+.DS_Store

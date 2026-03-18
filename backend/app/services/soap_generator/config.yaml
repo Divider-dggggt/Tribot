@@ -1,0 +1,5 @@
+llm:
+  url: https://o3.fan/v1
+  llm_api: sk-L9ERMdOFw04afq0R67FbCa0f2eAf41Ac97A95937677a8f00
+  # Single model name (used as-is for OpenAI-compatible API)
+  model: claude-sonnet-4-20250514

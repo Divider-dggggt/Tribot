@@ -24,7 +24,12 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/app_db
+      DB_HOST: db
+      DB_NAME: app_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    #environment:
+      #DATABASE_URL: postgresql://postgres:postgres@db:5432/app_db
 
   frontend:
     build: ./frontend
