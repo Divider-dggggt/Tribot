@@ -222,26 +222,28 @@ def delete_user(user_id: int, admin=Depends(admin_required)):
 def soap_summary(text: str) -> str:
     #to call SOAP Summary model (Boqian)
     soap = {
-        "subjective": "Patient reports severe chest pain radiating to the left arm.",
+        "subjective": "Patient reports severe chest pain that began approximately one hour ago and radiates to the left arm and jaw. Patient also reports severe shortness of breath and dizziness",
         "objective": {
-            "heart_rate": "110 bpm",
-            "blood_pressure": "150/95 mmHg",
-            "respiratory_rate": "24 breaths per minute",
-            "oxygen_saturation": "94%"
+            "heart_rate": "elevated",
+            "blood_pressure": "120/80",
+            "respiratory_rate": "22",
+            "oxygen_saturation": "95%",
+            "notes": "Patient appears distressed and short of breath. Speech slightly slurred. Visible bleeding from left forearm wound. Patient appears pale."
         },
-        "assessment": "Possible acute coronary syndrome. ATS Category 2.",
-        "plan": "Immediate ECG and cardiology review."
+        "assessment": "Symptoms indicate potential acute coronary syndrome and possible neurological involvement. Heavy bleeding also observed. Patient classified as ATS Category 2 due to multiple high-risk symptoms.",
+        "plan": "Immediate ECG and cardiac monitoring."
     }
 
     soap_text = f"""
     S – Subjective
     {soap['subjective']}
-    
+
     O – Objective
     Heart rate: {soap['objective']['heart_rate']}
     Blood pressure: {soap['objective']['blood_pressure']}
     Respiratory rate: {soap['objective']['respiratory_rate']}
     Oxygen saturation: {soap['objective']['oxygen_saturation']}
+    Notes: {soap['objective']['notes']}
 
     A – Assessment
     {soap['assessment']}
@@ -249,7 +251,6 @@ def soap_summary(text: str) -> str:
     P – Plan
     {soap['plan']}
     """.strip()
-
     return soap_text
 
 def triage_classification(text: str) -> str:
@@ -269,12 +270,13 @@ def classification_algo(text: str) -> dict:
         "confidence_score": 0.85,
         "severity_flags": True,
         "matched_categories": {
-            "severe_bleeding": 2
+            "chest_pain": 2
         },
         "flags": {
-            "severe_bleeding": [
-                "bleeding heavily"
-            ]
+            "chest_pain": ["severe chest pain", "pain radiating to left arm"],
+            "shortness_of_breath": ["severe shortness of breath"],
+            "stroke_symptoms": ["slurred speech", "weakness on right side"],
+            "severe_bleeding": ["bleeding heavily"]
         }
     }
 
