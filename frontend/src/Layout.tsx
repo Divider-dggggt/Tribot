@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -47,9 +47,35 @@ const LogoutIcon = () => (
 );
 
 const drawerWidth = 240;
+const API_BASE_URL = 'http://localhost:8000';
 
 function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const signedInEmail = localStorage.getItem('user_email');
+
+  const handleLogout = async () => {
+    const accessToken = localStorage.getItem('access_token');
+
+    try {
+      if (accessToken) {
+        await fetch(`${API_BASE_URL}/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+      }
+    } catch {
+      // Ignore network errors and clear local session anyway.
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('token_type');
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('user_email');
+      navigate('/login', { replace: true });
+    }
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -71,9 +97,13 @@ function Layout() {
         <Toolbar sx={{ justifyContent: 'flex-end' }}>
           <Button color="inherit" sx={{ textTransform: 'none', mr: 2 }}>
             <UserIcon />
-            Dr. Sarah Smith
+            {signedInEmail ?? 'Signed In User'}
           </Button>
-          <Button color="inherit" sx={{ textTransform: 'none' }}>
+          <Button
+            color="inherit"
+            sx={{ textTransform: 'none' }}
+            onClick={handleLogout}
+          >
             <LogoutIcon />
             Logout
           </Button>
@@ -98,7 +128,7 @@ function Layout() {
           {/* Logo Placeholder */}
           <Box
             component={Link}
-            to="/"
+            to="/dashboard"
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -125,8 +155,8 @@ function Layout() {
             <ListItem disablePadding>
               <ListItemButton 
                 component={Link} 
-                to="/"
-                selected={location.pathname === '/'}
+                to="/dashboard"
+                selected={location.pathname === '/dashboard'}
                 sx={{
                   mx: 1,
                   borderRadius: 2,
@@ -145,7 +175,7 @@ function Layout() {
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: location.pathname === '/' ? 'bold' : 'medium' }} />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: location.pathname === '/dashboard' ? 'bold' : 'medium' }} />
               </ListItemButton>
             </ListItem>
             

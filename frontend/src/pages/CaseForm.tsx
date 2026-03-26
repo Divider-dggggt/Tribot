@@ -1,6 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import { useForm } from "react-hook-form";
 import { 
+  Alert,
+  CircularProgress,
   TextField, 
   Button, 
   Box, 
@@ -8,12 +10,13 @@ import {
   Card, 
   CardContent,
   Grid,
+  Snackbar,
   Stack
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
-import { ATSLevel } from "../types/triage";
+import { ATSLevel, TriageCase } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 
@@ -33,35 +36,111 @@ const XIcon = () => (
   </svg>
 );
 
+interface CaseFormValues {
+  patientID: string;
+  patientName: string;
+  details: string;
+}
+
+interface TriageApiResponse {
+  case_id: number;
+  severity_flagged: boolean;
+  soap_summary: string;
+  ats_classification: number;
+  confidence_score: number;
+  flagged_keywords: string | null;
+}
+
+const API_BASE_URL = "http://localhost:8000";
+
+const mapBackendAtsToLevel = (atsClassification: number): ATSLevel => {
+  const boundedAts = Math.min(5, Math.max(1, Math.round(atsClassification)));
+  return (boundedAts - 1) as ATSLevel;
+};
+
+const normalizeConfidence = (rawScore: number): number => {
+  if (!Number.isFinite(rawScore)) {
+    return 0;
+  }
+
+  const ratio = rawScore > 1 ? rawScore / 100 : rawScore;
+  return Math.max(0, Math.min(1, ratio));
+};
+
+const readErrorMessage = async (response: Response): Promise<string> => {
+  try {
+    const data = await response.json() as { detail?: string };
+    if (typeof data.detail === "string" && data.detail.trim()) {
+      return data.detail;
+    }
+  } catch {
+    // Ignore parse errors and use fallback.
+  }
+
+  return `Request failed with status ${response.status}`;
+};
+
 export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
   const triageCases = useSelector(getTriageCases);
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<CaseFormValues>();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const details = watch('details', '');
 
-  const onSubmit = (data: Record<string, string>) => {
-    // TODO: fetch API request from backend for triage
-    const priorities = Object.values(ATSLevel).filter((key) => typeof key === "number");
-    const randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
-    const newCase = {
+  const onSubmit = async (data: CaseFormValues) => {
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    try {
+      const accessToken = localStorage.getItem("access_token");
+      const response = await fetch(`${API_BASE_URL}/triage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          case_details: data.details,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(await readErrorMessage(response));
+      }
+
+      const triageResult = await response.json() as TriageApiResponse;
+      const newCase: TriageCase = {
+        caseId: triageResult.case_id,
+        atsClassification: triageResult.ats_classification,
+        safetyOverride: triageResult.severity_flagged,
+        flaggedKeywords: triageResult.flagged_keywords,
+        soapSummary: triageResult.soap_summary,
       id: data.patientID,
       name: data.patientName,
       date: formatCaseDateTime(),
-      priority: randomPriority as ATSLevel,
-      confidence: Math.random(),
+        priority: mapBackendAtsToLevel(triageResult.ats_classification),
+        confidence: normalizeConfidence(triageResult.confidence_score),
       details: data.details,
     };
-    const severitySortedCases = [...triageCases, newCase].sort(
-      (a, b) => a.priority - b.priority
-    );
-    const newCaseIndex = severitySortedCases.findIndex((currentCase) => currentCase === newCase);
 
-    dispatch(addTriageCase(newCase));
-    navigate(
-      { pathname: "/", search: `?case=${newCaseIndex}` },
-      { state: { message: "Successfully created case", severity: "success" } }
-    );
+      const severitySortedCases = [...triageCases, newCase].sort(
+        (a, b) => a.priority - b.priority
+      );
+      const newCaseIndex = severitySortedCases.findIndex((currentCase) => currentCase === newCase);
+
+      dispatch(addTriageCase(newCase));
+      navigate(
+        { pathname: "/dashboard", search: `?case=${newCaseIndex}` },
+        { state: { message: "Successfully created case", severity: "success" } }
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to submit case";
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -145,6 +224,7 @@ export const CaseForm = (): ReactElement => {
                 type="submit" 
                 variant="contained" 
                 size="large"
+                disabled={isSubmitting}
                 sx={{ 
                   flex: 1,
                   bgcolor: '#9333ea', 
@@ -157,13 +237,17 @@ export const CaseForm = (): ReactElement => {
                   borderRadius: 2
                 }}
               >
-                <SendIcon />
-                Submit for Triage
+                {isSubmitting ? (
+                  <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                ) : (
+                  <SendIcon />
+                )}
+                {isSubmitting ? "Submitting..." : "Submit for Triage"}
               </Button>
               <Button 
                 variant="outlined" 
                 size="large"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/dashboard')}
                 sx={{ 
                   minWidth: 140,
                   color: '#374151',
@@ -186,6 +270,16 @@ export const CaseForm = (): ReactElement => {
           </form>
         </CardContent>
       </Card>
+
+      <Snackbar
+        open={Boolean(submitError)}
+        autoHideDuration={5000}
+        onClose={() => setSubmitError(null)}
+      >
+        <Alert onClose={() => setSubmitError(null)} severity="error" sx={{ width: "100%" }}>
+          {submitError}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

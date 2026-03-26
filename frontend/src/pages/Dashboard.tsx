@@ -99,6 +99,7 @@ const compareCaseNameWithPriority = (aName: string, bName: string): number => {
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
   const navigate = useNavigate();
+  const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
   const [searchParams] = useSearchParams();
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
@@ -167,7 +168,7 @@ export const Dashboard = (): ReactElement => {
       <>
         <CaseSummary
           case={selectedCase}
-          onBack={() => navigate("/")}
+          onBack={() => navigate("/dashboard")}
         />
         {successSnackbar}
       </>
@@ -181,7 +182,7 @@ export const Dashboard = (): ReactElement => {
           Dashboard
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          Welcome back, Dr. Smith
+          Welcome back, {signedInAccount}
         </Typography>
       </Box>
 
@@ -247,7 +248,7 @@ export const Dashboard = (): ReactElement => {
               <React.Fragment key={`${item.id},${index}`}>
                 <ListItemButton
                   onClick={() => {
-                    navigate({ pathname: "/", search: `?case=${index}` });
+                    navigate({ pathname: "/dashboard", search: `?case=${index}` });
                   }}
                   sx={{ py: 2, px: 3 }}
                 >
