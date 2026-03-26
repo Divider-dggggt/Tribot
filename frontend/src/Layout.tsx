@@ -11,6 +11,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
+import { API_BASE_URL } from './utils/constants';
 
 // Simple SVG Icons
 const DashboardIcon = () => (
@@ -47,7 +48,6 @@ const LogoutIcon = () => (
 );
 
 const drawerWidth = 240;
-const API_BASE_URL = 'http://localhost:8000';
 
 function Layout() {
   const location = useLocation();

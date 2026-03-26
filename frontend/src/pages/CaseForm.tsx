@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import { 
   Alert,
@@ -19,6 +19,7 @@ import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
 import { ATSLevel, TriageCase } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
+import { API_BASE_URL } from "../utils/constants";
 
 // Simple Send Icon
 const SendIcon = () => (
@@ -51,9 +52,7 @@ interface TriageApiResponse {
   flagged_keywords: string | null;
 }
 
-const API_BASE_URL = "http://localhost:8000";
-
-const mapBackendAtsToLevel = (atsClassification: number): ATSLevel => {
+const parseAtsToLevel = (atsClassification: number): ATSLevel => {
   const boundedAts = Math.min(5, Math.max(1, Math.round(atsClassification)));
   return (boundedAts - 1) as ATSLevel;
 };
@@ -83,15 +82,19 @@ const readErrorMessage = async (response: Response): Promise<string> => {
 export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
   const triageCases = useSelector(getTriageCases);
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<CaseFormValues>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm<CaseFormValues>();
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const details = watch('details', '');
 
   const onSubmit = async (data: CaseFormValues) => {
-    setSubmitError(null);
-    setIsSubmitting(true);
+    clearErrors("root.serverError");
 
     try {
       const accessToken = localStorage.getItem("access_token");
@@ -113,14 +116,13 @@ export const CaseForm = (): ReactElement => {
       const triageResult = await response.json() as TriageApiResponse;
       const newCase: TriageCase = {
         caseId: triageResult.case_id,
-        atsClassification: triageResult.ats_classification,
         safetyOverride: triageResult.severity_flagged,
         flaggedKeywords: triageResult.flagged_keywords,
         soapSummary: triageResult.soap_summary,
       id: data.patientID,
       name: data.patientName,
       date: formatCaseDateTime(),
-        priority: mapBackendAtsToLevel(triageResult.ats_classification),
+        priority: parseAtsToLevel(triageResult.ats_classification),
         confidence: normalizeConfidence(triageResult.confidence_score),
       details: data.details,
     };
@@ -137,9 +139,10 @@ export const CaseForm = (): ReactElement => {
       );
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to submit case";
-      setSubmitError(message);
-    } finally {
-      setIsSubmitting(false);
+      setError("root.serverError", {
+        type: "server",
+        message,
+      });
     }
   };
 
@@ -272,12 +275,12 @@ export const CaseForm = (): ReactElement => {
       </Card>
 
       <Snackbar
-        open={Boolean(submitError)}
+        open={Boolean(errors.root?.serverError?.message)}
         autoHideDuration={5000}
-        onClose={() => setSubmitError(null)}
+        onClose={() => clearErrors("root.serverError")}
       >
-        <Alert onClose={() => setSubmitError(null)} severity="error" sx={{ width: "100%" }}>
-          {submitError}
+        <Alert onClose={() => clearErrors("root.serverError")} severity="error" sx={{ width: "100%" }}>
+          {errors.root?.serverError?.message}
         </Alert>
       </Snackbar>
     </Box>

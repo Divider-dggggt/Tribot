@@ -31,10 +31,9 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const priorityColor = getPriorityColor(triageCase.priority);
   const confidencePercentage = Math.round((triageCase.confidence ?? 0) * 100);
   const hasSafetyOverride = Boolean(triageCase.safetyOverride);
-  const hasFlaggedKeywords = Boolean(triageCase.flaggedKeywords && triageCase.flaggedKeywords.trim());
-  const atsLabel = triageCase.atsClassification
-    ? `ATS-${triageCase.atsClassification}`
-    : ATSLevel[triageCase.priority];
+  const flaggedKeywordsText = triageCase.flaggedKeywords?.trim() ?? "";
+  const hasFlaggedKeywords = flaggedKeywordsText.length > 0;
+  const atsLabel = ATSLevel[triageCase.priority];
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -160,7 +159,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             {hasSafetyOverride
               ? "Safety rule override applied to this case."
               : "No safety rule override was applied."}
-            {hasFlaggedKeywords ? ` Trigger indicator: ${triageCase.flaggedKeywords}` : ""}
+            {hasFlaggedKeywords ? ` Trigger indicator: ${flaggedKeywordsText}` : ""}
           </Alert>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
@@ -171,7 +170,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             color="text.secondary"
             sx={{ whiteSpace: "pre-line", lineHeight: 1.7, mb: 3 }}
           >
-            {triageCase.soapSummary?.trim() || "No SOAP summary returned from backend."}
+            {triageCase.soapSummary.trim() || "No SOAP summary is available."}
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>

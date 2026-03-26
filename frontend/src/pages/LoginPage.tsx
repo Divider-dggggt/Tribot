@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useState } from "react";
+import { ReactElement, useState } from "react";
 import {
   Alert,
   Box,
@@ -9,8 +9,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../components/AuthLogo";
+import { API_BASE_URL } from "../utils/constants";
 
 interface LoginResponse {
   access_token: string;
@@ -18,7 +20,10 @@ interface LoginResponse {
   role: string;
 }
 
-const API_BASE_URL = "http://localhost:8000";
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
 
 const readLoginError = async (response: Response): Promise<string> => {
   try {
@@ -35,22 +40,21 @@ const readLoginError = async (response: Response): Promise<string> => {
 
 export const LoginPage = (): ReactElement => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSignIn = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSignIn = async (values: LoginFormValues): Promise<void> => {
     setErrorMessage(null);
-
-    const trimmedEmail = email.trim();
-    if (!trimmedEmail || !password) {
-      setErrorMessage("Please enter both email and password.");
-      return;
-    }
-
-    setIsSubmitting(true);
+    const trimmedEmail = values.email.trim();
 
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
@@ -60,7 +64,7 @@ export const LoginPage = (): ReactElement => {
         },
         body: JSON.stringify({
           email: trimmedEmail,
-          password,
+          password: values.password,
         }),
       });
 
@@ -77,8 +81,6 @@ export const LoginPage = (): ReactElement => {
       navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to sign in right now.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -106,7 +108,7 @@ export const LoginPage = (): ReactElement => {
         <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
           <AuthLogo subtitle="Clinician Triage System" />
 
-          <Box component="form" onSubmit={handleSignIn}>
+          <Box component="form" onSubmit={handleSubmit(handleSignIn)} noValidate>
             {errorMessage && (
               <Alert severity="error" sx={{ mb: 2 }}>
                 {errorMessage}
@@ -118,11 +120,19 @@ export const LoginPage = (): ReactElement => {
             <TextField
               fullWidth
               type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
               placeholder="Enter your email"
               size="small"
               sx={{ mb: 2.5 }}
+              error={Boolean(errors.email)}
+              helperText={errors.email?.message}
+              {...register("email", {
+                required: "Please enter your email.",
+                setValueAs: (value: string) => value.trim(),
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Please enter a valid email address.",
+                },
+              })}
               InputProps={{
                 sx: {
                   borderRadius: 2,
@@ -137,11 +147,14 @@ export const LoginPage = (): ReactElement => {
             <TextField
               fullWidth
               type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
               size="small"
               sx={{ mb: 2.5 }}
+              error={Boolean(errors.password)}
+              helperText={errors.password?.message}
+              {...register("password", {
+                required: "Please enter your password.",
+              })}
               InputProps={{
                 sx: {
                   borderRadius: 2,
@@ -176,29 +189,12 @@ export const LoginPage = (): ReactElement => {
             <Button
               type="button"
               fullWidth
-              onClick={() => undefined}
-              sx={{
-                textTransform: "none",
-                color: "#7c3aed",
-                mt: 1.5,
-                mb: 2.5,
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              Forgot password?
-            </Button>
-
-            <Button
-              type="button"
-              fullWidth
               variant="outlined"
               onClick={() => navigate("/create-account")}
               sx={{
                 textTransform: "none",
                 borderRadius: 2,
+                mt: 2.5,
                 py: 1.2,
                 fontSize: "1rem",
                 fontWeight: 500,

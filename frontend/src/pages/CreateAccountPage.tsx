@@ -1,5 +1,6 @@
-import { FormEvent, ReactElement, useMemo, useState } from "react";
+import { ReactElement, useMemo } from "react";
 import { Box, Button, Card, CardContent, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../components/AuthLogo";
 
@@ -22,24 +23,56 @@ const requiredLabel = (text: string) => (
   </Typography>
 );
 
+interface CreateAccountFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  userRole: (typeof ROLE_OPTIONS)[number];
+  licenseNumber: string;
+  department: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export const CreateAccountPage = (): ReactElement => {
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState<(typeof ROLE_OPTIONS)[number]>("Doctor");
-  const [formVersion, setFormVersion] = useState(0);
-
   const permissionColumns = useMemo(
     () => [PERMISSIONS.slice(0, 3), PERMISSIONS.slice(3)],
     []
   );
 
-  const handleCreate = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const defaultValues: CreateAccountFormValues = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    userRole: "Doctor",
+    licenseNumber: "",
+    department: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  };
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<CreateAccountFormValues>({
+    defaultValues,
+  });
+  const passwordValue = watch("password", "");
+
+  const handleCreate = (_values: CreateAccountFormValues): void => {
     navigate("/login");
   };
 
   const handleReset = () => {
-    setSelectedRole("Doctor");
-    setFormVersion((previous) => previous + 1);
+    reset(defaultValues);
   };
 
   return (
@@ -67,7 +100,7 @@ export const CreateAccountPage = (): ReactElement => {
         <CardContent sx={{ p: { xs: 3, sm: 4.5 } }}>
           <AuthLogo subtitle="Create New User Account" />
 
-          <Box component="form" key={formVersion} onSubmit={handleCreate}>
+          <Box component="form" onSubmit={handleSubmit(handleCreate)} noValidate>
             <Typography
               variant="h6"
               sx={{
@@ -90,6 +123,9 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder="Enter first name"
                   size="small"
+                  error={Boolean(errors.firstName)}
+                  helperText={errors.firstName?.message}
+                  {...register("firstName", { required: "Required" })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -99,6 +135,9 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder="Enter last name"
                   size="small"
+                  error={Boolean(errors.lastName)}
+                  helperText={errors.lastName?.message}
+                  {...register("lastName", { required: "Required" })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -108,6 +147,15 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder="email@example.com"
                   size="small"
+                  error={Boolean(errors.email)}
+                  helperText={errors.email?.message}
+                  {...register("email", {
+                    required: "Required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email address",
+                    },
+                  })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -119,6 +167,7 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder="(555) 123-4567"
                   size="small"
+                  {...register("phone")}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -129,34 +178,50 @@ export const CreateAccountPage = (): ReactElement => {
             </Typography>
 
             {requiredLabel("User Role")}
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 2.5 }}>
-              {ROLE_OPTIONS.map((role) => {
-                const isSelected = role === selectedRole;
-                return (
-                  <Button
-                    key={role}
-                    type="button"
-                    variant="outlined"
-                    onClick={() => setSelectedRole(role)}
-                    sx={{
-                      flex: 1,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      py: 1.1,
-                      color: isSelected ? "#7e22ce" : "#374151",
-                      borderColor: isSelected ? "#9333ea" : "#d1d5db",
-                      backgroundColor: isSelected ? "#faf5ff" : "#fff",
-                      "&:hover": {
-                        borderColor: "#9333ea",
-                        backgroundColor: "#faf5ff",
-                      },
-                    }}
-                  >
-                    {role}
-                  </Button>
-                );
-              })}
-            </Stack>
+            <Controller
+              name="userRole"
+              control={control}
+              rules={{ required: "Required" }}
+              render={({ field }) => (
+                <>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
+                    {ROLE_OPTIONS.map((role) => {
+                      const isSelected = role === field.value;
+                      return (
+                        <Button
+                          key={role}
+                          type="button"
+                          variant="outlined"
+                          onClick={() => field.onChange(role)}
+                          sx={{
+                            flex: 1,
+                            borderRadius: 2,
+                            textTransform: "none",
+                            py: 1.1,
+                            color: isSelected ? "#7e22ce" : "#374151",
+                            borderColor: isSelected ? "#9333ea" : "#d1d5db",
+                            backgroundColor: isSelected ? "#faf5ff" : "#fff",
+                            "&:hover": {
+                              borderColor: "#9333ea",
+                              backgroundColor: "#faf5ff",
+                            },
+                          }}
+                        >
+                          {role}
+                        </Button>
+                      );
+                    })}
+                  </Stack>
+                  {errors.userRole?.message ? (
+                    <Typography variant="caption" sx={{ color: "#dc2626", mb: 2.5, display: "block" }}>
+                      {errors.userRole.message}
+                    </Typography>
+                  ) : (
+                    <Box sx={{ mb: 2.5 }} />
+                  )}
+                </>
+              )}
+            />
 
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -165,6 +230,9 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder="Enter license number"
                   size="small"
+                  error={Boolean(errors.licenseNumber)}
+                  helperText={errors.licenseNumber?.message}
+                  {...register("licenseNumber", { required: "Required" })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -176,6 +244,7 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder=""
                   size="small"
+                  {...register("department")}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -192,6 +261,19 @@ export const CreateAccountPage = (): ReactElement => {
                   fullWidth
                   placeholder="Choose a username"
                   size="small"
+                  error={Boolean(errors.username)}
+                  helperText={errors.username?.message}
+                  {...register("username", {
+                    required: "Required",
+                    minLength: {
+                      value: 6,
+                      message: "Minimum 6 characters",
+                    },
+                    pattern: {
+                      value: /^[a-zA-Z0-9]+$/,
+                      message: "Alphanumeric only",
+                    },
+                  })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
                 <Typography variant="caption" sx={{ color: "#6b7280", mt: 0.7, display: "block" }}>
@@ -205,6 +287,9 @@ export const CreateAccountPage = (): ReactElement => {
                   type="password"
                   placeholder="Enter password"
                   size="small"
+                  error={Boolean(errors.password)}
+                  helperText={errors.password?.message}
+                  {...register("password", { required: "Required" })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
@@ -215,6 +300,12 @@ export const CreateAccountPage = (): ReactElement => {
                   type="password"
                   placeholder="Confirm password"
                   size="small"
+                  error={Boolean(errors.confirmPassword)}
+                  helperText={errors.confirmPassword?.message}
+                  {...register("confirmPassword", {
+                    required: "Required",
+                    validate: (value) => value === passwordValue || "Passwords do not match",
+                  })}
                   InputProps={{ sx: { borderRadius: 2 } }}
                 />
               </Grid>
