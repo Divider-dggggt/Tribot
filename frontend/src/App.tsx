@@ -3,7 +3,6 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
 import { Dashboard } from "./pages/Dashboard";
 import { CaseForm } from "./pages/CaseForm";
 import { LoginPage } from "./pages/LoginPage";
-import { CreateAccountPage } from "./pages/CreateAccountPage";
 import Layout from "./Layout";
 import { UserRole } from "./types/user";
 import { getDecodedToken, isAuthenticated } from "./utils/auth";

@@ -14,9 +14,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { formatCaseDateTime } from "../utils/date";
+import { CreateUserForm } from "./CreateUserForm";
 
 export const UsersTable = (): ReactElement => {
   const [users, setUsers] = useState<User[]>([]);
+  const [isCreatingUser, setIsCreatingUser] = useState<boolean>(false);
+  const handleOpenCreateForm = () => setIsCreatingUser(true);
+  const handleCloseCreateForm = () => setIsCreatingUser(false);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
@@ -32,8 +36,10 @@ export const UsersTable = (): ReactElement => {
       setUsers(users);
     };
 
-    fetchUsers();
-  }, []);
+    if (!isCreatingUser) {
+      fetchUsers();
+    }
+  }, [isCreatingUser]);
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -51,7 +57,7 @@ export const UsersTable = (): ReactElement => {
         </Box>
         <Button
           variant="outlined"
-          onClick={() => {}}
+          onClick={handleOpenCreateForm}
           sx={{
             color: "#7c3aed",
             borderColor: "#c4b5fd",
@@ -96,6 +102,10 @@ export const UsersTable = (): ReactElement => {
           </TableBody>
         </Table>
       </TableContainer>
+      <CreateUserForm
+        open={isCreatingUser}
+        onClose={handleCloseCreateForm}
+      />
     </Box>
   );
 };
