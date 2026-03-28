@@ -6,14 +6,24 @@ import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
 import { API_BASE_URL } from "../utils/constants";
 
-const PERMISSIONS = [
-  "Create new cases",
-  "Override AI predictions",
-  "Generate reports",
-  "View all patient records",
-  "Access evaluation tools",
-  "Administrative access",
-];
+const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
+  [UserRole.Admin]: [
+    "View all patient records",
+    "Access evaluation tools",
+    "Generate reports",
+    "Administrative access",
+  ],
+  [UserRole.Clinician]: [
+    "Create new cases",
+    "Override AI predictions",
+    "Access evaluation tools",
+  ],
+  [UserRole.Researcher]: [
+    "Generate reports",
+    "View all patient records",
+    "Access evaluation tools",
+  ],
+};
 
 const requiredLabel = (text: string) => (
   <Typography variant="subtitle2" sx={{ mb: 0.75, mt: 1, color: "#374151", fontWeight: 600 }}>
@@ -39,11 +49,6 @@ interface CreateUserFormProps {
 }
 
 export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactElement => {
-  const permissionColumns = useMemo(
-    () => [PERMISSIONS.slice(0, 3), PERMISSIONS.slice(3)],
-    []
-  );
-
   const defaultValues: CreateUserFormValues = {
     firstName: "",
     lastName: "",
@@ -63,6 +68,12 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
     defaultValues,
   });
   const passwordValue = watch("password", "");
+  const selectedRole = watch("role", defaultValues.role);
+  const permissionColumns = useMemo(() => {
+    const permissions = ROLE_PERMISSIONS[selectedRole] ?? [];
+    const midpoint = Math.ceil(permissions.length / 2);
+    return [permissions.slice(0, midpoint), permissions.slice(midpoint)];
+  }, [selectedRole]);
 
   const handleCreate = async (values: CreateUserFormValues): Promise<void> => {
     const accessToken = localStorage.getItem("access_token");
