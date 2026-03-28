@@ -8,8 +8,8 @@ import { UserRole } from "./types/user";
 import { getDecodedToken, isAuthenticated } from "./utils/auth";
 import { UsersTable } from "./components/UsersTable";
 
-const AdminOnly = ({ children }: { children: ReactElement }): ReactElement => {
-  if (getDecodedToken()?.role !== UserRole.Admin) {
+const RoleRestriction = ({ role, children }: { role: UserRole, children: ReactElement }): ReactElement => {
+  if (getDecodedToken()?.role !== role) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -51,8 +51,8 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/new-case" element={<CaseForm />} />
-            <Route path="/users" element={<AdminOnly><UsersTable /></AdminOnly>} />
+            <Route path="/new-case" element={<RoleRestriction role={UserRole.Clinician}><CaseForm /></RoleRestriction>} />
+            <Route path="/users" element={<RoleRestriction role={UserRole.Admin}><UsersTable /></RoleRestriction>} />
           </Route>
         </Route>
 

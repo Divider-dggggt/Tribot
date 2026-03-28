@@ -24,6 +24,8 @@ import { CaseSummary } from "../components/CaseSummary";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { parseCaseDateTime } from "../utils/date";
+import { UserRole } from "../types/user";
+import { getDecodedToken } from "../utils/auth";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -100,6 +102,7 @@ export const Dashboard = (): ReactElement => {
   const location = useLocation();
   const navigate = useNavigate();
   const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
+  const userRole = getDecodedToken()?.role;
   const [searchParams] = useSearchParams();
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
@@ -186,7 +189,7 @@ export const Dashboard = (): ReactElement => {
         </Typography>
       </Box>
 
-      <Button 
+      {userRole === UserRole.Clinician && <Button 
         variant="contained" 
         fullWidth 
         size="large"
@@ -204,7 +207,7 @@ export const Dashboard = (): ReactElement => {
       >
         <PlusIcon />
         Create New Case
-      </Button>
+      </Button>}
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
         <CardContent sx={{ p: 0 }}>

@@ -183,7 +183,7 @@ function Layout() {
               </ListItemButton>
             </ListItem>
             
-            <ListItem disablePadding sx={{ mt: 1 }}>
+            {userRole === UserRole.Clinician && <ListItem disablePadding sx={{ mt: 1 }}>
               <ListItemButton 
                 component={Link} 
                 to="/new-case"
@@ -208,7 +208,7 @@ function Layout() {
                 </ListItemIcon>
                 <ListItemText primary="New Case" primaryTypographyProps={{ fontWeight: location.pathname === '/new-case' ? 'bold' : 'medium' }} />
               </ListItemButton>
-            </ListItem>
+            </ListItem>}
 
             {userRole === UserRole.Admin && <ListItem disablePadding sx={{ mt: 1 }}>
               <ListItemButton 
