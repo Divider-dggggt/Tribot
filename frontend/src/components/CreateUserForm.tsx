@@ -1,8 +1,8 @@
 import { ReactElement, useMemo } from "react";
 import { Box, Button, Dialog, DialogContent, Grid, Stack, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "./AuthLogo";
+import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
 import { API_BASE_URL } from "../utils/constants";
 
@@ -39,7 +39,6 @@ interface CreateUserFormProps {
 }
 
 export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactElement => {
-  const navigate = useNavigate();
   const permissionColumns = useMemo(
     () => [PERMISSIONS.slice(0, 3), PERMISSIONS.slice(3)],
     []
@@ -89,11 +88,23 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
   };
 
   return (
-    <Dialog open={open} onClose={onClose} disablePortal scroll="body">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      disablePortal
+      scroll="body"
+      fullWidth
+      maxWidth="md"
+      PaperProps={{
+        sx: {
+          width: "min(900px, calc(100% - 32px))",
+          maxWidth: "900px",
+        },
+      }}
+    >
       <DialogContent
         sx={{
           width: "100%",
-          maxWidth: 760,
           borderRadius: 3,
           border: "1px solid #ede9fe",
           boxShadow: "0 18px 40px rgba(17, 24, 39, 0.15)",
@@ -102,26 +113,32 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
         <AuthLogo subtitle="Create New User" />
 
         <Box component="form" onSubmit={handleSubmit(handleCreate)} noValidate>
-          {requiredLabel("First Name")}
-          <TextField
-            fullWidth
-            placeholder="Enter first name"
-            size="small"
-            error={Boolean(errors.firstName)}
-            helperText={errors.firstName?.message}
-            {...register("firstName", { required: "Required" })}
-            InputProps={{ sx: { borderRadius: 2 } }}
-          />
-          {requiredLabel("Last Name")}
-          <TextField
-            fullWidth
-            placeholder="Enter last name"
-            size="small"
-            error={Boolean(errors.lastName)}
-            helperText={errors.lastName?.message}
-            {...register("lastName", { required: "Required" })}
-            InputProps={{ sx: { borderRadius: 2 } }}
-          />
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              {requiredLabel("First Name")}
+              <TextField
+                fullWidth
+                placeholder="Enter first name"
+                size="small"
+                error={Boolean(errors.firstName)}
+                helperText={errors.firstName?.message}
+                {...register("firstName", { required: "Required" })}
+                InputProps={{ sx: { borderRadius: 2 } }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              {requiredLabel("Last Name")}
+              <TextField
+                fullWidth
+                placeholder="Enter last name"
+                size="small"
+                error={Boolean(errors.lastName)}
+                helperText={errors.lastName?.message}
+                {...register("lastName", { required: "Required" })}
+                InputProps={{ sx: { borderRadius: 2 } }}
+              />
+            </Grid>
+          </Grid>
           {requiredLabel("Email Address")}
           <TextField
             fullWidth
@@ -138,33 +155,41 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
             })}
             InputProps={{ sx: { borderRadius: 2 } }}
           />
-          {requiredLabel("Temporary Password")}
-          <TextField
-            fullWidth
-            type="password"
-            placeholder="Enter password"
-            size="small"
-            autoComplete="new-password"
-            error={Boolean(errors.password)}
-            helperText={errors.password?.message}
-            {...register("password", { required: "Required" })}
-            InputProps={{ sx: { borderRadius: 2 } }}
-          />
-          {requiredLabel("Confirm Password")}
-          <TextField
-            fullWidth
-            type="password"
-            placeholder="Confirm password"
-            size="small"
-            autoComplete="new-password"
-            error={Boolean(errors.confirmPassword)}
-            helperText={errors.confirmPassword?.message}
-            {...register("confirmPassword", {
-              required: "Required",
-              validate: (value) => value === passwordValue || "Passwords do not match",
-            })}
-            InputProps={{ sx: { borderRadius: 2 } }}
-          />
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              {requiredLabel("Temporary Password")}
+              <PasswordField
+                fullWidth
+                placeholder="Enter password"
+                size="small"
+                autoComplete="new-password"
+                error={Boolean(errors.password)}
+                helperText={errors.password?.message}
+                {...register("password", { required: "Required" })}
+                InputProps={{
+                  sx: { borderRadius: 2 },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              {requiredLabel("Confirm Password")}
+              <PasswordField
+                fullWidth
+                placeholder="Confirm password"
+                size="small"
+                autoComplete="new-password"
+                error={Boolean(errors.confirmPassword)}
+                helperText={errors.confirmPassword?.message}
+                {...register("confirmPassword", {
+                  required: "Required",
+                  validate: (value) => value === passwordValue || "Passwords do not match",
+                })}
+                InputProps={{
+                  sx: { borderRadius: 2 },
+                }}
+              />
+            </Grid>
+          </Grid>
 
           {requiredLabel("User Role")}
           <Controller

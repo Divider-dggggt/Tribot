@@ -12,6 +12,7 @@ import {
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../components/AuthLogo";
+import { PasswordField } from "../components/PasswordField";
 import { API_BASE_URL } from "../utils/constants";
 
 interface LoginResponse {
@@ -144,9 +145,8 @@ export const LoginPage = (): ReactElement => {
             <Typography variant="subtitle2" sx={{ color: "#374151", mb: 0.75 }}>
               Password
             </Typography>
-            <TextField
+            <PasswordField
               fullWidth
-              type="password"
               placeholder="Enter your password"
               size="small"
               sx={{ mb: 2.5 }}
