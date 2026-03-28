@@ -120,7 +120,8 @@ export const UsersTable = (): ReactElement => {
                   <TableRow
                     key={user.id}
                     sx={{
-                      "&:hover": { bgcolor: "#faf5ff" },
+                      "&:hover, &.MuiTableRow-hover:hover": { bgcolor: "#f5f3ff" },
+                      "&:hover > *, &.MuiTableRow-hover:hover > *": { bgcolor: "#f5f3ff" },
                       "&:last-child td, &:last-child th": { border: 0 },
                     }}
                   >
