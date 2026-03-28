@@ -185,29 +185,6 @@ export const LoginPage = (): ReactElement => {
               ) : null}
               {isSubmitting ? "Signing In..." : "Sign In"}
             </Button>
-
-            <Button
-              type="button"
-              fullWidth
-              variant="outlined"
-              onClick={() => navigate("/create-account")}
-              sx={{
-                textTransform: "none",
-                borderRadius: 2,
-                mt: 2.5,
-                py: 1.2,
-                fontSize: "1rem",
-                fontWeight: 500,
-                color: "#9333ea",
-                borderColor: "#9333ea",
-                "&:hover": {
-                  borderColor: "#7e22ce",
-                  backgroundColor: "#faf5ff",
-                },
-              }}
-            >
-              Create New Account
-            </Button>
           </Box>
         </CardContent>
       </Card>

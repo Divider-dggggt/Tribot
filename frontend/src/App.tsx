@@ -40,15 +40,6 @@ function App() {
             </RedirectIfAuthenticated>
           )}
         />
-        <Route
-          path="/create-account"
-          element={(
-            <RedirectIfAuthenticated>
-              <CreateAccountPage />
-            </RedirectIfAuthenticated>
-          )}
-        />
-
         <Route element={<RequireAuth />}>
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
