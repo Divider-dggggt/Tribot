@@ -5,8 +5,17 @@ import { CaseForm } from "./pages/CaseForm";
 import { LoginPage } from "./pages/LoginPage";
 import { CreateAccountPage } from "./pages/CreateAccountPage";
 import Layout from "./Layout";
+import { UserRole } from "./types/user";
+import { getDecodedToken, isAuthenticated } from "./utils/auth";
+import { UsersTable } from "./components/UsersTable";
 
-const isAuthenticated = (): boolean => Boolean(localStorage.getItem("access_token"));
+const AdminOnly = ({ children }: { children: ReactElement }): ReactElement => {
+  if (getDecodedToken()?.role !== UserRole.Admin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
 
 const RequireAuth = (): ReactElement => {
   if (!isAuthenticated()) {
@@ -44,6 +53,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/new-case" element={<CaseForm />} />
+            <Route path="/users" element={<AdminOnly><UsersTable /></AdminOnly>} />
           </Route>
         </Route>
 

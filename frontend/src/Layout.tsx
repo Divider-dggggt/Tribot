@@ -12,6 +12,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { API_BASE_URL } from './utils/constants';
+import GroupIcon from '@mui/icons-material/Group';
+import { getDecodedToken } from './utils/auth';
+import { UserRole } from './types/user';
 
 // Simple SVG Icons
 const DashboardIcon = () => (
@@ -53,6 +56,7 @@ function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const signedInEmail = localStorage.getItem('user_email');
+  const userRole = getDecodedToken()?.role;
 
   const handleLogout = async () => {
     const accessToken = localStorage.getItem('access_token');
@@ -205,6 +209,33 @@ function Layout() {
                 <ListItemText primary="New Case" primaryTypographyProps={{ fontWeight: location.pathname === '/new-case' ? 'bold' : 'medium' }} />
               </ListItemButton>
             </ListItem>
+
+            {userRole === UserRole.Admin && <ListItem disablePadding sx={{ mt: 1 }}>
+              <ListItemButton 
+                component={Link} 
+                to="/users"
+                selected={location.pathname === '/users'}
+                sx={{
+                  mx: 1,
+                  borderRadius: 2,
+                  '&.Mui-selected': {
+                    bgcolor: '#f3e8ff',
+                    color: '#7c3aed',
+                    '&:hover': {
+                      bgcolor: '#f3e8ff',
+                    },
+                    '& .MuiListItemIcon-root': {
+                      color: '#7c3aed',
+                    },
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <GroupIcon />
+                </ListItemIcon>
+                <ListItemText primary="Users" primaryTypographyProps={{ fontWeight: location.pathname === '/users' ? 'bold' : 'medium' }} />
+              </ListItemButton>
+            </ListItem>}
           </List>
         </Box>
       </Drawer>
