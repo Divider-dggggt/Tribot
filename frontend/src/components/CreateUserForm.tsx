@@ -34,6 +34,23 @@ const requiredLabel = (text: string) => (
   </Typography>
 );
 
+const readCreateUserError = async (response: Response): Promise<string> => {
+  try {
+    const body = await response.json() as { detail?: string };
+    if (typeof body.detail === "string" && body.detail.trim()) {
+      return body.detail;
+    }
+  } catch {
+    // Fall back to status-based message below.
+  }
+
+  return `Create user failed with status ${response.status}`;
+};
+
+const isDuplicateEmailError = (message: string): boolean => (
+  /email/i.test(message) && /(duplicate key value|already exists|unique constraint)/i.test(message)
+);
+
 interface CreateUserFormValues {
   firstName: string;
   lastName: string;
@@ -62,6 +79,8 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
     control,
     handleSubmit,
     reset,
+    clearErrors,
+    setError,
     watch,
     formState: { errors },
   } = useForm<CreateUserFormValues>({
@@ -77,7 +96,9 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
 
   const handleCreate = async (values: CreateUserFormValues): Promise<void> => {
     const accessToken = localStorage.getItem("access_token");
-    await fetch(`${API_BASE_URL}/users`, {
+    clearErrors("email");
+
+    const response = await fetch(`${API_BASE_URL}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,11 +106,30 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
       },
       body: JSON.stringify({
         name: `${values.firstName} ${values.lastName}`,
-        email: values.email,
+        email: values.email.trim(),
         role: values.role,
         password: values.password,
       }),
     });
+
+    if (!response.ok) {
+      const errorMessage = await readCreateUserError(response);
+      if (isDuplicateEmailError(errorMessage)) {
+        setError(
+          "email",
+          { type: "server", message: "An account with this email already exists" },
+          { shouldFocus: true }
+        );
+        return;
+      }
+      setError(
+        "email",
+        { type: "server", message: "Unable to create user. Please try again." },
+        { shouldFocus: true }
+      );
+      return;
+    }
+
     handleReset();
     onClose();
   };
@@ -159,6 +199,8 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
             helperText={errors.email?.message}
             {...register("email", {
               required: "Required",
+              setValueAs: (value: string) => value.trim(),
+              onChange: () => clearErrors("email"),
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                 message: "Enter a valid email address",
