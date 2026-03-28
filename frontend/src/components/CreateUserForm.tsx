@@ -171,12 +171,22 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
               {requiredLabel("Temporary Password")}
               <PasswordField
                 fullWidth
-                placeholder="Enter password"
+                placeholder="Enter password (6-72 characters)"
                 size="small"
                 autoComplete="new-password"
                 error={Boolean(errors.password)}
                 helperText={errors.password?.message}
-                {...register("password", { required: "Required" })}
+                {...register("password", {
+                  required: "Required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be 6-72 characters",
+                  },
+                  maxLength: {
+                    value: 72,
+                    message: "Password must be 6-72 characters",
+                  },
+                })}
                 InputProps={{
                   sx: { borderRadius: 2 },
                 }}
