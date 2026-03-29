@@ -13,4 +13,8 @@ export interface TriageCase {
   priority: ATSLevel;
   confidence: number;
   details: string;
+  caseId?: number;
+  safetyOverride?: boolean;
+  flaggedKeywords: string | null;
+  soapSummary: string;
 }

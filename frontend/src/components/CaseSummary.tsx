@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, CardContent, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
 import React, { ReactElement } from "react";
 import { ATSLevel, TriageCase } from "../types/triage";
 import { getPriorityColor } from "../utils/color";
@@ -30,6 +30,10 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const { case: triageCase, onBack } = props;
   const priorityColor = getPriorityColor(triageCase.priority);
   const confidencePercentage = Math.round((triageCase.confidence ?? 0) * 100);
+  const hasSafetyOverride = Boolean(triageCase.safetyOverride);
+  const flaggedKeywordsText = triageCase.flaggedKeywords?.trim() ?? "";
+  const hasFlaggedKeywords = flaggedKeywordsText.length > 0;
+  const atsLabel = ATSLevel[triageCase.priority];
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -131,7 +135,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 fontWeight="bold"
                 sx={{ color: priorityColor.color, fontSize: { xs: "2.4rem", sm: "3.2rem" } }}
               >
-                {ATSLevel[triageCase.priority]}
+                {atsLabel}
               </Typography>
               <Chip
                 label={`Confidence ${confidencePercentage}%`}
@@ -144,6 +148,30 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
               />
             </Card>
           </Box>
+          <Alert
+            severity={hasSafetyOverride ? "warning" : "info"}
+            sx={{
+              mb: 2,
+              borderRadius: 2,
+              border: hasSafetyOverride ? "1px solid #fcd34d" : "1px solid #bfdbfe",
+            }}
+          >
+            {hasSafetyOverride
+              ? "Safety rule override applied to this case."
+              : "No safety rule override was applied."}
+            {hasFlaggedKeywords ? ` Trigger indicator: ${flaggedKeywordsText}` : ""}
+          </Alert>
+          <Divider sx={{ mb: 2 }} />
+          <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
+            SOAP Summary
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ whiteSpace: "pre-line", lineHeight: 1.7, mb: 3 }}
+          >
+            {triageCase.soapSummary.trim() || "No SOAP summary is available."}
+          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
             Case Details

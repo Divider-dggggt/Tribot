@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -11,6 +11,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
+import { API_BASE_URL } from './utils/constants';
+import GroupIcon from '@mui/icons-material/Group';
+import { getDecodedToken } from './utils/auth';
+import { UserRole } from './types/user';
 
 // Simple SVG Icons
 const DashboardIcon = () => (
@@ -50,6 +54,32 @@ const drawerWidth = 240;
 
 function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const signedInEmail = localStorage.getItem('user_email');
+  const userRole = getDecodedToken()?.role;
+
+  const handleLogout = async () => {
+    const accessToken = localStorage.getItem('access_token');
+
+    try {
+      if (accessToken) {
+        await fetch(`${API_BASE_URL}/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+      }
+    } catch {
+      // Ignore network errors and clear local session anyway.
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('token_type');
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('user_email');
+      navigate('/login', { replace: true });
+    }
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -71,9 +101,13 @@ function Layout() {
         <Toolbar sx={{ justifyContent: 'flex-end' }}>
           <Button color="inherit" sx={{ textTransform: 'none', mr: 2 }}>
             <UserIcon />
-            Dr. Sarah Smith
+            {signedInEmail ?? 'Signed In User'}
           </Button>
-          <Button color="inherit" sx={{ textTransform: 'none' }}>
+          <Button
+            color="inherit"
+            sx={{ textTransform: 'none' }}
+            onClick={handleLogout}
+          >
             <LogoutIcon />
             Logout
           </Button>
@@ -98,7 +132,7 @@ function Layout() {
           {/* Logo Placeholder */}
           <Box
             component={Link}
-            to="/"
+            to="/dashboard"
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -125,8 +159,8 @@ function Layout() {
             <ListItem disablePadding>
               <ListItemButton 
                 component={Link} 
-                to="/"
-                selected={location.pathname === '/'}
+                to="/dashboard"
+                selected={location.pathname === '/dashboard'}
                 sx={{
                   mx: 1,
                   borderRadius: 2,
@@ -145,11 +179,11 @@ function Layout() {
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: location.pathname === '/' ? 'bold' : 'medium' }} />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: location.pathname === '/dashboard' ? 'bold' : 'medium' }} />
               </ListItemButton>
             </ListItem>
             
-            <ListItem disablePadding sx={{ mt: 1 }}>
+            {userRole === UserRole.Clinician && <ListItem disablePadding sx={{ mt: 1 }}>
               <ListItemButton 
                 component={Link} 
                 to="/new-case"
@@ -174,7 +208,34 @@ function Layout() {
                 </ListItemIcon>
                 <ListItemText primary="New Case" primaryTypographyProps={{ fontWeight: location.pathname === '/new-case' ? 'bold' : 'medium' }} />
               </ListItemButton>
-            </ListItem>
+            </ListItem>}
+
+            {userRole === UserRole.Admin && <ListItem disablePadding sx={{ mt: 1 }}>
+              <ListItemButton 
+                component={Link} 
+                to="/users"
+                selected={location.pathname === '/users'}
+                sx={{
+                  mx: 1,
+                  borderRadius: 2,
+                  '&.Mui-selected': {
+                    bgcolor: '#f3e8ff',
+                    color: '#7c3aed',
+                    '&:hover': {
+                      bgcolor: '#f3e8ff',
+                    },
+                    '& .MuiListItemIcon-root': {
+                      color: '#7c3aed',
+                    },
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <GroupIcon />
+                </ListItemIcon>
+                <ListItemText primary="Users" primaryTypographyProps={{ fontWeight: location.pathname === '/users' ? 'bold' : 'medium' }} />
+              </ListItemButton>
+            </ListItem>}
           </List>
         </Box>
       </Drawer>

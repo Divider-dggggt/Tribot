@@ -9,11 +9,13 @@ import {
   Button, 
   Card, 
   CardContent,
-  List,
-  ListItemButton,
-  ListItemText,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Chip,
-  Divider,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -24,6 +26,8 @@ import { CaseSummary } from "../components/CaseSummary";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { parseCaseDateTime } from "../utils/date";
+import { UserRole } from "../types/user";
+import { getDecodedToken } from "../utils/auth";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -99,6 +103,8 @@ const compareCaseNameWithPriority = (aName: string, bName: string): number => {
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
   const navigate = useNavigate();
+  const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
+  const userRole = getDecodedToken()?.role;
   const [searchParams] = useSearchParams();
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
@@ -167,7 +173,7 @@ export const Dashboard = (): ReactElement => {
       <>
         <CaseSummary
           case={selectedCase}
-          onBack={() => navigate("/")}
+          onBack={() => navigate("/dashboard")}
         />
         {successSnackbar}
       </>
@@ -181,11 +187,11 @@ export const Dashboard = (): ReactElement => {
           Dashboard
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          Welcome back, Dr. Smith
+          Welcome back, {signedInAccount}
         </Typography>
       </Box>
 
-      <Button 
+      {userRole === UserRole.Clinician && <Button 
         variant="contained" 
         fullWidth 
         size="large"
@@ -203,7 +209,7 @@ export const Dashboard = (): ReactElement => {
       >
         <PlusIcon />
         Create New Case
-      </Button>
+      </Button>}
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
         <CardContent sx={{ p: 0 }}>
@@ -234,55 +240,74 @@ export const Dashboard = (): ReactElement => {
               </IconButton>
             </Tooltip>
           </Box>
-          {sortedTriageCases.length === 0 && <Typography
-            variant="body2"
-            sx={{ marginLeft: 2, marginTop: 2 }}
-          >
-            No cases yet
-          </Typography>}
-          <List disablePadding>
-            {sortedTriageCases.map((item, index) => {
-              const atsPriority = item.priority;
-              return (
-              <React.Fragment key={`${item.id},${index}`}>
-                <ListItemButton
-                  onClick={() => {
-                    navigate({ pathname: "/", search: `?case=${index}` });
-                  }}
-                  sx={{ py: 2, px: 3 }}
-                >
-                  <ListItemText 
-                    primary={
-                      <Typography variant="subtitle1" fontWeight="medium">
-                        {item.name}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
+          <TableContainer>
+            <Table sx={{ minWidth: 700 }} aria-label="recent cases table">
+              <TableHead>
+                <TableRow sx={{ bgcolor: "#faf5ff" }}>
+                  <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
+                    Patient
+                  </TableCell>
+                  <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
+                    Created
+                  </TableCell>
+                  <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
+                    Severity
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedTriageCases.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={3} sx={{ py: 6, textAlign: "center", color: "#6b7280" }}>
+                      No cases yet
+                    </TableCell>
+                  </TableRow>
+                )}
+                {sortedTriageCases.map((item, index) => {
+                  const atsPriority = item.priority;
+                  return (
+                    <TableRow
+                      key={`${item.id},${index}`}
+                      onClick={() => {
+                        navigate({ pathname: "/dashboard", search: `?case=${index}` });
+                      }}
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover, &.MuiTableRow-hover:hover": { bgcolor: "#f5f3ff" },
+                        "&:hover > *, &.MuiTableRow-hover:hover > *": { bgcolor: "#f5f3ff" },
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell component="th" scope="row" sx={{ py: 1.8 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#111827" }}>
+                          {item.name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#9ca3af" }}>
+                          {item.id}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
                         {item.date}
-                      </Typography>
-                    } 
-                  />
-                  <Chip 
-                    label={ATSLevel[atsPriority]} 
-                    size="small"
-                    sx={{ 
-                      bgcolor: getPriorityColor(atsPriority).bg, 
-                      color: getPriorityColor(atsPriority).color,
-                      fontWeight: 'bold',
-                      borderRadius: 1,
-                      px: 1
-                    }} 
-                  />
-                </ListItemButton>
-                {index < sortedTriageCases.length - 1 && <Divider />}
-              </React.Fragment>
-            )})}
-          </List>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={ATSLevel[atsPriority]}
+                          size="small"
+                          sx={{
+                            bgcolor: getPriorityColor(atsPriority).bg,
+                            color: getPriorityColor(atsPriority).color,
+                            fontWeight: "bold",
+                            borderRadius: 1.5,
+                            px: 1,
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </CardContent>
       </Card>
 

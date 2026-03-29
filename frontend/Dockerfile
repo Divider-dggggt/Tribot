@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 5173
 
-CMD ["yarn", "dev"]
+CMD ["sh", "-c", "yarn install && yarn dev --host"]
