@@ -3,12 +3,15 @@ import re
 DEIDENTIFICATION_PATTERNS = {
     "dob": [
         r"\bDOB\s*[:\-]?\s*\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b",
-        r"\bdate of birth\s*[:\-]?\s*\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b",
+        r"\bdate of birth(?:\s+is)?\s*[:\-]?\s*\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b",
     ],
     "date": [
         r"\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b",
         r"\b\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}\b",
         r"\b(?:Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|Sept|September|Oct|October|Nov|November|Dec|December)\s+\d{1,2},?\s+\d{4}\b",
+        r"\b\d{1,2}(?:st|nd|rd|th)?\s+of\s+(?:Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|Sept|September|Oct|October|Nov|November|Dec|December)\b",
+        r"\b\d{1,2}(?:st|nd|rd|th)?\s+(?:Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|Sept|September|Oct|October|Nov|November|Dec|December)\b",
+        r"\b(?:Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|Sept|September|Oct|October|Nov|November|Dec|December)\s+\d{1,2}(?:st|nd|rd|th)?\b",
     ],
     "time": [
         r"\b\d{1,2}:\d{2}\s?(?:am|pm|AM|PM)?\b",
@@ -117,7 +120,7 @@ def deidentify_dialogue(dialogue: str) -> dict:
 
     # Speaker labels like "Nurse:" should remain unchanged.
     # Do not try to replace names in speaker labels unless they actually exist.
-    # If later your transcripts contain "Nurse Ben:", you can add a separate pattern.
+    # If later transcripts contain "Nurse Ben:", add a separate pattern.
 
     # DOB first so internal dates don't get separately counted
     for pattern in DEIDENTIFICATION_PATTERNS["dob"]:
