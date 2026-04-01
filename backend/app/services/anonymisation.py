@@ -1,4 +1,7 @@
 import re
+import sys
+import json
+from pathlib import Path
 
 DEIDENTIFICATION_PATTERNS = {
     "dob": [
@@ -204,24 +207,45 @@ def deidentify_dialogue(dialogue: str) -> dict:
         "deidentification_applied": len(items_detected) > 0
     }
 
+def read_input_text() -> str:
+    """
+    Read from a file path argument if provided, otherwise from stdin.
+    """
+    if len(sys.argv) > 1:
+        input_path = Path(sys.argv[1])
+        if not input_path.exists():
+            raise FileNotFoundError(f"File not found: {input_path}")
+        return input_path.read_text(encoding="utf-8")
+
+    if not sys.stdin.isatty():
+        return sys.stdin.read()
+    # else:
+    #     print("Enter dialogue (Ctrl+D to finish):")
+    #     return sys.stdin.read()
+
+    raise ValueError(
+        "No input provided. Use either:\n"
+        "  python severity_flagging.py path/to/file.txt\n"
+        "or:\n"
+        "  python severity_flagging.py < path/to/file.txt"
+    )
+    
+def main():
+    try:
+        input_text = read_input_text()
+
+        if not input_text.strip():
+            raise ValueError("Input text is empty.")
+
+        result = deidentify_dialogue(input_text)
+
+        # result["deidentified_text"]
+        # result["items_detected"]
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+
+    except Exception as e:
+        print(json.dumps({"error": str(e)}, indent=2), file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
-    sample_dialogue = """
-    Nurse: Hi there, I'm Ben, one of the triage nurses. What's his name?
-    Patient: This is Noah. He's 3 years old.
-    Nurse: When did this start?
-    Patient: Around 2:30 pm on 12/03/2026.
-    Patient: My phone number is 0412 345 678 and email is maryjones@email.com.
-    Patient: We live at 14 George Street.
-    Patient: His date of birth is 03/08/2022.
-    Patient: Yes, the 3rd of August.
-    """
-
-    result = deidentify_dialogue(sample_dialogue)
-
-    print("De-identified text:\n")
-    print(result["deidentified_text"])
-
-    print("\nItems detected:\n")
-    for item in result["items_detected"]:
-        print(item)
+    main()
