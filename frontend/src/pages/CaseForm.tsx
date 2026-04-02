@@ -11,8 +11,12 @@ import {
   CardContent,
   Grid,
   Snackbar,
-  Stack
+  Stack,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
+import NumberField from "../components/NumberField";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
@@ -41,6 +45,16 @@ interface CaseFormValues {
   patientID: string;
   patientName: string;
   details: string;
+  age?: number;
+  gender?: "Male" | "Female" | "Other";
+  duration?: number;
+  medications?: string;
+  allergies?: string;
+  risks?: string;
+  temperature?: number;
+  heartRate?: number;
+  respirationRate?: number;
+  bloodPressure?: string;
 }
 
 interface TriageApiResponse {
@@ -219,6 +233,117 @@ export const CaseForm = (): ReactElement => {
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
                 {details.length} characters
               </Typography>
+            </Box>
+
+            {/* Clinical Characteristics */}
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+                Clinical Characteristics
+              </Typography>
+              <Grid container>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <NumberField
+                    {...register("age")}
+                    label="Age"
+                    min={0}
+                    max={125}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    {...register("gender")}
+                    fullWidth
+                    select
+                    label="Gender"
+                  >
+                    <MenuItem value={undefined}><em>Unspecified</em></MenuItem>
+                    <MenuItem value="Male">Male</MenuItem>
+                    <MenuItem value="Female">Female</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <NumberField
+                    {...register("duration")}
+                    label="Symptom Duration (days)"
+                    min={0}
+                    max={undefined}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Medications"
+                    fullWidth
+                    {...register("medications")}
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Allergies"
+                    fullWidth
+                    {...register("allergies")}
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Risk Factors & Comorbidities"
+                    fullWidth
+                    {...register("risks")}
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    {...register("temperature")}
+                    label="Body Temperature (°C)"
+                    type="number"
+                    variant="outlined"
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <NumberField
+                    {...register("heartRate")}
+                    label="Heart Rate (bpm)"
+                    min={0}
+                    max={undefined}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <NumberField
+                    {...register("respirationRate")}
+                    label="Respiration Rate (breaths per minute)"
+                    min={0}
+                    max={undefined}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    {...register("bloodPressure", {
+                      pattern: {
+                        value: /^\d{2,3}\/\d{2,3}$/,
+                        message: "Format must be Systolic/Diastolic (e.g., 120/80)"
+                      }
+                    })}
+                    label="Blood Pressure (mmHg)"
+                    error={!!errors.bloodPressure}
+                    helperText={errors.bloodPressure?.message as string}
+                    variant="outlined"
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </Grid>
+              </Grid>
             </Box>
 
             {/* Buttons */}

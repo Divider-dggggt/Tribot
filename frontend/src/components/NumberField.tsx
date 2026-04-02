@@ -103,11 +103,6 @@ export default function NumberField({
           />
         )}
       />
-      <FormHelperText sx={{ ml: 0, '&:empty': { mt: 0 } }}>
-        {other.min != null && other.max != null && `Enter value between ${other.min} and ${other.max}`}
-        {other.min != null && other.max == null && `Enter value greater than or equal to ${other.min}`}
-        {other.min == null && other.max != null && `Enter value less than or equal to ${other.max}`}
-      </FormHelperText>
     </BaseNumberField.Root>
   );
 }
