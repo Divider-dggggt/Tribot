@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { 
   Alert,
   CircularProgress,
@@ -12,8 +12,6 @@ import {
   Grid,
   Snackbar,
   Stack,
-  InputLabel,
-  Select,
   MenuItem
 } from '@mui/material';
 import NumberField from "../components/NumberField";
@@ -103,6 +101,7 @@ export const CaseForm = (): ReactElement => {
     setError,
     clearErrors,
     formState: { errors, isSubmitting },
+    control,
   } = useForm<CaseFormValues>();
   const navigate = useNavigate();
   const details = watch('details', '');
@@ -253,11 +252,20 @@ export const CaseForm = (): ReactElement => {
               </Typography>
               <Grid container>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <NumberField
-                    {...register("age")}
-                    label="Age"
-                    min={0}
-                    max={125}
+                  <Controller
+                    name="age"
+                    control={control}
+                    render={({ field: { onChange, value, onBlur, ref } }) => (
+                      <NumberField
+                        value={value}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        ref={ref}
+                        label="Age"
+                        min={0}
+                        max={125}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
@@ -274,11 +282,20 @@ export const CaseForm = (): ReactElement => {
                   </TextField>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <NumberField
-                    {...register("duration")}
-                    label="Symptom Duration (days)"
-                    min={0}
-                    max={undefined}
+                  <Controller
+                    name="duration"
+                    control={control}
+                    render={({ field: { onChange, value, onBlur, ref } }) => (
+                      <NumberField
+                        value={value}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        ref={ref}
+                        label="Symptom Duration (days)"
+                        min={0}
+                        max={undefined}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
@@ -324,19 +341,37 @@ export const CaseForm = (): ReactElement => {
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <NumberField
-                    {...register("heartRate")}
-                    label="Heart Rate (bpm)"
-                    min={0}
-                    max={undefined}
+                  <Controller
+                    name="heartRate"
+                    control={control}
+                    render={({ field: { onChange, value, onBlur, ref } }) => (
+                      <NumberField
+                        value={value}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        ref={ref}
+                        label="Heart Rate (bpm)"
+                        min={0}
+                        max={undefined}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <NumberField
-                    {...register("respirationRate")}
-                    label="Respiration Rate (breaths per minute)"
-                    min={0}
-                    max={undefined}
+                  <Controller
+                    name="respirationRate"
+                    control={control}
+                    render={({ field: { onChange, value, onBlur, ref } }) => (
+                      <NumberField
+                        value={value}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        ref={ref}
+                        label="Respiration Rate (breaths per minute)"
+                        min={0}
+                        max={undefined}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
