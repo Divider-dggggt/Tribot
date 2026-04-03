@@ -109,6 +109,17 @@ export const CaseForm = (): ReactElement => {
 
   const onSubmit = async (data: CaseFormValues) => {
     clearErrors("root.serverError");
+    const allDetails: string[] = [data.details];
+    if (data.age) allDetails.push(`age: ${data.age}`);
+    if (data.gender) allDetails.push(`gender: ${data.gender}`);
+    if (data.duration) allDetails.push(`duration: ${data.duration}`);
+    if (data.medications) allDetails.push(`medications: ${data.medications}`);
+    if (data.allergies) allDetails.push(`allergies: ${data.allergies}`);
+    if (data.risks) allDetails.push(`risks: ${data.risks}`);
+    if (data.temperature) allDetails.push(`temperature: ${data.temperature}`);
+    if (data.heartRate) allDetails.push(`heartRate: ${data.heartRate}`);
+    if (data.respirationRate) allDetails.push(`respirationRate: ${data.respirationRate}`);
+    if (data.bloodPressure) allDetails.push(`bloodPressure: ${data.bloodPressure}`);
 
     try {
       const accessToken = localStorage.getItem("access_token");
@@ -119,7 +130,7 @@ export const CaseForm = (): ReactElement => {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
-          case_details: data.details,
+          case_details: allDetails.join("\n"),
         }),
       });
 
@@ -138,7 +149,7 @@ export const CaseForm = (): ReactElement => {
         date: formatCaseDateTime(),
         priority: parseAtsToLevel(triageResult.ats_classification),
         confidence: normalizeConfidence(triageResult.confidence_score),
-      details: data.details,
+        details: data.details,
     };
 
       const severitySortedCases = [...triageCases, newCase].sort(
