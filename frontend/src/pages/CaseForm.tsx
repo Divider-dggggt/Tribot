@@ -1,5 +1,5 @@
-import { ReactElement } from "react";
-import { useForm } from "react-hook-form";
+import { FormEvent, ReactElement } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { 
   Alert,
   CircularProgress,
@@ -11,7 +11,9 @@ import {
   CardContent,
   Grid,
   Snackbar,
-  Stack
+  Stack,
+  MenuItem,
+  InputAdornment,
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,6 +43,16 @@ interface CaseFormValues {
   patientID: string;
   patientName: string;
   details: string;
+  age?: number;
+  gender?: "Male" | "Female" | "Other";
+  duration?: number;
+  medications?: string;
+  allergies?: string;
+  risks?: string;
+  temperature?: number;
+  heartRate?: number;
+  respirationRate?: number;
+  bloodPressure?: string;
 }
 
 interface TriageApiResponse {
@@ -51,6 +63,8 @@ interface TriageApiResponse {
   confidence_score: number;
   flagged_keywords: string | null;
 }
+
+type RequiredFieldName = "patientID" | "patientName" | "details";
 
 const parseAtsToLevel = (atsClassification: number): ATSLevel => {
   const boundedAts = Math.min(5, Math.max(1, Math.round(atsClassification)));
@@ -79,6 +93,79 @@ const readErrorMessage = async (response: Response): Promise<string> => {
   return `Request failed with status ${response.status}`;
 };
 
+const isValidBloodPressure = (value: string): boolean => /^\d{2,3}\/\d{2,3}$/.test(value);
+
+const toOptionalInteger = (value: unknown): number | undefined => {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+  const digits = value.replace(/\D/g, "");
+  if (!digits) {
+    return undefined;
+  }
+  const parsed = Number(digits);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+const toOptionalTemperature = (value: unknown): number | undefined => {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+  const trimmedValue = value.trim();
+  if (!trimmedValue) {
+    return undefined;
+  }
+  const parsed = Number(trimmedValue);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+const handleIntegerInput = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const input = event.currentTarget as HTMLInputElement;
+  input.value = input.value.replace(/\D/g, "");
+};
+
+const handleTemperatureInput = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const input = event.currentTarget as HTMLInputElement;
+  const sanitized = input.value.replace(/[^\d.]/g, "");
+  const [rawIntegerPart = "", ...rawDecimalParts] = sanitized.split(".");
+  const integerPart = rawIntegerPart.slice(0, 3);
+
+  if (rawDecimalParts.length === 0) {
+    input.value = integerPart;
+    return;
+  }
+
+  const decimalPart = rawDecimalParts.join("").slice(0, 1);
+  input.value = decimalPart ? `${integerPart}.${decimalPart}` : `${integerPart}.`;
+};
+
+const formatBloodPressureInput = (rawValue: string): string => {
+  const sanitized = rawValue.replace(/[^\d/]/g, "");
+  const hasSlash = sanitized.includes("/");
+
+  if (hasSlash) {
+    const [rawSystolic = "", rawDiastolic = ""] = sanitized.split("/", 2);
+    const systolic = rawSystolic.replace(/\D/g, "").slice(0, 3);
+    const diastolic = rawDiastolic.replace(/\D/g, "").slice(0, 3);
+    if (!systolic && !diastolic) {
+      return "";
+    }
+    return `${systolic}/${diastolic}`;
+  }
+
+  const digits = sanitized.replace(/\D/g, "").slice(0, 6);
+  if (digits.length === 0) {
+    return "";
+  }
+  if (digits.length < 3) {
+    return digits;
+  }
+  if (digits.length === 3) {
+    return `${digits}/`;
+  }
+  return `${digits.slice(0, 3)}/${digits.slice(3, 6)}`;
+};
+
 export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
   const triageCases = useSelector(getTriageCases);
@@ -89,12 +176,42 @@ export const CaseForm = (): ReactElement => {
     setError,
     clearErrors,
     formState: { errors, isSubmitting },
+    control,
   } = useForm<CaseFormValues>();
   const navigate = useNavigate();
   const details = watch('details', '');
+  const fieldInputSx = { borderRadius: 2, bgcolor: "#fff" } as const;
+  const requiredLabelSx = { "& .MuiInputLabel-asterisk": { color: "#dc2626" } } as const;
+  const requiredFieldNames: RequiredFieldName[] = ["patientID", "patientName", "details"];
+
+  const isRequiredFieldName = (value: string): value is RequiredFieldName => (
+    requiredFieldNames.includes(value as RequiredFieldName)
+  );
+
+  const handleInvalidCapture = (event: FormEvent<HTMLFormElement>) => {
+    const target = event.target as HTMLInputElement | HTMLTextAreaElement | null;
+    if (!target?.name || !isRequiredFieldName(target.name) || !target.validity.valueMissing) {
+      return;
+    }
+    setError(target.name, {
+      type: "required",
+      message: "Required",
+    });
+  };
 
   const onSubmit = async (data: CaseFormValues) => {
     clearErrors("root.serverError");
+    const allDetails: string[] = [data.details];
+    if (data.age) allDetails.push(`age: ${data.age}`);
+    if (data.gender) allDetails.push(`gender: ${data.gender}`);
+    if (data.duration) allDetails.push(`duration: ${data.duration}`);
+    if (data.medications) allDetails.push(`medications: ${data.medications}`);
+    if (data.allergies) allDetails.push(`allergies: ${data.allergies}`);
+    if (data.risks) allDetails.push(`risks: ${data.risks}`);
+    if (data.temperature) allDetails.push(`temperature: ${data.temperature}`);
+    if (data.heartRate) allDetails.push(`heartRate: ${data.heartRate}`);
+    if (data.respirationRate) allDetails.push(`respirationRate: ${data.respirationRate}`);
+    if (data.bloodPressure) allDetails.push(`bloodPressure: ${data.bloodPressure}`);
 
     try {
       const accessToken = localStorage.getItem("access_token");
@@ -105,7 +222,7 @@ export const CaseForm = (): ReactElement => {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
-          case_details: data.details,
+          case_details: allDetails.join("\n"),
         }),
       });
 
@@ -124,7 +241,7 @@ export const CaseForm = (): ReactElement => {
         date: formatCaseDateTime(),
         priority: parseAtsToLevel(triageResult.ats_classification),
         confidence: normalizeConfidence(triageResult.confidence_score),
-      details: data.details,
+        details: data.details,
     };
 
       const severitySortedCases = [...triageCases, newCase].sort(
@@ -158,8 +275,11 @@ export const CaseForm = (): ReactElement => {
       </Box>
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
-        <CardContent sx={{ p: 4 }}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+          <form onSubmit={handleSubmit(onSubmit)} onInvalidCapture={handleInvalidCapture}>
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+              * Required fields
+            </Typography>
             
             {/* Patient Information */}
             <Box sx={{ mb: 4 }}>
@@ -168,33 +288,37 @@ export const CaseForm = (): ReactElement => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
-                    Patient ID
-                  </Typography>
                   <TextField
                     fullWidth
-                    placeholder="Enter patient ID"
-                    {...register("patientID", { required: "Required" })}
+                    required
+                    label="Patient ID"
+                    {...register("patientID", {
+                      required: "Required",
+                      onChange: () => clearErrors("patientID"),
+                    })}
                     error={!!errors.patientID}
                     helperText={errors.patientID?.message as string}
                     variant="outlined"
-                    size="medium"
-                    InputProps={{ sx: { borderRadius: 2 } }}
+                    size="small"
+                    sx={requiredLabelSx}
+                    InputProps={{ sx: fieldInputSx }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
-                    Patient Name
-                  </Typography>
                   <TextField
                     fullWidth
-                    placeholder="Enter patient name"
-                    {...register("patientName", { required: "Required" })}
+                    required
+                    label="Patient Name"
+                    {...register("patientName", {
+                      required: "Required",
+                      onChange: () => clearErrors("patientName"),
+                    })}
                     error={!!errors.patientName}
                     helperText={errors.patientName?.message as string}
                     variant="outlined"
-                    size="medium"
-                    InputProps={{ sx: { borderRadius: 2 } }}
+                    size="small"
+                    sx={requiredLabelSx}
+                    InputProps={{ sx: fieldInputSx }}
                   />
                 </Grid>
               </Grid>
@@ -207,22 +331,222 @@ export const CaseForm = (): ReactElement => {
               </Typography>
               <TextField
                 fullWidth
-                placeholder="Enter case details here"
-                {...register("details", { required: "Required" })}
+                required
+                label="Case Details"
+                {...register("details", {
+                  required: "Required",
+                  onChange: () => clearErrors("details"),
+                })}
                 multiline
                 rows={8}
                 error={!!errors.details}
                 helperText={errors.details?.message as string}
                 variant="outlined"
-                InputProps={{ sx: { borderRadius: 2 } }}
+                sx={requiredLabelSx}
+                InputProps={{ sx: fieldInputSx }}
               />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
                 {details.length} characters
               </Typography>
             </Box>
 
+            {/* Clinical Characteristics */}
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+                Clinical Characteristics
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Age"
+                    fullWidth
+                    size="small"
+                    {...register("age", {
+                      setValueAs: toOptionalInteger,
+                    })}
+                    inputProps={{
+                      inputMode: "numeric",
+                      maxLength: 3,
+                      onInput: handleIntegerInput,
+                    }}
+                    InputProps={{
+                      sx: fieldInputSx,
+                      endAdornment: <InputAdornment position="end">years</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    {...register("gender")}
+                    fullWidth
+                    select
+                    label="Gender"
+                    size="small"
+                    InputProps={{ sx: fieldInputSx }}
+                  >
+                    <MenuItem value={undefined}><em>Unspecified</em></MenuItem>
+                    <MenuItem value="Male">Male</MenuItem>
+                    <MenuItem value="Female">Female</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Symptom Duration"
+                    fullWidth
+                    size="small"
+                    {...register("duration", {
+                      setValueAs: toOptionalInteger,
+                    })}
+                    inputProps={{
+                      inputMode: "numeric",
+                      maxLength: 4,
+                      onInput: handleIntegerInput,
+                    }}
+                    InputProps={{
+                      sx: fieldInputSx,
+                      endAdornment: <InputAdornment position="end">days</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    {...register("temperature", {
+                      setValueAs: toOptionalTemperature,
+                    })}
+                    label="Body Temperature"
+                    fullWidth
+                    size="small"
+                    variant="outlined"
+                    inputProps={{
+                      inputMode: "decimal",
+                      maxLength: 5,
+                      onInput: handleTemperatureInput,
+                    }}
+                    InputProps={{
+                      sx: fieldInputSx,
+                      endAdornment: <InputAdornment position="end">℃</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Heart Rate"
+                    fullWidth
+                    size="small"
+                    {...register("heartRate", {
+                      setValueAs: toOptionalInteger,
+                    })}
+                    inputProps={{
+                      inputMode: "numeric",
+                      maxLength: 3,
+                      onInput: handleIntegerInput,
+                    }}
+                    InputProps={{
+                      sx: fieldInputSx,
+                      endAdornment: <InputAdornment position="end">bpm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Respiration Rate"
+                    fullWidth
+                    size="small"
+                    {...register("respirationRate", {
+                      setValueAs: toOptionalInteger,
+                    })}
+                    inputProps={{
+                      inputMode: "numeric",
+                      maxLength: 3,
+                      onInput: handleIntegerInput,
+                    }}
+                    InputProps={{
+                      sx: fieldInputSx,
+                      endAdornment: <InputAdornment position="end">breaths/min</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 12 }}>
+                  <Controller
+                    name="bloodPressure"
+                    control={control}
+                    rules={{
+                      validate: (value) => {
+                        if (!value || !value.trim()) {
+                          return true;
+                        }
+                        return isValidBloodPressure(value) || "Format must be Systolic/Diastolic (e.g., 120/80)";
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Blood Pressure"
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        onChange={(event) => {
+                          field.onChange(formatBloodPressureInput(event.target.value));
+                          clearErrors("bloodPressure");
+                        }}
+                        error={!!errors.bloodPressure}
+                        helperText={errors.bloodPressure?.message as string}
+                        fullWidth
+                        size="small"
+                        variant="outlined"
+                        inputProps={{
+                          inputMode: "numeric",
+                          maxLength: 7,
+                          placeholder: "120/80",
+                        }}
+                        InputProps={{
+                          sx: fieldInputSx,
+                          endAdornment: <InputAdornment position="end">mmHg</InputAdornment>,
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Medications"
+                    fullWidth
+                    {...register("medications")}
+                    multiline
+                    rows={4}
+                    size="small"
+                    variant="outlined"
+                    InputProps={{ sx: fieldInputSx }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Allergies"
+                    fullWidth
+                    {...register("allergies")}
+                    multiline
+                    rows={4}
+                    size="small"
+                    variant="outlined"
+                    InputProps={{ sx: fieldInputSx }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 12 }}>
+                  <TextField
+                    label="Risk Factors & Comorbidities"
+                    fullWidth
+                    {...register("risks")}
+                    multiline
+                    rows={4}
+                    size="small"
+                    variant="outlined"
+                    InputProps={{ sx: fieldInputSx }}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+
             {/* Buttons */}
-            <Stack direction="row" spacing={2} sx={{ mt: 4, width: '100%' }}>
+            <Stack direction="row" spacing={2} sx={{ mt: 4, pt: 3, borderTop: "1px solid #e5e7eb", width: '100%' }}>
               <Button 
                 type="submit" 
                 variant="contained" 
