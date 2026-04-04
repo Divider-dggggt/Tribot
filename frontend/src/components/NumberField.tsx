@@ -20,11 +20,13 @@ export default function NumberField({
   label,
   error,
   size = 'medium',
+  fullWidth = true,
   ...other
 }: BaseNumberField.Root.Props & {
   label?: React.ReactNode;
   size?: 'small' | 'medium';
   error?: boolean;
+  fullWidth?: boolean;
 }) {
   let id = React.useId();
   if (idProp) {
@@ -40,6 +42,7 @@ export default function NumberField({
           disabled={state.disabled}
           required={state.required}
           error={error}
+          fullWidth={fullWidth}
           variant="outlined"
         >
           {props.children}
@@ -47,7 +50,7 @@ export default function NumberField({
       )}
     >
       <SSRInitialFilled {...other} />
-      <InputLabel htmlFor={id}>{label}</InputLabel>
+      {label ? <InputLabel htmlFor={id}>{label}</InputLabel> : null}
       <BaseNumberField.Input
         id={id}
         render={(props, state) => (
@@ -99,7 +102,7 @@ export default function NumberField({
                 </BaseNumberField.Decrement>
               </InputAdornment>
             }
-            sx={{ pr: 0 }}
+            sx={{ pr: 0, borderRadius: 2, bgcolor: '#fff' }}
           />
         )}
       />
