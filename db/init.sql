@@ -22,7 +22,8 @@ CREATE TABLE cases (
     severity_flagged BOOLEAN DEFAULT FALSE,
     user_override_category INT DEFAULT 0,
     override_reason TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP NULL
 );
 
 INSERT INTO cases (user_id, case_details) VALUES
