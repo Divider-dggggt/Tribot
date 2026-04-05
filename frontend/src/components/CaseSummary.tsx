@@ -87,7 +87,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Patient ID
+                Medicare Card Number
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 {triageCase.id}

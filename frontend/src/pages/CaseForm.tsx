@@ -139,6 +139,33 @@ const handleTemperatureInput = (event: FormEvent<HTMLInputElement | HTMLTextArea
   input.value = decimalPart ? `${integerPart}.${decimalPart}` : `${integerPart}.`;
 };
 
+const formatMedicareCardField = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>): string => {
+  const sanitized = event.target.value.replace(/[^\d/]/g, "");
+  const hasSlash = sanitized.includes("/");
+
+  if (hasSlash) {
+    const [rawCardNumber = "", rawIRN = ""] = sanitized.split("/", 2);
+    const cardNumber = rawCardNumber.replace(/\D/g, "").slice(0, 10);
+    const IRN = rawIRN.replace(/\D/g, "").slice(0, 1);
+    if (!cardNumber && !IRN) {
+      return "";
+    }
+    if (!IRN) {
+      return cardNumber;
+    }
+    return `${cardNumber}/${IRN}`;
+  }
+
+  const digits = sanitized.replace(/\D/g, "").slice(0, 11);
+  if (digits.length === 0) {
+    return "";
+  }
+  if (digits.length <= 10) {
+    return digits;
+  }
+  return `${digits.slice(0, 10)}/${digits.slice(10, 11)}`;
+};
+
 const formatBloodPressureInput = (rawValue: string): string => {
   const sanitized = rawValue.replace(/[^\d/]/g, "");
   const hasSlash = sanitized.includes("/");
@@ -288,20 +315,39 @@ export const CaseForm = (): ReactElement => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    required
-                    label="Patient ID"
-                    {...register("patientID", {
+                  <Controller
+                    name="patientID"
+                    control={control}
+                    rules={{
                       required: "Required",
-                      onChange: () => clearErrors("patientID"),
-                    })}
-                    error={!!errors.patientID}
-                    helperText={errors.patientID?.message as string}
-                    variant="outlined"
-                    size="small"
-                    sx={requiredLabelSx}
-                    InputProps={{ sx: fieldInputSx }}
+                      pattern: {
+                        value: /^\d{10}\/\d{1}$/,
+                        message: "Must include card number (10 digits) and IRN (1 digit)",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Medicare Card Number"
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        onChange={(event) => {
+                          field.onChange(formatMedicareCardField(event));
+                          clearErrors("patientID");
+                        }}
+                        error={!!errors.patientID}
+                        helperText={errors.patientID?.message as string}
+                        fullWidth
+                        required
+                        size="small"
+                        variant="outlined"
+                        inputProps={{
+                          inputMode: "numeric",
+                          maxLength: 12,
+                        }}
+                        sx={requiredLabelSx}
+                        InputProps={{ sx: fieldInputSx }}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
