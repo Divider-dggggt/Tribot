@@ -112,10 +112,21 @@ def get_open_cases():
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
-        FROM cases
-        WHERE resolved_at IS NULL
-        ORDER BY created_at DESC;
+        SELECT
+            c.case_id,
+            c.user_id,
+            c.name,
+            c.medicare_number,
+            c.case_details,
+            c.severity_flagged,
+            c.resolved_at,
+            c.created_at,
+            cm.ats_classification,
+            cm.confidence_score
+        FROM cases c
+        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
+        WHERE c.resolved_at IS NULL
+        ORDER BY c.created_at DESC;
         """
     )
     rows = cur.fetchall()
@@ -132,21 +143,36 @@ def get_open_cases():
             "severity_flagged": row[5],
             "resolved_at": row[6],
             "created_at": row[7],
+            "ats_classification": row[8],
+            "confidence_score": row[9],
         }
         for row in rows
     ]
+
 
 def get_resolved_cases():
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
-        FROM cases
-        WHERE resolved_at IS NOT NULL
-        ORDER BY resolved_at DESC;
+        SELECT
+            c.case_id,
+            c.user_id,
+            c.name,
+            c.medicare_number,
+            c.case_details,
+            c.severity_flagged,
+            c.resolved_at,
+            c.created_at,
+            cm.ats_classification,
+            cm.confidence_score
+        FROM cases c
+        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
+        WHERE c.resolved_at IS NOT NULL
+        ORDER BY c.resolved_at DESC;
         """
     )
+
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -161,18 +187,32 @@ def get_resolved_cases():
             "severity_flagged": row[5],
             "resolved_at": row[6],
             "created_at": row[7],
+            "ats_classification": row[8],
+            "confidence_score": row[9],
         }
         for row in rows
     ]
+
 
 def get_all_cases():
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
-        FROM cases
-        ORDER BY created_at DESC;
+        SELECT
+            c.case_id,
+            c.user_id,
+            c.name,
+            c.medicare_number,
+            c.case_details,
+            c.severity_flagged,
+            c.resolved_at,
+            c.created_at,
+            cm.ats_classification,
+            cm.confidence_score
+        FROM cases c
+        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
+        ORDER BY c.created_at DESC;
         """
     )
     rows = cur.fetchall()
@@ -189,6 +229,8 @@ def get_all_cases():
             "severity_flagged": row[5],
             "resolved_at": row[6],
             "created_at": row[7],
+            "ats_classification": row[8],
+            "confidence_score": row[9],
         }
         for row in rows
     ]
