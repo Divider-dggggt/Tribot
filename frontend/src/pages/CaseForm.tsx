@@ -18,7 +18,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
-import { ATSLevel, TriageCase } from "../types/triage";
+import { ATSLevel, TriageApiResponse, TriageCase } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 import { API_BASE_URL } from "../utils/constants";
@@ -53,15 +53,6 @@ interface CaseFormValues {
   heartRate?: number;
   respirationRate?: number;
   bloodPressure?: string;
-}
-
-interface TriageApiResponse {
-  case_id: number;
-  severity_flagged: boolean;
-  soap_summary: string;
-  ats_classification: number;
-  confidence_score: number;
-  flagged_keywords: string | null;
 }
 
 type RequiredFieldName = "patientID" | "patientName" | "details";

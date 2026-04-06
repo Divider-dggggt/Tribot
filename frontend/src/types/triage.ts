@@ -18,3 +18,12 @@ export interface TriageCase {
   flaggedKeywords: string | null;
   soapSummary: string;
 }
+
+export interface TriageApiResponse {
+  case_id: number;
+  severity_flagged: boolean;
+  soap_summary: string;
+  ats_classification: number;
+  confidence_score: number;
+  flagged_keywords: string | null;
+}
