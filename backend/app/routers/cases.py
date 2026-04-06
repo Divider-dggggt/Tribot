@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app import db
 from app.core.security import get_current_user
 from app.schemas.case import CaseCreate, CaseFullOut
 from app.services.case_processing import classification_algo, soap_summary
+from app.services.anonymisation import deidentify_dialogue
 from psycopg2.errors import UniqueViolation
 
 router = APIRouter()
@@ -13,8 +14,12 @@ router = APIRouter()
 def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
     try:
         classification_res = classification_algo(case.case_details) #non-llm service
-        anon_dialogue = case.case_details #deidentify_dialogue(case.case_details) #precise anon
+
+        anon_result = deidentify_dialogue(case.case_details) #precise anon
+        anon_dialogue = anon_result["deidentified_text"]
+
         soap_text = soap_summary(anon_dialogue) #SOAP generation with precise anon
+        print(anon_dialogue)
 
         severity_info = classification_res["severity_flags"]
 
@@ -55,22 +60,29 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
     except Exception as e:
         error_text = str(e)
 
-    if "medicare_number" in error_text:
-        raise HTTPException(status_code=409, detail="Medicare number already exists")
+        if "medicare_number" in error_text:
+            raise HTTPException(status_code=409, detail="Medicare number already exists")
 
-    raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
+        raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
 
 @router.get("/cases")
-def get_open_cases(user=Depends(get_current_user)):
+def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):
+    if resolved:
+        return db.get_all_cases()
     return db.get_open_cases()
 
-@router.get("/cases/resolved")
-def get_resolved_cases(user=Depends(get_current_user)):
-    return db.get_resolved_cases()
 
-@router.get("/cases/all")
-def get_all_cases(user=Depends(get_current_user)):
-    return db.get_all_cases()
+#@router.get("/cases")
+#def get_open_cases(user=Depends(get_current_user)):
+#    return db.get_open_cases()
+
+#@router.get("/cases/resolved")
+#def get_resolved_cases(user=Depends(get_current_user)):
+#    return db.get_resolved_cases()
+
+#@router.get("/cases/all")
+#def get_all_cases(user=Depends(get_current_user)):
+#    return db.get_all_cases()
 
 @router.get("/cases/{case_id}")
 def get_case(case_id: int, user=Depends(get_current_user)):
