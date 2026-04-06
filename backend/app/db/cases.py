@@ -1,18 +1,25 @@
 import json
 
+from app.core.crypto import decrypt_text, encrypt_text
 from app.db.connection import get_connection
 
 
-def add_case(user_id: int, case_details: str, severity_flagged: bool = False):
+
+def add_case(user_id: int, name: str, medicare_number: str, case_details: str, severity_flagged: bool = False):
+
+    encrypted_name = encrypt_text(name)
+    encrypted_medicare_number = encrypt_text(medicare_number)
+    encrypted_case_details = encrypt_text(case_details)
+
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
         """
-        INSERT INTO cases (user_id, case_details, severity_flagged)
-        VALUES (%s, %s, %s)
-        RETURNING case_id, user_id, case_details, severity_flagged;
+        INSERT INTO cases (user_id, name, medicare_number, case_details, severity_flagged)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at;
         """,
-        (user_id, case_details, severity_flagged),
+        (user_id, encrypted_name, encrypted_medicare_number, encrypted_case_details, severity_flagged),
     )
     row = cur.fetchone()
     conn.commit()
@@ -22,8 +29,11 @@ def add_case(user_id: int, case_details: str, severity_flagged: bool = False):
     return {
         "case_id": row[0],
         "user_id": row[1],
-        "case_details": row[2],
-        "severity_flagged": row[3],
+        "name": decrypt_text(row[2]),
+        "medicare_number": decrypt_text(row[3]),
+        "case_details": decrypt_text(row[4]),
+        "severity_flagged": row[5],
+        "resolved_at": row[6],
     }
 
 
@@ -33,7 +43,7 @@ def get_case_by_id(case_id: int):
 
     cur.execute(
         """
-        SELECT case_id, user_id, case_details, severity_flagged, created_at
+        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
         FROM cases
         WHERE case_id = %s;
         """,
@@ -83,9 +93,12 @@ def get_case_by_id(case_id: int):
     return {
         "case_id": case_row[0],
         "user_id": case_row[1],
-        "case_details": case_row[2],
-        "severity_flagged": case_row[3],
-        "created_at": case_row[4],
+        "name": decrypt_text(case_row[2]),
+        "medicare_number": decrypt_text(case_row[3]),
+        "case_details": decrypt_text(case_row[4]),
+        "severity_flagged": case_row[5],
+        "resolved_at": case_row[6],
+        "created_at": case_row[7],
         "soap_summary": soap_summary,
         "classification": classification,
         "severity_flags": [
@@ -99,7 +112,7 @@ def get_open_cases():
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT case_id, user_id, case_details, severity_flagged, resolved_at, created_at
+        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
         FROM cases
         WHERE resolved_at IS NULL
         ORDER BY created_at DESC;
@@ -113,10 +126,12 @@ def get_open_cases():
         {
             "case_id": row[0],
             "user_id": row[1],
-            "case_details": row[2],
-            "severity_flagged": row[3],
-            "resolved_at": row[4],
-            "created_at": row[5],
+            "name": decrypt_text(row[2]),
+            "medicare_number": decrypt_text(row[3]),
+            "case_details": decrypt_text(row[4]),
+            "severity_flagged": row[5],
+            "resolved_at": row[6],
+            "created_at": row[7],
         }
         for row in rows
     ]
@@ -126,7 +141,7 @@ def get_resolved_cases():
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT case_id, user_id, case_details, severity_flagged, resolved_at, created_at
+        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
         FROM cases
         WHERE resolved_at IS NOT NULL
         ORDER BY resolved_at DESC;
@@ -140,10 +155,12 @@ def get_resolved_cases():
         {
             "case_id": row[0],
             "user_id": row[1],
-            "case_details": row[2],
-            "severity_flagged": row[3],
-            "resolved_at": row[4],
-            "created_at": row[5],
+            "name": decrypt_text(row[2]),
+            "medicare_number": decrypt_text(row[3]),
+            "case_details": decrypt_text(row[4]),
+            "severity_flagged": row[5],
+            "resolved_at": row[6],
+            "created_at": row[7],
         }
         for row in rows
     ]
@@ -153,7 +170,7 @@ def get_all_cases():
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT case_id, user_id, case_details, severity_flagged, resolved_at, created_at
+        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
         FROM cases
         ORDER BY created_at DESC;
         """
@@ -166,10 +183,12 @@ def get_all_cases():
         {
             "case_id": row[0],
             "user_id": row[1],
-            "case_details": row[2],
-            "severity_flagged": row[3],
-            "resolved_at": row[4],
-            "created_at": row[5],
+            "name": decrypt_text(row[2]),
+            "medicare_number": decrypt_text(row[3]),
+            "case_details": decrypt_text(row[4]),
+            "severity_flagged": row[5],
+            "resolved_at": row[6],
+            "created_at": row[7],
         }
         for row in rows
     ]
