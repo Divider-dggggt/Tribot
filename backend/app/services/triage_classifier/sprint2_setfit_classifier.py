@@ -7,7 +7,7 @@ import json
 
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_DIR = BASE_DIR / "final_model"
+MODEL_DIR = BASE_DIR / "models" / "sprint2_setfit_model"
 
 _MODEL = None
 
