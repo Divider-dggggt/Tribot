@@ -43,12 +43,24 @@ def get_case_by_id(case_id: int):
 
     cur.execute(
         """
-        SELECT case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at, created_at
-        FROM cases
-        WHERE case_id = %s;
+        SELECT
+            c.case_id,
+            c.user_id,
+            c.name,
+            c.medicare_number,
+            c.case_details,
+            c.severity_flagged,
+            c.resolved_at,
+            c.created_at,
+            cm.ats_classification,
+            cm.confidence_score
+        FROM cases c
+        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
+        WHERE c.case_id = %s;
         """,
         (case_id,),
     )
+
     case_row = cur.fetchone()
     if not case_row:
         cur.close()
@@ -61,25 +73,6 @@ def get_case_by_id(case_id: int):
     )
     soap_row = cur.fetchone()
     soap_summary = soap_row[0] if soap_row else ""
-
-    cur.execute(
-        """
-        SELECT model_name, ats_classification, confidence_score
-        FROM classification_model
-        WHERE case_id = %s;
-        """,
-        (case_id,),
-    )
-    classification_row = cur.fetchone()
-    classification = (
-        {
-            "model_name": classification_row[0],
-            "ats_classification": classification_row[1],
-            "confidence_score": classification_row[2],
-        }
-        if classification_row
-        else {}
-    )
 
     cur.execute(
         "SELECT flag_category, flag_reason FROM severity_flags WHERE case_id = %s;",
@@ -100,7 +93,8 @@ def get_case_by_id(case_id: int):
         "resolved_at": case_row[6],
         "created_at": case_row[7],
         "soap_summary": soap_summary,
-        "classification": classification,
+        "ats_classification": case_row[8],
+        "confidence_score": case_row[9],
         "severity_flags": [
             {"flag_category": row[0], "flag_reason": row[1]}
             for row in severity_rows
