@@ -4,6 +4,7 @@ from app import db
 from app.core.security import get_current_user
 from app.schemas.case import CaseCreate, CaseFullOut
 from app.services.case_processing import classification_algo, soap_summary
+from psycopg2.errors import UniqueViolation
 
 router = APIRouter()
 
@@ -11,12 +12,16 @@ router = APIRouter()
 @router.post("/triage", response_model=CaseFullOut)
 def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
     try:
-        soap_text = soap_summary(case.case_details)
-        classification_res = classification_algo(case.case_details)
+        classification_res = classification_algo(case.case_details) #non-llm service
+        anon_dialogue = case.case_details #deidentify_dialogue(case.case_details) #precise anon
+        soap_text = soap_summary(anon_dialogue) #SOAP generation with precise anon
+
         severity_info = classification_res["severity_flags"]
 
         new_case = db.add_case(
             user_id=user["id"],
+            name=case.name,
+            medicare_number=case.medicare_number,
             case_details=case.case_details,
             severity_flagged=severity_info["is_high_severity"],
         )
@@ -30,23 +35,30 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
             confidence_score=classification_res["confidence_score"],
         )
 
-        severity_flags_reason = None
-        if severity_info:
-            for label, ats in classification_res["matched_categories"].items():
-                severity_flags_reason = ", ".join(classification_res["flags"].get(label, []))
-                db.add_severity_flag(case_id, ats, severity_flags_reason)
+        if severity_info["is_high_severity"]:
+            for label, ats in severity_info["matched_categories"].items():
+                severity_flags_reason = ", ".join(severity_info["flags"].get(label, []))
+            db.add_severity_flag(case_id, ats, severity_flags_reason)
 
         return {
             "case_id": case_id,
+            "name": new_case["name"],
+            "medicare_number": new_case["medicare_number"],
             "severity_flagged": new_case["severity_flagged"],
             "soap_summary": soap_text,
             "ats_classification": classification_res["ats_category"],
             "confidence_score": classification_res["confidence_score"],
             "flagged_keywords": severity_flags_reason,
+            "resolved_at": new_case["resolved_at"],
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create case: {str(e)}")
+        error_text = str(e)
+
+    if "medicare_number" in error_text:
+        raise HTTPException(status_code=409, detail="Medicare number already exists")
+
+    raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
 
 @router.get("/cases")
 def get_open_cases(user=Depends(get_current_user)):

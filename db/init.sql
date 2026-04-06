@@ -18,6 +18,8 @@ INSERT INTO users (name, email, password, role) VALUES
 CREATE TABLE cases (
     case_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
+    name TEXT NOT NULL,
+    medicare_number TEXT NOT NULL,
     case_details TEXT NOT NULL, --dialogues
     severity_flagged BOOLEAN DEFAULT FALSE,
     user_override_category INT DEFAULT 0,
@@ -26,9 +28,11 @@ CREATE TABLE cases (
     resolved_at TIMESTAMP NULL
 );
 
-INSERT INTO cases (user_id, case_details) VALUES
+INSERT INTO cases (user_id, name, medicare_number, case_details) VALUES
 (
 1,
+'Alex',
+'12345678',
 $$
 Nurse: Hi there, I'm Sarah, one of the triage nurses. Come take a seat. Who's this little one?
 
