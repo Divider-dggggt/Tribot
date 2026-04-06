@@ -3,6 +3,7 @@ import React, { ReactElement } from "react";
 import { ATSLevel, TriageCase } from "../types/triage";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
+import { API_BASE_URL } from "../utils/constants";
 
 interface CaseSummaryProps {
   case: TriageCase;
@@ -185,6 +186,34 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           </Typography>
         </CardContent>
       </Card>
+
+      <Button 
+        variant="contained" 
+        fullWidth 
+        size="large"
+        onClick={() => {
+          const accessToken = localStorage.getItem("access_token");
+          void fetch(`${API_BASE_URL}/cases/${triageCase.caseId}/resolve`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            },
+          });
+        }}
+        sx={{ 
+          bgcolor: '#9333ea', // Purple-600
+          '&:hover': { bgcolor: '#7e22ce' }, // Purple-700
+          py: 2,
+          mt: 4,
+          borderRadius: 2,
+          textTransform: 'none',
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}
+      >
+        Resolve
+      </Button>
     </Box>
   );
 };
