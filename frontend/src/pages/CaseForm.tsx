@@ -16,8 +16,8 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
+import { useDispatch } from "react-redux";
+import { addTriageCase } from "../store/triage/triageSlice";
 import { ATSLevel, TriageApiResponse, TriageCase } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
@@ -186,7 +186,6 @@ const formatBloodPressureInput = (rawValue: string): string => {
 
 export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
-  const triageCases = useSelector(getTriageCases);
   const {
     register,
     handleSubmit,
@@ -262,14 +261,9 @@ export const CaseForm = (): ReactElement => {
         details: data.details,
     };
 
-      const severitySortedCases = [...triageCases, newCase].sort(
-        (a, b) => a.priority - b.priority
-      );
-      const newCaseIndex = severitySortedCases.findIndex((currentCase) => currentCase === newCase);
-
       dispatch(addTriageCase(newCase));
       navigate(
-        { pathname: "/dashboard", search: `?case=${newCaseIndex}` },
+        { pathname: "/dashboard", search: `?case=${triageResult.case_id}` },
         { state: { message: "Successfully created case", severity: "success" } }
       );
     } catch (error) {
