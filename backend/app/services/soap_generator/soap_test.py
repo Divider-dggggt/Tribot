@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 import json
 import argparse
+import re
 
 # Ensure backend root (directory that contains the "app" package) is on path,
 # so "from app.services.soap_generator" works when run from any cwd (e.g. Docker /app).
@@ -20,6 +21,66 @@ from app.services.soap_generator import init_soap_generator, generate_soap
 SCRIPT_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = SCRIPT_DIR / "config.yaml"
 SCENARIOS_PATH = SCRIPT_DIR / "scenarios.json"
+SOAP_FIELDS = ["subjective", "objective", "assessment", "plan"]
+
+
+def _tokenize(text: str) -> list[str]:
+    if not text:
+        return []
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def _lcs_length(a: list[str], b: list[str]) -> int:
+    if not a or not b:
+        return 0
+    n = len(b)
+    prev = [0] * (n + 1)
+    for ta in a:
+        curr = [0] * (n + 1)
+        for j, tb in enumerate(b, start=1):
+            if ta == tb:
+                curr[j] = prev[j - 1] + 1
+            else:
+                curr[j] = max(prev[j], curr[j - 1])
+        prev = curr
+    return prev[n]
+
+
+def rouge_l_f1(prediction: str, reference: str) -> float:
+    pred_tokens = _tokenize(prediction)
+    ref_tokens = _tokenize(reference)
+    if not pred_tokens or not ref_tokens:
+        return 0.0
+    lcs = _lcs_length(pred_tokens, ref_tokens)
+    precision = lcs / len(pred_tokens)
+    recall = lcs / len(ref_tokens)
+    if precision + recall == 0:
+        return 0.0
+    return (2 * precision * recall) / (precision + recall)
+
+
+def _flatten_soap_text(value: object) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, list):
+        return " ".join(_flatten_soap_text(v) for v in value)
+    if isinstance(value, dict):
+        return " ".join(_flatten_soap_text(v) for v in value.values())
+    return str(value)
+
+
+def _generated_sections(result: dict) -> dict[str, str]:
+    soap = result.get("soap", {}) if isinstance(result, dict) else {}
+    subjective = soap.get("subjective", {}) if isinstance(soap, dict) else {}
+    objective = soap.get("objective", {}) if isinstance(soap, dict) else {}
+    return {
+        "subjective": _flatten_soap_text(subjective),
+        "objective": _flatten_soap_text(objective),
+        "assessment": _flatten_soap_text(soap.get("assessment") if isinstance(soap, dict) else None),
+        "plan": _flatten_soap_text(soap.get("plan") if isinstance(soap, dict) else None),
+    }
 
 
 def load_scenarios() -> list[dict]:
@@ -73,6 +134,11 @@ def main() -> None:
         default=None,
         help="When using --all, stop after this many scenarios",
     )
+    parser.add_argument(
+        "--eval",
+        action="store_true",
+        help="Evaluate generated SOAP text with ROUGE-L F1 against available references.",
+    )
     args = parser.parse_args()
 
     if not CONFIG_PATH.exists():
@@ -103,6 +169,8 @@ def main() -> None:
         chosen = [scenarios[0]]
 
     init_soap_generator(config_path=str(CONFIG_PATH))
+    eval_scores: list[float] = []
+    eval_field_scores: dict[str, list[float]] = {k: [] for k in SOAP_FIELDS}
 
     for i, sc in enumerate(chosen):
         num = sc.get("scenario_number", "?")
@@ -112,10 +180,54 @@ def main() -> None:
         try:
             result = generate_soap(payload)
             print(json.dumps(result, indent=2, ensure_ascii=False))
+            if args.eval:
+                generated_text = _flatten_soap_text(result.get("soap", {})).strip()
+                reference_text = str(sc.get("dialogue_text", "")).strip()
+                if not reference_text:
+                    print(f"[Eval] Scenario {num} skipped: empty dialogue_text.")
+                    continue
+
+                score = rouge_l_f1(generated_text, reference_text)
+                eval_scores.append(score)
+                print(
+                    f"[Eval] Scenario {num} SOAP-vs-dialogue ROUGE-L F1={score:.4f}"
+                )
+
+                generated_by_field = _generated_sections(result)
+                field_parts: list[str] = []
+                for field in SOAP_FIELDS:
+                    field_score = rouge_l_f1(
+                        generated_by_field.get(field, ""),
+                        reference_text,
+                    )
+                    eval_field_scores[field].append(field_score)
+                    field_parts.append(f"{field}={field_score:.4f}")
+                print(
+                    "[Eval-Field] SOAP-field-vs-dialogue ROUGE-L F1 "
+                    + ", ".join(field_parts)
+                )
         except Exception as e:
             print(f"Error: {e}")
             if not args.all:
                 raise
+
+    if args.eval:
+        if eval_scores:
+            avg_score = sum(eval_scores) / len(eval_scores)
+            print(
+                f"\n[Eval] SOAP-vs-dialogue ROUGE-L F1 mean={avg_score:.4f} "
+                f"over {len(eval_scores)} scenario(s)"
+            )
+            field_means = []
+            for field in SOAP_FIELDS:
+                scores = eval_field_scores[field]
+                if scores:
+                    field_means.append(f"{field}={sum(scores) / len(scores):.4f}")
+                else:
+                    field_means.append(f"{field}=n/a")
+            print("[Eval-Field] SOAP-field-vs-dialogue ROUGE-L F1 mean: " + ", ".join(field_means))
+        else:
+            print("\n[Eval] No scenarios had usable dialogue_text.")
 
 
 if __name__ == "__main__":
