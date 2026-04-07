@@ -8,6 +8,7 @@ import { CaseObject } from "../types/case";
 import { formatCaseDateTime } from "../utils/date";
 import { getDecodedToken } from "../utils/auth";
 import { UserRole } from "../types/user";
+import { OverrideDialog } from "./OverrideDialog";
 
 interface CaseSummaryProps {
   caseId: number;
@@ -40,6 +41,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const { caseId, onBack } = props;
   const [triageCase, setTriageCase] = useState<CaseObject | undefined>();
   const userRole = getDecodedToken()?.role;
+  const [isOverriding, setIsOverriding] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTriageCase = async (): Promise<void> => {
@@ -57,7 +59,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
     };
 
     fetchTriageCase();
-  }, [caseId]);
+  }, [caseId, triageCase == null]);
 
   if (triageCase == null) {
     return <CircularProgress />;
@@ -234,6 +236,9 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}
+        onClick={() => {
+          setIsOverriding(true);
+        }}
       >
         Override
       </Button>}
@@ -266,6 +271,17 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
       >
         {triageCase.resolved_at == null ? "Resolve" : "Reopen"}
       </Button>
+      <OverrideDialog
+        open={isOverriding}
+        onClose={() => {
+          setIsOverriding(false);
+        }}
+        onSuccess={() => {
+          setTriageCase(undefined);
+        }}
+        initialValue={triageCasePriority}
+        caseId={triageCase.case_id}
+      />
     </Box>
   );
 };
