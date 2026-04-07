@@ -110,6 +110,7 @@ export const Dashboard = (): ReactElement => {
   const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
   const userRole = getDecodedToken()?.role;
   const [searchParams] = useSearchParams();
+  const createdNewCase = searchParams.get("new") === "true";
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
@@ -149,10 +150,10 @@ export const Dashboard = (): ReactElement => {
       setIsLoading(false);
     };
 
-    if (isViewingDashboard) {
+    if (isViewingDashboard || createdNewCase) {
       fetchCases();
     }
-  }, [caseView, isViewingDashboard]);
+  }, [caseView, isViewingDashboard, createdNewCase]);
 
   useEffect(() => {
     if (location.state?.message) {

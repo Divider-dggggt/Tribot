@@ -251,7 +251,7 @@ export const CaseForm = (): ReactElement => {
       const triageResult = await response.json() as TriageApiResponse;
 
       navigate(
-        { pathname: "/dashboard", search: `?case=${triageResult.case_id}` },
+        { pathname: "/dashboard", search: `?case=${triageResult.case_id}&new=true` },
         { state: { message: "Successfully created case", severity: "success" } }
       );
     } catch (error) {
