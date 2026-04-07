@@ -22,8 +22,6 @@ import {
   ToggleButton,
 } from "@mui/material";
 import { ATSLevel } from "../types/triage";
-import { useSelector } from "react-redux";
-import { getTriageCases } from "../store/triage/triageSlice";
 import { CaseSummary } from "../components/CaseSummary";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
@@ -31,7 +29,7 @@ import { parseCaseDateTime } from "../utils/date";
 import { UserRole } from "../types/user";
 import { getDecodedToken } from "../utils/auth";
 import { API_BASE_URL } from "../utils/constants";
-import { CaseApiResponse } from "../types/case";
+import { DashboardCaseObject } from "../types/case";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -115,16 +113,16 @@ export const Dashboard = (): ReactElement => {
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
   const [sortOption, setSortOption] = useState<SortOption>("severity");
   const [caseView, setCaseView] = useState<string>("open-cases");
-  const triageCases = useSelector(getTriageCases);
+  const [triageCases, setTriageCases] = useState<DashboardCaseObject[]>([]);
   const sortedTriageCases = [...triageCases]
     .map((item, originalIndex) => ({ item, originalIndex }))
     .sort((a, b) => {
       if (sortOption === "severity") {
-        return a.item.priority - b.item.priority;
+        return a.item.ats_classification - b.item.ats_classification;
       }
       if (sortOption === "createdTime") {
-        const aTimestamp = getCaseTimestamp(a.item.date, a.originalIndex);
-        const bTimestamp = getCaseTimestamp(b.item.date, b.originalIndex);
+        const aTimestamp = getCaseTimestamp(a.item.created_at, a.originalIndex);
+        const bTimestamp = getCaseTimestamp(b.item.created_at, b.originalIndex);
         return bTimestamp - aTimestamp;
       }
       const nameCompareResult = compareCaseNameWithPriority(a.item.name, b.item.name);
@@ -142,8 +140,8 @@ export const Dashboard = (): ReactElement => {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
-      const cases = await response.json() as CaseApiResponse[];
-      console.log(cases); // TODO: set state for cases and phase out redux selector
+      const cases = await response.json() as DashboardCaseObject[];
+      setTriageCases(cases);
     };
 
     fetchCases();
@@ -173,7 +171,7 @@ export const Dashboard = (): ReactElement => {
   };
 
   const selectedCaseIdParam = Number(searchParams.get("case"));
-  const selectedCase = sortedTriageCases.find(c => c.caseId === selectedCaseIdParam);
+  const selectedCase = sortedTriageCases.find(c => c.case_id === selectedCaseIdParam);
 
   const successSnackbar = (
     <Snackbar open={snackOpen} autoHideDuration={4000} onClose={handleSnackClose}>
@@ -187,7 +185,7 @@ export const Dashboard = (): ReactElement => {
     return (
       <>
         <CaseSummary
-          case={selectedCase}
+          caseId={selectedCase.case_id}
           onBack={() => navigate("/dashboard")}
         />
         {successSnackbar}
@@ -295,12 +293,12 @@ export const Dashboard = (): ReactElement => {
                   </TableRow>
                 )}
                 {sortedTriageCases.map((item, index) => {
-                  const atsPriority = item.priority;
+                  const atsPriority = item.ats_classification;
                   return (
                     <TableRow
-                      key={`${item.id},${index}`}
+                      key={`${item.medicare_number},${index}`}
                       onClick={() => {
-                        navigate({ pathname: "/dashboard", search: `?case=${item.caseId}` });
+                        navigate({ pathname: "/dashboard", search: `?case=${item.case_id}` });
                       }}
                       sx={{
                         cursor: "pointer",
@@ -314,11 +312,11 @@ export const Dashboard = (): ReactElement => {
                           {item.name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#9ca3af" }}>
-                          {item.id}
+                          {item.medicare_number}
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
-                        {item.date}
+                        {item.created_at}
                       </TableCell>
                       <TableCell>
                         <Chip

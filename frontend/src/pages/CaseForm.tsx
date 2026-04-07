@@ -17,8 +17,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addTriageCase } from "../store/triage/triageSlice";
-import { ATSLevel, TriageApiResponse, TriageCase } from "../types/triage";
+import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 import { API_BASE_URL } from "../utils/constants";
@@ -250,20 +249,7 @@ export const CaseForm = (): ReactElement => {
       }
 
       const triageResult = await response.json() as TriageApiResponse;
-      const newCase: TriageCase = {
-        caseId: triageResult.case_id,
-        safetyOverride: triageResult.severity_flagged,
-        flaggedKeywords: triageResult.flagged_keywords,
-        soapSummary: triageResult.soap_summary,
-        id: data.patientID,
-        name: data.patientName,
-        date: formatCaseDateTime(),
-        priority: parseAtsToLevel(triageResult.ats_classification),
-        confidence: normalizeConfidence(triageResult.confidence_score),
-        details: data.details,
-    };
 
-      dispatch(addTriageCase(newCase));
       navigate(
         { pathname: "/dashboard", search: `?case=${triageResult.case_id}` },
         { state: { message: "Successfully created case", severity: "success" } }

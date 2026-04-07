@@ -1,12 +1,13 @@
-import { Alert, Box, Button, Card, CardContent, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
-import React, { ReactElement } from "react";
+import { Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Divider, Grid, Stack, Typography } from "@mui/material";
+import React, { ReactElement, useEffect, useState } from "react";
 import { ATSLevel, TriageCase } from "../types/triage";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { API_BASE_URL } from "../utils/constants";
+import { CaseObject } from "../types/case";
 
 interface CaseSummaryProps {
-  case: TriageCase;
+  caseId: number;
   onBack: () => void;
 }
 
@@ -27,14 +28,44 @@ const ArrowLeftIcon = () => (
   </svg>
 );
 
+const parseAtsToLevel = (atsClassification: number): ATSLevel => {
+  const boundedAts = Math.min(5, Math.max(1, Math.round(atsClassification)));
+  return (boundedAts - 1) as ATSLevel;
+};
+
 export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
-  const { case: triageCase, onBack } = props;
-  const priorityColor = getPriorityColor(triageCase.priority);
-  const confidencePercentage = Math.round((triageCase.confidence ?? 0) * 100);
-  const hasSafetyOverride = Boolean(triageCase.safetyOverride);
-  const flaggedKeywordsText = triageCase.flaggedKeywords?.trim() ?? "";
+  const { caseId, onBack } = props;
+  const [triageCase, setTriageCase] = useState<CaseObject | undefined>();
+
+  useEffect(() => {
+    const fetchTriageCase = async (): Promise<void> => {
+      const accessToken = localStorage.getItem("access_token");
+      const response = await fetch(`${API_BASE_URL}/cases/${caseId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      });
+
+      const caseResponse = await response.json() as CaseObject;
+      setTriageCase(caseResponse);
+    };
+
+    fetchTriageCase();
+  }, [caseId]);
+
+  if (triageCase == null) {
+    return <CircularProgress />;
+  }
+
+  const triageCasePriority = parseAtsToLevel(triageCase.ats_classification);
+  const priorityColor = getPriorityColor(triageCasePriority);
+  const confidencePercentage = Math.round((triageCase.confidence_score ?? 0) * 100);
+  const hasSafetyOverride = triageCase.severity_flagged;
+  const flaggedKeywordsText = triageCase.severity_flags.map(flag => flag.flag_reason).join(",");
   const hasFlaggedKeywords = flaggedKeywordsText.length > 0;
-  const atsLabel = ATSLevel[triageCase.priority];
+  const atsLabel = ATSLevel[triageCasePriority];
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -91,7 +122,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 Medicare Card Number
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                {triageCase.id}
+                {triageCase.medicare_number}
               </Typography>
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -99,7 +130,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 Assessment Time
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                {triageCase.date}
+                {triageCase.created_at}
               </Typography>
             </Grid>
           </Grid>
@@ -171,7 +202,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             color="text.secondary"
             sx={{ whiteSpace: "pre-line", lineHeight: 1.7, mb: 3 }}
           >
-            {triageCase.soapSummary.trim() || "No SOAP summary is available."}
+            {triageCase.soap_summary.trim() || "No SOAP summary is available."}
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
@@ -182,7 +213,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             color="text.secondary"
             sx={{ whiteSpace: "pre-line", lineHeight: 1.7 }}
           >
-            {triageCase.details}
+            {triageCase.case_details}
           </Typography>
         </CardContent>
       </Card>
@@ -193,7 +224,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         size="large"
         onClick={() => {
           const accessToken = localStorage.getItem("access_token");
-          void fetch(`${API_BASE_URL}/cases/${triageCase.caseId}/resolve`, {
+          void fetch(`${API_BASE_URL}/cases/${triageCase.case_id}/resolve`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
