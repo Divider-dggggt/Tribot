@@ -20,6 +20,7 @@ import {
   Tooltip,
   ToggleButtonGroup,
   ToggleButton,
+  CircularProgress,
 } from "@mui/material";
 import { ATSLevel } from "../types/triage";
 import { CaseSummary } from "../components/CaseSummary";
@@ -113,6 +114,7 @@ export const Dashboard = (): ReactElement => {
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
   const [sortOption, setSortOption] = useState<SortOption>("severity");
   const [caseView, setCaseView] = useState<string>("open-cases");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [triageCases, setTriageCases] = useState<DashboardCaseObject[]>([]);
   const sortedTriageCases = [...triageCases]
     .map((item, originalIndex) => ({ item, originalIndex }))
@@ -132,6 +134,7 @@ export const Dashboard = (): ReactElement => {
 
   useEffect(() => {
     const fetchCases = async (): Promise<void> => {
+      setIsLoading(true);
       const accessToken = localStorage.getItem("access_token");
       const response = await fetch(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
         method: "GET",
@@ -142,6 +145,7 @@ export const Dashboard = (): ReactElement => {
       });
       const cases = await response.json() as DashboardCaseObject[];
       setTriageCases(cases);
+      setIsLoading(false);
     };
 
     fetchCases();
@@ -269,7 +273,15 @@ export const Dashboard = (): ReactElement => {
               </IconButton>
             </Tooltip>
           </Box>
-          <TableContainer>
+          {isLoading && <Box 
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ p: 4 }}
+          >
+            <CircularProgress />
+          </Box>}
+          {!isLoading && <TableContainer>
             <Table sx={{ minWidth: 700 }} aria-label="cases table">
               <TableHead>
                 <TableRow sx={{ bgcolor: "#faf5ff" }}>
@@ -336,7 +348,7 @@ export const Dashboard = (): ReactElement => {
                 })}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer>}
         </CardContent>
       </Card>
 
