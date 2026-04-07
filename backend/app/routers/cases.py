@@ -137,6 +137,9 @@ def override_ats_classification_endpoint(
     payload: ATSOverrideRequest,
     user=Depends(get_current_user),
 ):
+    if user["role"] not in {"Admin", "Clinician"}:
+        raise HTTPException(status_code=403, detail="Only Admin or Clinician can override ATS classification")
+
     updated = db.override_ats_classification(
         case_id=case_id,
         ats_classification=payload.ats_classification,
