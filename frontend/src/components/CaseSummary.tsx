@@ -196,10 +196,15 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
               border: hasSafetyOverride ? "1px solid #fcd34d" : "1px solid #bfdbfe",
             }}
           >
-            {hasSafetyOverride
-              ? "Safety rule override applied to this case."
-              : "No safety rule override was applied."}
-            {hasFlaggedKeywords ? ` Trigger indicator: ${flaggedKeywordsText}` : ""}
+            {triageCase.clinician_override_at != null
+              ? "Clinician override applied to this case."
+              : (
+                hasSafetyOverride
+                  ? "Safety rule override applied to this case."
+                  : "No safety rule override was applied."
+              )
+            }
+            {hasFlaggedKeywords ? ` Trigger indicators: ${flaggedKeywordsText}` : ""}
           </Alert>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
