@@ -32,5 +32,15 @@ class CaseFullOut(BaseModel):
     ats_classification: int
     confidence_score: float
     flagged_keywords: str | None
+    clinician_override_at: datetime | None = None
     resolved_at: datetime | None = None
 
+class ATSOverrideRequest(BaseModel):
+    ats_classification: int
+
+    @field_validator("ats_classification")
+    @classmethod
+    def validate_ats_classification(cls, value: int):
+        if value < 1 or value > 5:
+            raise ValueError("ATS classification must be between 1 and 5")
+        return value
