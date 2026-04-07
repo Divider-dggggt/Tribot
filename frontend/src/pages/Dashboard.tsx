@@ -308,7 +308,7 @@ export const Dashboard = (): ReactElement => {
                   </TableRow>
                 )}
                 {sortedTriageCases.map((item, index) => {
-                  const atsPriority = item.ats_classification;
+                  const atsPriority = item.ats_classification - 1;
                   return (
                     <TableRow
                       key={`${item.medicare_number},${index}`}
