@@ -41,7 +41,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
             severity_flagged=is_high_severity,
         )
         case_id = new_case["case_id"]
-        db.update_soap_summary(case_id, soap_object["brief_summary"])
+        db.update_soap_summary(case_id, soap_object["soap_markdown"])
 
         db.add_classification_model(
             case_id=case_id,
