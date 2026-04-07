@@ -3,9 +3,6 @@ from datetime import datetime
 
 
 class CaseCreate(BaseModel):
-    case_details: str
-
-class CaseCreate(BaseModel):
     name: str
     medicare_number: str
     case_details: str
@@ -22,8 +19,8 @@ class CaseCreate(BaseModel):
     @classmethod
     def validate_medicare_number(cls, value: str):
         value = value.strip()
-        if not value.isdigit() or len(value) != 8:
-            raise ValueError("Medicare number must be exactly 8 digits")
+        if not value.isdigit() or len(value) != 11:
+            raise ValueError("Medicare number must be exactly 11 digits")
         return value
 
 class CaseFullOut(BaseModel):
