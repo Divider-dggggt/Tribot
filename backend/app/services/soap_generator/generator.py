@@ -230,11 +230,18 @@ class SOAPGenerator:
 
     def generate(self, request: SOAPRequest) -> SOAPResult:
         last_error: Optional[Exception] = None
+        generation_start = time.perf_counter()
 
         for attempt in range(self.max_retries + 1):
             try:
                 result = self._call_llm_once(request)
-                return SOAPResult.model_validate(result)
+                validated = SOAPResult.model_validate(result)
+                elapsed = time.perf_counter() - generation_start
+                scenario = request.scenario_number or "-"
+                print(
+                    f"[SOAPGenerator] scenario={scenario} end_to_end_latency={elapsed:.3f}s"
+                )
+                return validated
             except Exception as e:
                 last_error = e
                 if attempt < self.max_retries:
@@ -242,4 +249,7 @@ class SOAPGenerator:
                     continue
                 break
 
+        elapsed = time.perf_counter() - generation_start
+        scenario = request.scenario_number or "-"
+        print(f"[SOAPGenerator] scenario={scenario} failed_after={elapsed:.3f}s")
         raise SOAPGenerationError(f"SOAP generation failed: {last_error}") from last_error
