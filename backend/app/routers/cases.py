@@ -77,7 +77,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
 @router.get("/cases")
 def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):
     if resolved:
-        return db.get_all_cases()
+        return db.get_resolved_cases()
     return db.get_open_cases()
 
 
