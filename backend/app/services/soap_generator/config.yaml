@@ -10,7 +10,6 @@
 #   # Single model name (used as-is for OpenAI-compatible API)
 #   model: claude-opus-4-20250514
 
-
 llm:
   url: https://api.moonshot.cn/v1
   llm_api: sk-4j0Qm2G79sFBsu9HVHzzRCe6N4nTECueLO3SPVD41ZEV1dhI
