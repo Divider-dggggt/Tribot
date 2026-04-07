@@ -5,6 +5,7 @@ import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { API_BASE_URL } from "../utils/constants";
 import { CaseObject } from "../types/case";
+import { formatCaseDateTime } from "../utils/date";
 
 interface CaseSummaryProps {
   caseId: number;
@@ -130,7 +131,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 Assessment Time
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                {triageCase.created_at}
+                {formatCaseDateTime(new Date(triageCase.created_at))}
               </Typography>
             </Grid>
           </Grid>

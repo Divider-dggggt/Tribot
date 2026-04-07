@@ -26,7 +26,7 @@ import { ATSLevel } from "../types/triage";
 import { CaseSummary } from "../components/CaseSummary";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
-import { parseCaseDateTime } from "../utils/date";
+import { formatCaseDateTime, parseCaseDateTime } from "../utils/date";
 import { UserRole } from "../types/user";
 import { getDecodedToken } from "../utils/auth";
 import { API_BASE_URL } from "../utils/constants";
@@ -331,7 +331,7 @@ export const Dashboard = (): ReactElement => {
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
-                        {item.created_at}
+                        {formatCaseDateTime(new Date(item.created_at))}
                       </TableCell>
                       <TableCell>
                         <Chip
