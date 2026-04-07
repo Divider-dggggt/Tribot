@@ -19,7 +19,6 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
         anon_dialogue = anon_result["deidentified_text"]
 
         soap_text = soap_summary(anon_dialogue) #SOAP generation with precise anon
-        print(anon_dialogue)
 
         severity_info = classification_res["severity_flags"]
 
@@ -121,6 +120,9 @@ def override_ats_classification_endpoint(
     payload: ATSOverrideRequest,
     user=Depends(get_current_user),
 ):
+    if user["role"] not in {"Admin", "Clinician"}:
+        raise HTTPException(status_code=403, detail="Only Admin or Clinician can override ATS classification")
+
     updated = db.override_ats_classification(
         case_id=case_id,
         ats_classification=payload.ats_classification,
