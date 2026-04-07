@@ -72,8 +72,9 @@ NAME_EXCLUSIONS = {
 }
 
 CONFIG = {
-    "mask_age": True,
-    "mask_date": True,
+    "mask_dob": False,
+    "mask_age": False,
+    "mask_date": False,
     "mask_time": True,
     "mask_names": True,
 }
@@ -126,10 +127,11 @@ def deidentify_dialogue(dialogue: str) -> dict:
     # If later transcripts contain "Nurse Ben:", add a separate pattern.
 
     # DOB first so internal dates don't get separately counted
-    for pattern in DEIDENTIFICATION_PATTERNS["dob"]:
-        deidentified_text = replace_with_placeholder(
-            deidentified_text, pattern, "dob", "[DOB]", flags=re.IGNORECASE
-        )
+    if CONFIG["mask_dob"]:
+        for pattern in DEIDENTIFICATION_PATTERNS["dob"]:
+            deidentified_text = replace_with_placeholder(
+                deidentified_text, pattern, "dob", "[DOB]", flags=re.IGNORECASE
+            )
 
     if CONFIG["mask_date"]:
         for pattern in DEIDENTIFICATION_PATTERNS["date"]:
