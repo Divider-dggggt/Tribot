@@ -110,7 +110,6 @@ export const Dashboard = (): ReactElement => {
   const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
   const userRole = getDecodedToken()?.role;
   const [searchParams] = useSearchParams();
-  const createdNewCase = searchParams.get("new") === "true";
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
@@ -150,10 +149,10 @@ export const Dashboard = (): ReactElement => {
       setIsLoading(false);
     };
 
-    if (isViewingDashboard || createdNewCase) {
+    if (isViewingDashboard) {
       fetchCases();
     }
-  }, [caseView, isViewingDashboard, createdNewCase]);
+  }, [caseView, isViewingDashboard]);
 
   useEffect(() => {
     if (location.state?.message) {
@@ -178,8 +177,7 @@ export const Dashboard = (): ReactElement => {
     setSortOption((previousSortOption) => getNextSortOption(previousSortOption));
   };
 
-  const selectedCaseIdParam = Number(searchParams.get("case"));
-  const selectedCase = sortedTriageCases.find(c => c.case_id === selectedCaseIdParam);
+  const selectedCaseIdParam = searchParams.get("case");
 
   const successSnackbar = (
     <Snackbar open={snackOpen} autoHideDuration={4000} onClose={handleSnackClose}>
@@ -189,11 +187,11 @@ export const Dashboard = (): ReactElement => {
     </Snackbar>
   );
 
-  if (selectedCase !== undefined) {
+  if (selectedCaseIdParam != null && !isNaN(Number(selectedCaseIdParam))) {
     return (
       <>
         <CaseSummary
-          caseId={selectedCase.case_id}
+          caseId={Number(selectedCaseIdParam)}
           onBack={() => navigate("/dashboard")}
         />
         {successSnackbar}
