@@ -176,7 +176,9 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 {atsLabel}
               </Typography>
               <Chip
-                label={`Confidence ${confidencePercentage}%`}
+                label={triageCase.clinician_override_at != null
+                  ? "Clinician Override"
+                  : (triageCase.severity_flagged ? "Safety Rule Override" : `Confidence ${confidencePercentage}%`)}
                 sx={{
                   mt: 2,
                   fontWeight: "bold",
