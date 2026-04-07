@@ -6,6 +6,8 @@ import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { API_BASE_URL } from "../utils/constants";
 import { CaseObject } from "../types/case";
 import { formatCaseDateTime } from "../utils/date";
+import { getDecodedToken } from "../utils/auth";
+import { UserRole } from "../types/user";
 
 interface CaseSummaryProps {
   caseId: number;
@@ -37,6 +39,7 @@ const parseAtsToLevel = (atsClassification: number): ATSLevel => {
 export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const { caseId, onBack } = props;
   const [triageCase, setTriageCase] = useState<CaseObject | undefined>();
+  const userRole = getDecodedToken()?.role;
 
   useEffect(() => {
     const fetchTriageCase = async (): Promise<void> => {
@@ -219,6 +222,21 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         </CardContent>
       </Card>
 
+      {userRole === UserRole.Clinician && <Button
+        variant="outlined" 
+        fullWidth 
+        size="large"
+        sx={{ 
+          py: 2,
+          mt: 4,
+          borderRadius: 2,
+          textTransform: 'none',
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}
+      >
+        Override
+      </Button>}
       <Button 
         variant="contained" 
         fullWidth 
