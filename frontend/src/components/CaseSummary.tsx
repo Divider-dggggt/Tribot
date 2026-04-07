@@ -224,12 +224,14 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         size="large"
         onClick={() => {
           const accessToken = localStorage.getItem("access_token");
-          void fetch(`${API_BASE_URL}/cases/${triageCase.case_id}/resolve`, {
+          void fetch(`${API_BASE_URL}/cases/${triageCase.case_id}/${triageCase.resolved_at == null ? "resolve" : "reopen"}`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
               ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             },
+          }).then(() => {
+            onBack();
           });
         }}
         sx={{ 
@@ -243,7 +245,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           fontWeight: 'bold'
         }}
       >
-        Resolve
+        {triageCase.resolved_at == null ? "Resolve" : "Reopen"}
       </Button>
     </Box>
   );

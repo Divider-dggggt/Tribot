@@ -105,6 +105,7 @@ const compareCaseNameWithPriority = (aName: string, bName: string): number => {
 
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
+  const isViewingDashboard = location.search === "";
   const navigate = useNavigate();
   const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
   const userRole = getDecodedToken()?.role;
@@ -148,8 +149,10 @@ export const Dashboard = (): ReactElement => {
       setIsLoading(false);
     };
 
-    fetchCases();
-  }, [caseView]);
+    if (isViewingDashboard) {
+      fetchCases();
+    }
+  }, [caseView, isViewingDashboard]);
 
   useEffect(() => {
     if (location.state?.message) {
