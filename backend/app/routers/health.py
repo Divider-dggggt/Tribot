@@ -1,23 +1,20 @@
 from fastapi import APIRouter, Request
+
+from app.core.config import ENCRYPTION_KEY
 from app.db.connection import get_connection
 
 router = APIRouter()
 
 
 @router.get("/health")
-def health():
-    return {
-        "status": "ok",
-        "service": "backend",
-        "message": "API is running",
-    }
-
-@router.get("/health/ready")
-def readiness():
+def health(request: Request):
     checks = {
         "api": "ok",
         "database": "unknown",
+        "encryption_key": "unknown",
+        "routes_loaded": "unknown",
     }
+
     overall_status = "ok"
 
     try:
@@ -28,30 +25,24 @@ def readiness():
         cur.close()
         conn.close()
         checks["database"] = "ok"
-    except Exception as e:
-        checks["database"] = f"error: {str(e)}"
+    except Exception:
+        checks["database"] = "error"
+        overall_status = "degraded"
+
+    if ENCRYPTION_KEY:
+        checks["encryption_key"] = "ok"
+    else:
+        checks["encryption_key"] = "missing"
+        overall_status = "degraded"
+
+    try:
+        route_count = len(request.app.routes)
+        checks["routes_loaded"] = f"ok ({route_count} routes)"
+    except Exception:
+        checks["routes_loaded"] = "error"
         overall_status = "degraded"
 
     return {
         "status": overall_status,
         "checks": checks,
-    }
-
-@router.get("/health/routes")
-def list_routes(request: Request):
-    routes = []
-    for route in request.app.routes:
-        methods = sorted(list(route.methods)) if hasattr(route, "methods") else []
-        routes.append(
-            {
-                "path": route.path,
-                "methods": methods,
-                "name": route.name,
-            }
-        )
-
-    return {
-        "status": "ok",
-        "route_count": len(routes),
-        "routes": routes,
     }
