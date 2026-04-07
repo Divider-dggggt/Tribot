@@ -16,9 +16,8 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { addTriageCase, getTriageCases } from "../store/triage/triageSlice";
-import { ATSLevel, TriageCase } from "../types/triage";
+import { useDispatch } from "react-redux";
+import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 import { API_BASE_URL } from "../utils/constants";
@@ -53,15 +52,6 @@ interface CaseFormValues {
   heartRate?: number;
   respirationRate?: number;
   bloodPressure?: string;
-}
-
-interface TriageApiResponse {
-  case_id: number;
-  severity_flagged: boolean;
-  soap_summary: string;
-  ats_classification: number;
-  confidence_score: number;
-  flagged_keywords: string | null;
 }
 
 type RequiredFieldName = "patientID" | "patientName" | "details";
@@ -139,6 +129,33 @@ const handleTemperatureInput = (event: FormEvent<HTMLInputElement | HTMLTextArea
   input.value = decimalPart ? `${integerPart}.${decimalPart}` : `${integerPart}.`;
 };
 
+const formatMedicareCardField = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>): string => {
+  const sanitized = event.target.value.replace(/[^\d/]/g, "");
+  const hasSlash = sanitized.includes("/");
+
+  if (hasSlash) {
+    const [rawCardNumber = "", rawIRN = ""] = sanitized.split("/", 2);
+    const cardNumber = rawCardNumber.replace(/\D/g, "").slice(0, 10);
+    const IRN = rawIRN.replace(/\D/g, "").slice(0, 1);
+    if (!cardNumber && !IRN) {
+      return "";
+    }
+    if (!IRN) {
+      return cardNumber;
+    }
+    return `${cardNumber}/${IRN}`;
+  }
+
+  const digits = sanitized.replace(/\D/g, "").slice(0, 11);
+  if (digits.length === 0) {
+    return "";
+  }
+  if (digits.length <= 10) {
+    return digits;
+  }
+  return `${digits.slice(0, 10)}/${digits.slice(10, 11)}`;
+};
+
 const formatBloodPressureInput = (rawValue: string): string => {
   const sanitized = rawValue.replace(/[^\d/]/g, "");
   const hasSlash = sanitized.includes("/");
@@ -168,7 +185,6 @@ const formatBloodPressureInput = (rawValue: string): string => {
 
 export const CaseForm = (): ReactElement => {
   const dispatch = useDispatch();
-  const triageCases = useSelector(getTriageCases);
   const {
     register,
     handleSubmit,
@@ -222,6 +238,8 @@ export const CaseForm = (): ReactElement => {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
+          name: data.patientName,
+          medicare_number: data.patientID.replace("/", ""),
           case_details: allDetails.join("\n"),
         }),
       });
@@ -231,27 +249,9 @@ export const CaseForm = (): ReactElement => {
       }
 
       const triageResult = await response.json() as TriageApiResponse;
-      const newCase: TriageCase = {
-        caseId: triageResult.case_id,
-        safetyOverride: triageResult.severity_flagged,
-        flaggedKeywords: triageResult.flagged_keywords,
-        soapSummary: triageResult.soap_summary,
-        id: data.patientID,
-        name: data.patientName,
-        date: formatCaseDateTime(),
-        priority: parseAtsToLevel(triageResult.ats_classification),
-        confidence: normalizeConfidence(triageResult.confidence_score),
-        details: data.details,
-    };
 
-      const severitySortedCases = [...triageCases, newCase].sort(
-        (a, b) => a.priority - b.priority
-      );
-      const newCaseIndex = severitySortedCases.findIndex((currentCase) => currentCase === newCase);
-
-      dispatch(addTriageCase(newCase));
       navigate(
-        { pathname: "/dashboard", search: `?case=${newCaseIndex}` },
+        { pathname: "/dashboard", search: `?case=${triageResult.case_id}` },
         { state: { message: "Successfully created case", severity: "success" } }
       );
     } catch (error) {
@@ -288,20 +288,39 @@ export const CaseForm = (): ReactElement => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    required
-                    label="Patient ID"
-                    {...register("patientID", {
+                  <Controller
+                    name="patientID"
+                    control={control}
+                    rules={{
                       required: "Required",
-                      onChange: () => clearErrors("patientID"),
-                    })}
-                    error={!!errors.patientID}
-                    helperText={errors.patientID?.message as string}
-                    variant="outlined"
-                    size="small"
-                    sx={requiredLabelSx}
-                    InputProps={{ sx: fieldInputSx }}
+                      pattern: {
+                        value: /^\d{10}\/\d{1}$/,
+                        message: "Must include card number (10 digits) and IRN (1 digit)",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Medicare Card Number"
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        onChange={(event) => {
+                          field.onChange(formatMedicareCardField(event));
+                          clearErrors("patientID");
+                        }}
+                        error={!!errors.patientID}
+                        helperText={errors.patientID?.message as string}
+                        fullWidth
+                        required
+                        size="small"
+                        variant="outlined"
+                        inputProps={{
+                          inputMode: "numeric",
+                          maxLength: 12,
+                        }}
+                        sx={requiredLabelSx}
+                        InputProps={{ sx: fieldInputSx }}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>

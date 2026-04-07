@@ -1,4 +1,5 @@
 export const formatCaseDateTime = (date = new Date()): string => {
+  date.setHours(date.getHours() + 10); // TODO: remove once BE is fixed
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();

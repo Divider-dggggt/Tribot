@@ -18,16 +18,19 @@ import {
   Chip,
   IconButton,
   Tooltip,
+  ToggleButtonGroup,
+  ToggleButton,
+  CircularProgress,
 } from "@mui/material";
 import { ATSLevel } from "../types/triage";
-import { useSelector } from "react-redux";
-import { getTriageCases } from "../store/triage/triageSlice";
 import { CaseSummary } from "../components/CaseSummary";
 import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
-import { parseCaseDateTime } from "../utils/date";
+import { formatCaseDateTime, parseCaseDateTime } from "../utils/date";
 import { UserRole } from "../types/user";
 import { getDecodedToken } from "../utils/auth";
+import { API_BASE_URL } from "../utils/constants";
+import { DashboardCaseObject } from "../types/case";
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -102,6 +105,7 @@ const compareCaseNameWithPriority = (aName: string, bName: string): number => {
 
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
+  const isViewingDashboard = location.search === "";
   const navigate = useNavigate();
   const signedInAccount = localStorage.getItem("user_email") ?? "Dr. Smith";
   const userRole = getDecodedToken()?.role;
@@ -110,22 +114,45 @@ export const Dashboard = (): ReactElement => {
   const [snackMessage, setSnackMessage] = useState<string>("");
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'info' | 'warning' | 'error'>("success");
   const [sortOption, setSortOption] = useState<SortOption>("severity");
-  const triageCases = useSelector(getTriageCases);
+  const [caseView, setCaseView] = useState<string>("open-cases");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [triageCases, setTriageCases] = useState<DashboardCaseObject[]>([]);
   const sortedTriageCases = [...triageCases]
     .map((item, originalIndex) => ({ item, originalIndex }))
     .sort((a, b) => {
       if (sortOption === "severity") {
-        return a.item.priority - b.item.priority;
+        return a.item.ats_classification - b.item.ats_classification;
       }
       if (sortOption === "createdTime") {
-        const aTimestamp = getCaseTimestamp(a.item.date, a.originalIndex);
-        const bTimestamp = getCaseTimestamp(b.item.date, b.originalIndex);
+        const aTimestamp = getCaseTimestamp(a.item.created_at, a.originalIndex);
+        const bTimestamp = getCaseTimestamp(b.item.created_at, b.originalIndex);
         return bTimestamp - aTimestamp;
       }
       const nameCompareResult = compareCaseNameWithPriority(a.item.name, b.item.name);
       return nameCompareResult !== 0 ? nameCompareResult : a.originalIndex - b.originalIndex;
     })
     .map(({ item }) => item);
+
+  useEffect(() => {
+    const fetchCases = async (): Promise<void> => {
+      setIsLoading(true);
+      const accessToken = localStorage.getItem("access_token");
+      const response = await fetch(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      });
+      const cases = await response.json() as DashboardCaseObject[];
+      setTriageCases(cases);
+      setIsLoading(false);
+    };
+
+    if (isViewingDashboard) {
+      fetchCases();
+    }
+  }, [caseView, isViewingDashboard]);
 
   useEffect(() => {
     if (location.state?.message) {
@@ -150,15 +177,7 @@ export const Dashboard = (): ReactElement => {
     setSortOption((previousSortOption) => getNextSortOption(previousSortOption));
   };
 
-  const selectedCaseIdxParam = searchParams.get("case");
-  const selectedCaseIdx = selectedCaseIdxParam !== null ? Number(selectedCaseIdxParam) : undefined;
-  const selectedCase =
-    selectedCaseIdx !== undefined &&
-    Number.isInteger(selectedCaseIdx) &&
-    selectedCaseIdx >= 0 &&
-    selectedCaseIdx < sortedTriageCases.length
-      ? sortedTriageCases[selectedCaseIdx]
-      : undefined;
+  const selectedCaseIdParam = searchParams.get("case");
 
   const successSnackbar = (
     <Snackbar open={snackOpen} autoHideDuration={4000} onClose={handleSnackClose}>
@@ -168,11 +187,11 @@ export const Dashboard = (): ReactElement => {
     </Snackbar>
   );
 
-  if (selectedCase !== undefined) {
+  if (selectedCaseIdParam != null && !isNaN(Number(selectedCaseIdParam))) {
     return (
       <>
         <CaseSummary
-          case={selectedCase}
+          caseId={Number(selectedCaseIdParam)}
           onBack={() => navigate("/dashboard")}
         />
         {successSnackbar}
@@ -211,12 +230,28 @@ export const Dashboard = (): ReactElement => {
         Create New Case
       </Button>}
 
+      <ToggleButtonGroup
+        value={caseView}
+        onChange={(e: React.MouseEvent<HTMLElement>, newCaseView: string | null) => {
+          if (newCaseView === null) return;
+          setCaseView(newCaseView);
+        }}
+        exclusive
+      >
+        <ToggleButton value="open-cases">
+          Open
+        </ToggleButton>
+        <ToggleButton value="resolved-cases">
+          Resolved
+        </ToggleButton>
+      </ToggleButtonGroup>
+
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
         <CardContent sx={{ p: 0 }}>
           <Box sx={{ p: 2, borderBottom: '1px solid #e5e7eb', display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
             <Box>
               <Typography variant="h6" fontWeight="bold">
-                Recent Cases
+                {caseView === "open-cases" ? "Open Cases" : "Resolved Cases"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Latest patient triage assessments
@@ -226,7 +261,7 @@ export const Dashboard = (): ReactElement => {
               <IconButton
                 size="small"
                 onClick={handleSortClick}
-                aria-label="sort recent cases"
+                aria-label="sort cases"
                 sx={{
                   border: "1px solid #e5e7eb",
                   borderRadius: 1.5,
@@ -240,8 +275,16 @@ export const Dashboard = (): ReactElement => {
               </IconButton>
             </Tooltip>
           </Box>
-          <TableContainer>
-            <Table sx={{ minWidth: 700 }} aria-label="recent cases table">
+          {isLoading && <Box 
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ p: 4 }}
+          >
+            <CircularProgress />
+          </Box>}
+          {!isLoading && <TableContainer>
+            <Table sx={{ minWidth: 700 }} aria-label="cases table">
               <TableHead>
                 <TableRow sx={{ bgcolor: "#faf5ff" }}>
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
@@ -264,12 +307,12 @@ export const Dashboard = (): ReactElement => {
                   </TableRow>
                 )}
                 {sortedTriageCases.map((item, index) => {
-                  const atsPriority = item.priority;
+                  const atsPriority = item.ats_classification - 1;
                   return (
                     <TableRow
-                      key={`${item.id},${index}`}
+                      key={`${item.medicare_number},${index}`}
                       onClick={() => {
-                        navigate({ pathname: "/dashboard", search: `?case=${index}` });
+                        navigate({ pathname: "/dashboard", search: `?case=${item.case_id}` });
                       }}
                       sx={{
                         cursor: "pointer",
@@ -283,11 +326,11 @@ export const Dashboard = (): ReactElement => {
                           {item.name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#9ca3af" }}>
-                          {item.id}
+                          {item.medicare_number}
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
-                        {item.date}
+                        {formatCaseDateTime(new Date(item.created_at))}
                       </TableCell>
                       <TableCell>
                         <Chip
@@ -307,7 +350,7 @@ export const Dashboard = (): ReactElement => {
                 })}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer>}
         </CardContent>
       </Card>
 
