@@ -41,9 +41,18 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
         )
 
         if severity_info["is_high_severity"]:
+            all_reasons = []
+
             for label, ats in severity_info["matched_categories"].items():
-                severity_flags_reason = ", ".join(severity_info["flags"].get(label, []))
-            db.add_severity_flag(case_id, ats, severity_flags_reason)
+                reasons = severity_info["flags"].get(label, [])
+                reason_text = ", ".join(reasons) if reasons else label
+
+                db.add_severity_flag(case_id, ats, reason_text)
+                all_reasons.extend(reasons)
+
+            severity_flags_reason = ", ".join(sorted(set(all_reasons))) if all_reasons else None
+        else:
+            severity_flags_reason = None
 
         return {
             "case_id": case_id,
