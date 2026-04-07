@@ -3,7 +3,10 @@ import sys
 import json
 from pathlib import Path
 
-from .baseline_predict import predict_ats
+# from .baseline_predict import predict_ats
+from .sprint2_deberta_classifier import predict_ats
+# from .sprint2_setfit_classifier import predict_ats
+
 from .severity_flagging import flag_high_severity
 
 
@@ -40,7 +43,8 @@ def classify_triage(dialogue_text: str) -> Dict[str, Any]:
     rule_based_ats_category = severity_result.get("recommended_ats_category")
     model_ats_category = model_result["ats_category"]
     model_confidence = model_result["confidence"]
-    flags_detected = severity_result.get("flags", {})
+    # flags_detected = severity_result.get("flags", {})
+    severity_flag_notes = severity_result.get("severity_flag_notes")
 
     if is_high_severity and rule_based_ats_category is not None:
         final_ats_category = int(rule_based_ats_category)
@@ -53,7 +57,7 @@ def classify_triage(dialogue_text: str) -> Dict[str, Any]:
         "ats_category": final_ats_category,
         "model_confidence": model_confidence,
         "is_high_severity": is_high_severity,
-        "flags_detected": flags_detected,
+        "severity_flag_notes": severity_flag_notes,
         "decision_source": decision_source,
         "rule_based_ats_category": rule_based_ats_category,
         "model_ats_category": model_ats_category,

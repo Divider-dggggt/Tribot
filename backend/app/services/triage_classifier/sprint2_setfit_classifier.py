@@ -47,7 +47,7 @@ def _to_ats_category(pred_label: object) -> int:
     return value
 
 
-def classify_triage(text: str) -> Dict[str, float | int]:
+def predict_ats(text: str) -> Dict[str, float | int]:
     """
     SetFit ATS classification interface.
 
@@ -57,7 +57,7 @@ def classify_triage(text: str) -> Dict[str, float | int]:
     Returns:
         {
             "ats_category": int,
-            "confidence_score": float  # 0.0 ~ 1.0
+            "confidence": float  # 0.0 ~ 1.0
         }
     """
     if not isinstance(text, str) or not text.strip():
@@ -85,7 +85,7 @@ def classify_triage(text: str) -> Dict[str, float | int]:
 
     return {
         "ats_category": ats_category,
-        "confidence_score": round(confidence, 4),
+        "confidence": round(confidence, 4),
     }
 
 def read_input_text() -> str:
@@ -115,7 +115,7 @@ def main():
         if not input_text.strip():
             raise ValueError("Input text is empty.")
 
-        result = classify_triage(input_text)
+        result = predict_ats(input_text)
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
     except Exception as e:
