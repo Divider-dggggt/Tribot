@@ -3,9 +3,6 @@ from datetime import datetime
 
 
 class CaseCreate(BaseModel):
-    case_details: str
-
-class CaseCreate(BaseModel):
     name: str
     medicare_number: str
     case_details: str
@@ -22,8 +19,8 @@ class CaseCreate(BaseModel):
     @classmethod
     def validate_medicare_number(cls, value: str):
         value = value.strip()
-        if not value.isdigit() or len(value) != 8:
-            raise ValueError("Medicare number must be exactly 8 digits")
+        if not value.isdigit() or len(value) != 11:
+            raise ValueError("Medicare number must be exactly 11 digits")
         return value
 
 class CaseFullOut(BaseModel):
@@ -35,5 +32,15 @@ class CaseFullOut(BaseModel):
     ats_classification: int
     confidence_score: float
     flagged_keywords: str | None
+    clinician_override_at: datetime | None = None
     resolved_at: datetime | None = None
 
+class ATSOverrideRequest(BaseModel):
+    ats_classification: int
+
+    @field_validator("ats_classification")
+    @classmethod
+    def validate_ats_classification(cls, value: int):
+        if value < 1 or value > 5:
+            raise ValueError("ATS classification must be between 1 and 5")
+        return value

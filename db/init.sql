@@ -22,8 +22,8 @@ CREATE TABLE cases (
     medicare_number TEXT NOT NULL,
     case_details TEXT NOT NULL, --dialogues
     severity_flagged BOOLEAN DEFAULT FALSE,
-    user_override_category INT DEFAULT 0,
-    override_reason TEXT,
+    -- user_override_category INT DEFAULT 0,
+    -- override_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     resolved_at TIMESTAMP NULL
 );
@@ -39,6 +39,7 @@ CREATE TABLE classification_model (
     model_name TEXT,
     ats_classification INT, -- ATS category
     confidence_score FLOAT,
+    clinician_override_at TIMESTAMP NULL,
     PRIMARY KEY (case_id)
 );
 

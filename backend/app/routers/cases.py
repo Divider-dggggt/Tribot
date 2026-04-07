@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app import db
 from app.core.security import get_current_user
-from app.schemas.case import CaseCreate, CaseFullOut
+from app.schemas.case import CaseCreate, CaseFullOut, ATSOverrideRequest
 from app.services.case_processing import classification_algo, soap_summary
 from app.services.anonymisation import deidentify_dialogue
 from psycopg2.errors import UniqueViolation
@@ -41,9 +41,18 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
         )
 
         if severity_info["is_high_severity"]:
+            all_reasons = []
+
             for label, ats in severity_info["matched_categories"].items():
-                severity_flags_reason = ", ".join(severity_info["flags"].get(label, []))
-            db.add_severity_flag(case_id, ats, severity_flags_reason)
+                reasons = severity_info["flags"].get(label, [])
+                reason_text = ", ".join(reasons) if reasons else label
+
+                db.add_severity_flag(case_id, ats, reason_text)
+                all_reasons.extend(reasons)
+
+            severity_flags_reason = ", ".join(sorted(set(all_reasons))) if all_reasons else None
+        else:
+            severity_flags_reason = None
 
         return {
             "case_id": case_id,
@@ -54,6 +63,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
             "ats_classification": classification_res["ats_category"],
             "confidence_score": classification_res["confidence_score"],
             "flagged_keywords": severity_flags_reason,
+            "clinician_override_at": None,
             "resolved_at": new_case["resolved_at"],
         }
 
@@ -68,7 +78,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
 @router.get("/cases")
 def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):
     if resolved:
-        return db.get_all_cases()
+        return db.get_resolved_cases()
     return db.get_open_cases()
 
 
@@ -104,3 +114,24 @@ def reopen_case_endpoint(case_id: int, user=Depends(get_current_user)):
     if not reopened_case:
         raise HTTPException(status_code=404, detail="Case not found")
     return reopened_case
+
+@router.patch("/cases/{case_id}/ats")
+def override_ats_classification_endpoint(
+    case_id: int,
+    payload: ATSOverrideRequest,
+    user=Depends(get_current_user),
+):
+    updated = db.override_ats_classification(
+        case_id=case_id,
+        ats_classification=payload.ats_classification,
+    )
+
+    if not updated:
+        raise HTTPException(status_code=404, detail="Classification record not found for case")
+
+    return {
+        "case_id": updated["case_id"],
+        "ats_classification": updated["ats_classification"],
+        "clinician_override_at": updated["clinician_override_at"],
+        "message": "ATS classification overridden successfully",
+    }
