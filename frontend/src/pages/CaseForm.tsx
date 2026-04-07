@@ -239,6 +239,8 @@ export const CaseForm = (): ReactElement => {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
+          name: data.patientName,
+          medicare_number: data.patientID.replace("/", ""),
           case_details: allDetails.join("\n"),
         }),
       });

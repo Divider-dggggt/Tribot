@@ -135,7 +135,7 @@ export const Dashboard = (): ReactElement => {
   useEffect(() => {
     const fetchCases = async (): Promise<void> => {
       const accessToken = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "/resolved" : ""}`, {
+      const response = await fetch(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
