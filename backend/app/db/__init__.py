@@ -22,4 +22,5 @@ from app.db.cases import (
     reopen_case,
     resolve_case,
     update_soap_summary,
+    override_ats_classification,
 )

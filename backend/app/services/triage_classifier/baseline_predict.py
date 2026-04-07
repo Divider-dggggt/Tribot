@@ -1,5 +1,7 @@
 import joblib
 from pathlib import Path
+import json
+import sys
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "models" / "baseline_classifier.pkl"
@@ -39,11 +41,50 @@ def predict_ats(text: str) -> dict:
     }
 
 
-if __name__ == "__main__":
-    while True:
-        user_input = input("\nEnter symptom text (or type 'exit'): ").strip()
-        if user_input.lower() == "exit":
-            break
+# if __name__ == "__main__":
+#     while True:
+#         user_input = input("\nEnter symptom text (or type 'exit'): ").strip()
+#         if user_input.lower() == "exit":
+#             break
 
-        result = predict_ats(user_input)
-        print(result)
+#         result = predict_ats(user_input)
+#         print(result)
+
+def read_input_text() -> str:
+    """
+    Read from a file path argument if provided, otherwise from stdin.
+    """
+    if len(sys.argv) > 1:
+        input_path = Path(sys.argv[1])
+        if not input_path.exists():
+            raise FileNotFoundError(f"File not found: {input_path}")
+        return input_path.read_text(encoding="utf-8")
+
+    if not sys.stdin.isatty():
+        return sys.stdin.read()
+
+    raise ValueError(
+        "No input provided. Use either:\n"
+        "  python severity_flagging.py path/to/file.txt\n"
+        "or:\n"
+        "  python severity_flagging.py < path/to/file.txt"
+    )
+
+def main():
+    try:
+        input_text = read_input_text()
+        if not input_text.strip():
+            raise ValueError("Input text is empty.")
+
+        result = predict_ats(input_text)
+        # print(result)
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+
+    except Exception as e:
+        # print(e)
+        print(json.dumps({"error": str(e)}, indent=2), file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

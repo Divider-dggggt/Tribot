@@ -1,0 +1,1797 @@
+scenario_number,scenario_summary_header,dialogue_text,text,ats_category,label,pred_label_id,pred_ats,true_ats
+0001,Fever Without a Source - 2-Month-Old Infant (ATS 2),"Nurse: Hi there, I'm Sarah, one of the triage nurses. Come take a seat. Who's this little one?
+
+Parent: This is Aria, she's two months old. She's had a fever today and she's just not herself.
+
+Nurse: Okay, thank you for coming in. Let's start with when you first noticed she was warm. Was it earlier today or overnight?
+
+Parent: Around mid-morning she felt a bit warm, but we thought maybe it was just the weather. But in the afternoon she got really hot, and we checked her temperature - it was 38.7.
+
+Nurse: Alright. When you checked the temperature, was it under the arm, ear thermometer…?
+
+Parent: Ear thermometer, we did it twice.
+
+Nurse: Good. And how has she been behaving since then? More sleepy? Irritable?
+
+Parent: More sleepy. She's usually quite alert, even at this age. But today she keeps dozing off during feeds.
+
+Nurse: Okay. Speaking of feeds - how much has she taken today compared to usual?
+
+Parent: Maybe half. She normally has 120mls a feed. Today she's had about 50 or 60mls at best.
+
+Nurse: And wet nappies - how many has she had today?
+
+Parent: Only two. Normally she has four or five by now.
+
+Nurse: That's helpful to know. Any vomiting today? Either small spit-ups or full feeds coming back?
+
+Parent: Just one little vomit earlier.
+
+Nurse: Any cough, runny nose, breathing that looks different?
+
+Parent: No cough or runny nose. Breathing looks normal to us.
+
+Nurse: Any rash anywhere? Even faint blotches or spots?
+
+Parent: No rash.
+
+Nurse: Anyone at home unwell? Colds, COVID, flu?
+
+Parent: Her dad has a bit of a cold, nothing serious.
+
+Nurse: Has she travelled recently? Anyone visiting from overseas?
+
+Parent: No, just home.
+
+Nurse: Is she vaccinated as per schedule - she would have had her 6-week shots?
+
+Parent: Yes, she had them right on time.
+
+Nurse: Great. Any complications at birth? Was she full-term?
+
+Parent: Full-term, no NICU, healthy pregnancy.
+
+Nurse: Perfect. I'm just going to pop this thermometer under her arm and check her temp, and I'll have a look at her colour and breathing while I do that.
+(pauses, checks temp, listens, palpates, watches breathing)
+
+Nurse: Her temperature is still up - 38.5 - and I can see her heart rate is a bit fast, which is normal with fever. Her breathing looks stable, nice and even, and her colour is okay. I'm going to check capillary refill on her chest…
+(presses)
+That's good - comes back quickly.
+
+Parent: Is she alright? She just seems so floppy compared to usual.
+
+Nurse: I can see why you're worried. Babies this young can get sick quite quickly, and even though she looks fairly stable now, with her young age and fever we don't take chances. She needs to be seen pretty urgently, and we'll likely do a septic workup - bloods, urine, maybe even other tests depending on what the doctor thinks.
+
+Parent: Is she likely to be admitted?
+
+Nurse: For babies under 3 months, admission is common, yes. But the doctors will make that decision after examining her. For now, we'll get you straight through rather than waiting in the waiting room.
+
+Parent: Okay, thank you.
+
+Nurse: You've done the right thing bringing her in quickly. I'm going to pop an ID band on her wrist - this won't hurt - and I'm going to put you as ""priority seen urgently."" We'll take her straight into the paediatric assessment area.
+
+Parent: Thank you.
+
+Nurse: Grab all your things, and I'll walk you through now.","Nurse: Hi there, I'm Sarah, one of the triage nurses. Come take a seat. Who's this little one? Parent: This is Aria, she's two months old. She's had a fever today and she's just not herself. Nurse: Okay, thank you for coming in. Let's start with when you first noticed she was warm. Was it earlier today or overnight? Parent: Around mid-morning she felt a bit warm, but we thought maybe it was just the weather. But in the afternoon she got really hot, and we checked her temperature - it was 38.7. Nurse: Alright. When you checked the temperature, was it under the arm, ear thermometer…? Parent: Ear thermometer, we did it twice. Nurse: Good. And how has she been behaving since then? More sleepy? Irritable? Parent: More sleepy. She's usually quite alert, even at this age. But today she keeps dozing off during feeds. Nurse: Okay. Speaking of feeds - how much has she taken today compared to usual? Parent: Maybe half. She normally has 120mls a feed. Today she's had about 50 or 60mls at best. Nurse: And wet nappies - how many has she had today? Parent: Only two. Normally she has four or five by now. Nurse: That's helpful to know. Any vomiting today? Either small spit-ups or full feeds coming back? Parent: Just one little vomit earlier. Nurse: Any cough, runny nose, breathing that looks different? Parent: No cough or runny nose. Breathing looks normal to us. Nurse: Any rash anywhere? Even faint blotches or spots? Parent: No rash. Nurse: Anyone at home unwell? Colds, COVID, flu? Parent: Her dad has a bit of a cold, nothing serious. Nurse: Has she travelled recently? Anyone visiting from overseas? Parent: No, just home. Nurse: Is she vaccinated as per schedule - she would have had her 6-week shots? Parent: Yes, she had them right on time. Nurse: Great. Any complications at birth? Was she full-term? Parent: Full-term, no NICU, healthy pregnancy. Nurse: Perfect. I'm just going to pop this thermometer under her arm and check her temp, and I'll have a look at her colour and breathing while I do that.
+(pauses, checks temp, listens, palpates, watches breathing) Nurse: Her temperature is still up - 38.5 - and I can see her heart rate is a bit fast, which is normal with fever. Her breathing looks stable, nice and even, and her colour is okay. I'm going to check capillary refill on her chest…
+(presses)
+That's good - comes back quickly. Parent: Is she alright? She just seems so floppy compared to usual. Nurse: I can see why you're worried. Babies this young can get sick quite quickly, and even though she looks fairly stable now, with her young age and fever we don't take chances. She needs to be seen pretty urgently, and we'll likely do a septic workup - bloods, urine, maybe even other tests depending on what the doctor thinks. Parent: Is she likely to be admitted? Nurse: For babies under 3 months, admission is common, yes. But the doctors will make that decision after examining her. For now, we'll get you straight through rather than waiting in the waiting room. Parent: Okay, thank you. Nurse: You've done the right thing bringing her in quickly. I'm going to pop an ID band on her wrist - this won't hurt - and I'm going to put you as ""priority seen urgently."" We'll take her straight into the paediatric assessment area. Parent: Thank you. Nurse: Grab all your things, and I'll walk you through now.",2,1,2,3,2
+0002,Respiratory Distress / Asthma Exacerbation - 3-year-old (ATS 2),"Nurse: Hi there, I'm Ben, one of the triage nurses. Come on through, let's get your little one comfortable. What's his name?
+
+Parent: This is Noah. He's 3. He's been really wheezy today and struggling to breathe.
+
+Nurse: Okay Noah, we're going to help your breathing. Has he had asthma symptoms before?
+
+Parent: Yes, he was diagnosed last year. Usually the puffer helps.
+
+Nurse: When did his breathing start getting worse today?
+
+Parent: Around lunchtime. He had a cold for a couple of days, but this afternoon he's been breathing really fast and pulling in under his ribs.
+
+Nurse: Have you given him any Ventolin or preventer medication?
+
+Parent: Yes, we've given 6 puffs in the last hour, exactly like they taught us.
+
+Nurse: Did he improve at all after that?
+
+Parent: Maybe a tiny bit but not much.
+
+Nurse: Okay. Any fevers today?
+
+Parent: Yes, 38.3 in the afternoon. We gave Panadol.
+
+Nurse: Has he been eating or drinking?
+
+Parent: Very little. He's too puffed to drink properly.
+
+Nurse: Any vomiting or diarrhoea?
+
+Parent: No.
+
+Nurse: Any blue lips, blue fingers, or times when he looked like he couldn't catch his breath?
+
+Parent: Not blue, but he's been really distressed and breathing so hard.
+
+Nurse: Alright. Noah, can I pop this light on your finger? It's going to check your oxygen.
+(pauses)
+Oxygen is 92%. He's breathing fast and using his tummy muscles.
+
+Parent: Is that serious?
+
+Nurse: He's definitely working harder than we'd like. He needs urgent asthma treatment - nebulisers, maybe steroids. You did the right thing using the puffer and coming in quickly.
+
+Parent: Is he going to be admitted?
+
+Nurse: Hard to say yet - some kids improve quickly with hospital treatment, others need monitoring for a day or two. The doctors will decide after he's stabilised.
+
+Parent: Okay, thank you.
+
+Nurse: I'm going to put an ID band on him and take you straight through to acute care. No waiting room - he needs treatment now.","Nurse: Hi there, I'm Ben, one of the triage nurses. Come on through, let's get your little one comfortable. What's his name? Parent: This is Noah. He's 3. He's been really wheezy today and struggling to breathe. Nurse: Okay Noah, we're going to help your breathing. Has he had asthma symptoms before? Parent: Yes, he was diagnosed last year. Usually the puffer helps. Nurse: When did his breathing start getting worse today? Parent: Around lunchtime. He had a cold for a couple of days, but this afternoon he's been breathing really fast and pulling in under his ribs. Nurse: Have you given him any Ventolin or preventer medication? Parent: Yes, we've given 6 puffs in the last hour, exactly like they taught us. Nurse: Did he improve at all after that? Parent: Maybe a tiny bit but not much. Nurse: Okay. Any fevers today? Parent: Yes, 38.3 in the afternoon. We gave Panadol. Nurse: Has he been eating or drinking? Parent: Very little. He's too puffed to drink properly. Nurse: Any vomiting or diarrhoea? Parent: No. Nurse: Any blue lips, blue fingers, or times when he looked like he couldn't catch his breath? Parent: Not blue, but he's been really distressed and breathing so hard. Nurse: Alright. Noah, can I pop this light on your finger? It's going to check your oxygen.
+(pauses)
+Oxygen is 92%. He's breathing fast and using his tummy muscles. Parent: Is that serious? Nurse: He's definitely working harder than we'd like. He needs urgent asthma treatment - nebulisers, maybe steroids. You did the right thing using the puffer and coming in quickly. Parent: Is he going to be admitted? Nurse: Hard to say yet - some kids improve quickly with hospital treatment, others need monitoring for a day or two. The doctors will decide after he's stabilised. Parent: Okay, thank you. Nurse: I'm going to put an ID band on him and take you straight through to acute care. No waiting room - he needs treatment now.",2,1,1,2,2
+0003,Vomiting & Diarrhoea with Moderate Dehydration - 4-year-old (ATS 3),"Nurse: Hi, I'm Jess, come take a seat. Who's this little one?
+
+Parent: This is Lily, she's 4. She's been vomiting and having diarrhoea since yesterday.
+
+Nurse: Okay Lily, we'll help you feel better. How many times has she vomited?
+
+Parent: At least eight times since yesterday morning. Mostly today.
+
+Nurse: And her diarrhoea - how many loose stools?
+
+Parent: Seven or eight. Really watery.
+
+Nurse: Any blood in it?
+
+Parent: No blood.
+
+Nurse: Has she kept any fluids down today?
+
+Parent: Only tiny sips. Sometimes she vomits right after.
+
+Nurse: When was her last wee?
+
+Parent: This morning. Nothing since.
+
+Nurse: That's fewer than normal for her?
+
+Parent: Yes, usually she wees a lot.
+
+Nurse: Any fevers?
+
+Parent: Yes, 38 last night. We gave Panadol.
+
+Nurse: Is she more sleepy than usual?
+
+Parent: Yes, she just lies on me. She's never this quiet.
+
+Nurse: Has anyone else at home or daycare had gastro recently?
+
+Parent: Her brother last week, but he wasn't this sick.
+
+Nurse: Any abdominal pain?
+
+Parent: She says her tummy hurts sometimes.
+
+Nurse: Has she been drinking anything sugary like juice, or just water?
+
+Parent: Mostly water. We tried Hydralyte but she brought it up.
+
+Nurse: I'm just going to check her pulse, capillary refill, and have a look in her mouth…
+(checks)
+Her pulse is fast, her mouth is a bit dry, and cap refill is a little delayed.
+
+Parent: Is she very dehydrated?
+
+Nurse: She's showing signs of moderate dehydration. Not severely ill right now, but she needs proper fluids and close monitoring.
+
+Parent: Will she need a drip?
+
+Nurse: The doctors may try oral rehydration first, but with her vomiting, a drip is possible.
+
+Parent: Okay.
+
+Nurse: I'll put an ID band on her and get her into the paediatric acute area. You won't wait long.","Nurse: Hi, I'm Jess, come take a seat. Who's this little one? Parent: This is Lily, she's 4. She's been vomiting and having diarrhoea since yesterday. Nurse: Okay Lily, we'll help you feel better. How many times has she vomited? Parent: At least eight times since yesterday morning. Mostly today. Nurse: And her diarrhoea - how many loose stools? Parent: Seven or eight. Really watery. Nurse: Any blood in it? Parent: No blood. Nurse: Has she kept any fluids down today? Parent: Only tiny sips. Sometimes she vomits right after. Nurse: When was her last wee? Parent: This morning. Nothing since. Nurse: That's fewer than normal for her? Parent: Yes, usually she wees a lot. Nurse: Any fevers? Parent: Yes, 38 last night. We gave Panadol. Nurse: Is she more sleepy than usual? Parent: Yes, she just lies on me. She's never this quiet. Nurse: Has anyone else at home or daycare had gastro recently? Parent: Her brother last week, but he wasn't this sick. Nurse: Any abdominal pain? Parent: She says her tummy hurts sometimes. Nurse: Has she been drinking anything sugary like juice, or just water? Parent: Mostly water. We tried Hydralyte but she brought it up. Nurse: I'm just going to check her pulse, capillary refill, and have a look in her mouth…
+(checks)
+Her pulse is fast, her mouth is a bit dry, and cap refill is a little delayed. Parent: Is she very dehydrated? Nurse: She's showing signs of moderate dehydration. Not severely ill right now, but she needs proper fluids and close monitoring. Parent: Will she need a drip? Nurse: The doctors may try oral rehydration first, but with her vomiting, a drip is possible. Parent: Okay. Nurse: I'll put an ID band on her and get her into the paediatric acute area. You won't wait long.",3,2,2,3,3
+0004,Minor Head Injury - 9-year-old (ATS 4),"Nurse: Hi, I'm Kate. Tell me what happened today.
+
+Parent: My son Max, he's 9. He fell off the monkey bars at school and hit the back of his head.
+
+Nurse: When did that happen?
+
+Parent: About an hour ago.
+
+Nurse: Did he lose consciousness at all? Even briefly?
+
+Parent: No, he cried straight away.
+
+Nurse: Any vomiting afterwards?
+
+Parent: No vomiting.
+
+Nurse: Has he seemed confused, dazed, or not himself?
+
+Parent: No, he's been acting normally.
+
+Nurse: Headache?
+
+Parent: A mild one, he says.
+
+Nurse: Any neck pain or trouble moving his head?
+
+Parent: No.
+
+Nurse: Max, can you tell me your full name?
+
+Child: Max Taylor.
+
+Nurse: And where are we right now?
+
+Child: The hospital.
+
+Nurse: Good. Let me check your pupils and coordination…
+(checks pupils, gait, balance)
+Everything looks normal.
+
+Parent: Does he need a scan?
+
+Nurse: Based on his symptoms - no loss of consciousness, no vomiting, normal behaviour - a CT is unlikely. But he'll be seen and observed.
+
+Parent: Okay.
+
+Nurse: We'll pop on a wristband and get you into the minor injuries area. There might be a short wait, but he looks stable.","Nurse: Hi, I'm Kate. Tell me what happened today. Parent: My son Max, he's 9. He fell off the monkey bars at school and hit the back of his head. Nurse: When did that happen? Parent: About an hour ago. Nurse: Did he lose consciousness at all? Even briefly? Parent: No, he cried straight away. Nurse: Any vomiting afterwards? Parent: No vomiting. Nurse: Has he seemed confused, dazed, or not himself? Parent: No, he's been acting normally. Nurse: Headache? Parent: A mild one, he says. Nurse: Any neck pain or trouble moving his head? Parent: No. Nurse: Max, can you tell me your full name? Child: Max Taylor. Nurse: And where are we right now? Child: The hospital. Nurse: Good. Let me check your pupils and coordination…
+(checks pupils, gait, balance)
+Everything looks normal. Parent: Does he need a scan? Nurse: Based on his symptoms - no loss of consciousness, no vomiting, normal behaviour - a CT is unlikely. But he'll be seen and observed. Parent: Okay. Nurse: We'll pop on a wristband and get you into the minor injuries area. There might be a short wait, but he looks stable.",4,3,3,4,4
+0005,Laceration / Wound - 7-year-old (ATS 4),"Nurse: Hi, I'm Mark. Come on in. What happened to her arm?
+
+Parent: Sophie, she's 7. She slipped and cut her forearm on a bit of metal.
+
+Nurse: When did this happen?
+
+Parent: Around 40 minutes ago.
+
+Nurse: Was the wound bleeding heavily?
+
+Parent: It was at first, but we pressed on it and it stopped.
+
+Nurse: Any dizziness or fainting afterwards?
+
+Parent: No.
+
+Nurse: Any head strike or other injuries?
+
+Parent: No.
+
+Nurse: Vaccinations up to date?
+
+Parent: Yes, including tetanus.
+
+Nurse: Let me take a look…
+(examines wound)
+It's about 3 centimetres, straight cut, not actively bleeding. Likely needs stitches or glue.
+
+Parent: She's terrified of needles.
+
+Nurse: We'll numb the area first and keep her calm. We work with kids all day - she'll be okay.
+
+Parent: Thank you.
+
+Nurse: I'll put an ID band on. You'll be seen in the minor area. A bit of a wait but she's stable.","Nurse: Hi, I'm Mark. Come on in. What happened to her arm? Parent: Sophie, she's 7. She slipped and cut her forearm on a bit of metal. Nurse: When did this happen? Parent: Around 40 minutes ago. Nurse: Was the wound bleeding heavily? Parent: It was at first, but we pressed on it and it stopped. Nurse: Any dizziness or fainting afterwards? Parent: No. Nurse: Any head strike or other injuries? Parent: No. Nurse: Vaccinations up to date? Parent: Yes, including tetanus. Nurse: Let me take a look…
+(examines wound)
+It's about 3 centimetres, straight cut, not actively bleeding. Likely needs stitches or glue. Parent: She's terrified of needles. Nurse: We'll numb the area first and keep her calm. We work with kids all day - she'll be okay. Parent: Thank you. Nurse: I'll put an ID band on. You'll be seen in the minor area. A bit of a wait but she's stable.",4,3,3,4,4
+0006,Suspected Fracture - 10-year-old (ATS 4),"Nurse: Hi, I'm Ana. What's happened to your arm?
+
+Parent: My son Jai, 10, fell off his skateboard and hurt his wrist.
+
+Nurse: When did it happen?
+
+Parent: About an hour ago.
+
+Nurse: Jai, can you move your fingers for me?
+
+Child: Yes, but it hurts a lot.
+
+Nurse: Any numbness or tingling?
+
+Child: No.
+
+Nurse: Did you hit your head or fall on anything else?
+
+Child: No.
+
+Nurse: Let me feel the arm gently…
+(examines)
+There's swelling at the wrist, tender, but circulation is good - fingers warm and pink.
+
+Parent: Do you think it's broken?
+
+Nurse: Very possible. We'll get an X-ray.
+
+Parent: Will he need a cast?
+
+Nurse: Likely, depending on the fracture.
+
+Nurse: He's stable, so I'll place an ID band and get you into minors soon.","Nurse: Hi, I'm Ana. What's happened to your arm? Parent: My son Jai, 10, fell off his skateboard and hurt his wrist. Nurse: When did it happen? Parent: About an hour ago. Nurse: Jai, can you move your fingers for me? Child: Yes, but it hurts a lot. Nurse: Any numbness or tingling? Child: No. Nurse: Did you hit your head or fall on anything else? Child: No. Nurse: Let me feel the arm gently…
+(examines)
+There's swelling at the wrist, tender, but circulation is good - fingers warm and pink. Parent: Do you think it's broken? Nurse: Very possible. We'll get an X-ray. Parent: Will he need a cast? Nurse: Likely, depending on the fracture. Nurse: He's stable, so I'll place an ID band and get you into minors soon.",4,3,3,4,4
+0007,Abdominal Pain - Possible Appendicitis - 11-year-old (ATS 3),"Nurse: Hi, I'm Emma. Come take a seat. What's been happening?
+
+Parent: My son Leo, he's 11. He's had tummy pain since yesterday and it's worse today.
+
+Nurse: Leo, point with one finger where it hurts most.
+
+Child: Here, on the right side.
+
+Nurse: Did it start there?
+
+Child: No, it started around my belly button.
+
+Nurse: Any vomiting?
+
+Parent: Twice today.
+
+Nurse: Any diarrhoea?
+
+Parent: No bowel movement today.
+
+Nurse: Fever?
+
+Parent: Yes, 38.2.
+
+Nurse: Does the pain get worse when you walk or jump?
+
+Child: Yes, walking hurts.
+
+Nurse: I'm going to gently press your tummy… tell me when it hurts.
+(assesses)
+He's quite tender in the right lower quadrant.
+
+Parent: Is it appendicitis?
+
+Nurse: It's possible. He needs timely review, blood tests, and maybe imaging.
+
+Parent: Will he need surgery?
+
+Nurse: If it is appendicitis, yes - but the surgical team will explain everything.
+
+Nurse: I'll put an ID band on and get you into acute paediatrics.","Nurse: Hi, I'm Emma. Come take a seat. What's been happening? Parent: My son Leo, he's 11. He's had tummy pain since yesterday and it's worse today. Nurse: Leo, point with one finger where it hurts most. Child: Here, on the right side. Nurse: Did it start there? Child: No, it started around my belly button. Nurse: Any vomiting? Parent: Twice today. Nurse: Any diarrhoea? Parent: No bowel movement today. Nurse: Fever? Parent: Yes, 38.2. Nurse: Does the pain get worse when you walk or jump? Child: Yes, walking hurts. Nurse: I'm going to gently press your tummy… tell me when it hurts.
+(assesses)
+He's quite tender in the right lower quadrant. Parent: Is it appendicitis? Nurse: It's possible. He needs timely review, blood tests, and maybe imaging. Parent: Will he need surgery? Nurse: If it is appendicitis, yes - but the surgical team will explain everything. Nurse: I'll put an ID band on and get you into acute paediatrics.",3,2,2,3,3
+0008,Allergic Reaction / Anaphylaxis - 6-year-old (ATS 1-2),"Nurse: Hi, I'm Tom. Come straight over. What happened?
+
+Parent: Ava, she's 6. She accidentally ate peanuts.
+
+Nurse: When?
+
+Parent: About 20 minutes ago.
+
+Nurse: What symptoms has she had?
+
+Parent: Hives all over, swollen lips, hoarse voice, she says her throat feels tight.
+
+Nurse: Any difficulty breathing?
+
+Parent: A bit, she's struggling.
+
+Nurse: Did you use an EpiPen?
+
+Parent: Yes, 10 minutes ago.
+
+Nurse: Any vomiting?
+
+Parent: Once.
+
+Nurse: Let me check her quickly…
+(assesses airway, breathing)
+She's got facial swelling, hoarse voice, and mild respiratory effort. Oxygen is okay but this is still active anaphylaxis.
+
+Parent: Is she okay?
+
+Nurse: You did the right thing giving the EpiPen. We're taking her straight to resus - no waiting. She may need more medication.
+
+Parent: Okay, thank you.","Nurse: Hi, I'm Tom. Come straight over. What happened? Parent: Ava, she's 6. She accidentally ate peanuts. Nurse: When? Parent: About 20 minutes ago. Nurse: What symptoms has she had? Parent: Hives all over, swollen lips, hoarse voice, she says her throat feels tight. Nurse: Any difficulty breathing? Parent: A bit, she's struggling. Nurse: Did you use an EpiPen? Parent: Yes, 10 minutes ago. Nurse: Any vomiting? Parent: Once. Nurse: Let me check her quickly…
+(assesses airway, breathing)
+She's got facial swelling, hoarse voice, and mild respiratory effort. Oxygen is okay but this is still active anaphylaxis. Parent: Is she okay? Nurse: You did the right thing giving the EpiPen. We're taking her straight to resus - no waiting. She may need more medication. Parent: Okay, thank you.",1,0,0,1,1
+0009,Seizure with Fever - 3-year-old (ATS 2),"Nurse: Hi, I'm Jess. Is he okay right now?
+
+Parent: He's stopped fitting, but he had a seizure at home. I'm so scared.
+
+Nurse: You did the right thing coming quickly. When did the seizure happen?
+
+Parent: About 10 minutes before we arrived. It lasted around two minutes.
+
+Nurse: Was it his whole body shaking?
+
+Parent: Yes, arms and legs.
+
+Nurse: Any colour change?
+
+Parent: His lips went a bit blue.
+
+Nurse: Has he had a fever?
+
+Parent: Yes, since the afternoon.
+
+Nurse: Has he ever had a seizure before?
+
+Parent: No, never.
+
+Nurse: Any vomiting, rash, stiff neck?
+
+Parent: No.
+
+Nurse: I'm just going to check his breathing, colour, and response…
+(assesses)
+He's sleepy - that's normal after a seizure. His breathing is okay.
+
+Parent: Is this epilepsy?
+
+Nurse: Not necessarily. Many children have a single febrile seizure and never again. But because it's his first, we do need to assess him urgently.
+
+Parent: Okay.
+
+Nurse: I'll put on an ID band and take you straight to acute paediatrics.","Nurse: Hi, I'm Jess. Is he okay right now? Parent: He's stopped fitting, but he had a seizure at home. I'm so scared. Nurse: You did the right thing coming quickly. When did the seizure happen? Parent: About 10 minutes before we arrived. It lasted around two minutes. Nurse: Was it his whole body shaking? Parent: Yes, arms and legs. Nurse: Any colour change? Parent: His lips went a bit blue. Nurse: Has he had a fever? Parent: Yes, since the afternoon. Nurse: Has he ever had a seizure before? Parent: No, never. Nurse: Any vomiting, rash, stiff neck? Parent: No. Nurse: I'm just going to check his breathing, colour, and response…
+(assesses)
+He's sleepy - that's normal after a seizure. His breathing is okay. Parent: Is this epilepsy? Nurse: Not necessarily. Many children have a single febrile seizure and never again. But because it's his first, we do need to assess him urgently. Parent: Okay. Nurse: I'll put on an ID band and take you straight to acute paediatrics.",2,1,1,2,2
+0010,Foreign Body Ingestion (Coin) - 2-year-old (ATS 3),"Nurse: Hi, I'm Megan. What's happened today?
+
+Parent: My son Oliver, he's 2. We think he swallowed a coin.
+
+Nurse: When did it happen?
+
+Parent: About half an hour ago.
+
+Nurse: Did anyone see it?
+
+Parent: His sister saw him put it in his mouth. He coughed a lot at first.
+
+Nurse: Is he coughing now?
+
+Parent: No.
+
+Nurse: Any noisy breathing, wheezing, or trouble catching his breath?
+
+Parent: No, seems normal now.
+
+Nurse: Any drooling or refusing to swallow?
+
+Parent: No, he had a drink.
+
+Nurse: Any vomiting?
+
+Parent: None.
+
+Nurse: I'll check his breathing…
+(listens to chest)
+Air entry is equal, no stridor or wheeze. That's good.
+
+Parent: So is he safe?
+
+Nurse: He's stable, but we need to do an X-ray to see where the coin is - sometimes they get stuck in the oesophagus.
+
+Parent: Okay.
+
+Nurse: I'll get an ID band on him and send you through to the paediatric area.","Nurse: Hi, I'm Megan. What's happened today? Parent: My son Oliver, he's 2. We think he swallowed a coin. Nurse: When did it happen? Parent: About half an hour ago. Nurse: Did anyone see it? Parent: His sister saw him put it in his mouth. He coughed a lot at first. Nurse: Is he coughing now? Parent: No. Nurse: Any noisy breathing, wheezing, or trouble catching his breath? Parent: No, seems normal now. Nurse: Any drooling or refusing to swallow? Parent: No, he had a drink. Nurse: Any vomiting? Parent: None. Nurse: I'll check his breathing…
+(listens to chest)
+Air entry is equal, no stridor or wheeze. That's good. Parent: So is he safe? Nurse: He's stable, but we need to do an X-ray to see where the coin is - sometimes they get stuck in the oesophagus. Parent: Okay. Nurse: I'll get an ID band on him and send you through to the paediatric area.",3,2,2,3,3
+0011,Mental Health Crisis / Suicidal Ideation - 22-year-old Male (ATS 2),"Nurse: Hi, I'm Sam, one of the triage nurses. Come take a seat. What's brought you in tonight?
+
+Patient: I… I'm not doing well. I've been having thoughts about ending my life. I didn't feel safe at home.
+
+Nurse: Thank you for telling me. You've done the right thing coming in. Are you having those thoughts right now?
+
+Patient: Yeah… they keep coming into my head and I'm scared I might act on them.
+
+Nurse: Okay. I want to make sure you're safe. Have you tried to harm yourself today?
+
+Patient: I cut myself earlier on my arm. Not deep. And I had a lot to drink.
+
+Nurse: Thank you for being honest. Did you take any tablets or medications?
+
+Patient: No tablets, just alcohol.
+
+Nurse: Any drugs - anything like cannabis, pills, ice?
+
+Patient: No, just the drinking.
+
+Nurse: Do you have anyone here with you tonight?
+
+Patient: My friend's outside. He drove me here.
+
+Nurse: Alright. I'm just going to check your pulse and blood pressure while we talk, is that okay?
+(checks vitals)
+Your pulse is a bit fast, probably from the alcohol and anxiety. Breathing is okay.
+
+Patient: I feel awful.
+
+Nurse: I hear you. We're going to get you somewhere private and safe. No waiting room for you tonight. Do you have any medical or mental health diagnoses?
+
+Patient: Depression. I stopped taking my meds a few weeks ago.
+
+Nurse: Okay, thanks for letting me know. Any past suicide attempts?
+
+Patient: Once, last year.
+
+Nurse: Alright. You've done the right thing coming in before things got worse. I'm going to put an ID band on and move you into a safe room where the doctor and mental health team will see you urgently.","Nurse: Hi, I'm Sam, one of the triage nurses. Come take a seat. What's brought you in tonight? Patient: I… I'm not doing well. I've been having thoughts about ending my life. I didn't feel safe at home. Nurse: Thank you for telling me. You've done the right thing coming in. Are you having those thoughts right now? Patient: Yeah… they keep coming into my head and I'm scared I might act on them. Nurse: Okay. I want to make sure you're safe. Have you tried to harm yourself today? Patient: I cut myself earlier on my arm. Not deep. And I had a lot to drink. Nurse: Thank you for being honest. Did you take any tablets or medications? Patient: No tablets, just alcohol. Nurse: Any drugs - anything like cannabis, pills, ice? Patient: No, just the drinking. Nurse: Do you have anyone here with you tonight? Patient: My friend's outside. He drove me here. Nurse: Alright. I'm just going to check your pulse and blood pressure while we talk, is that okay?
+(checks vitals)
+Your pulse is a bit fast, probably from the alcohol and anxiety. Breathing is okay. Patient: I feel awful. Nurse: I hear you. We're going to get you somewhere private and safe. No waiting room for you tonight. Do you have any medical or mental health diagnoses? Patient: Depression. I stopped taking my meds a few weeks ago. Nurse: Okay, thanks for letting me know. Any past suicide attempts? Patient: Once, last year. Nurse: Alright. You've done the right thing coming in before things got worse. I'm going to put an ID band on and move you into a safe room where the doctor and mental health team will see you urgently.",2,1,2,3,2
+0012,Lower Abdominal Pain - Possible Ectopic Pregnancy - 23-year-old (ATS 3),"Nurse: Hi, I'm Claire. What's brought you in today?
+
+Patient: I'm having really bad lower tummy pain. I'm a week late for my period.
+
+Nurse: Okay. When did the pain start?
+
+Patient: This morning, but it's gotten much worse in the last couple of hours.
+
+Nurse: Is it across the lower abdomen or mainly one side?
+
+Patient: Mostly on the right. Sharp pain.
+
+Nurse: Any vaginal bleeding?
+
+Patient: Just some spotting earlier.
+
+Nurse: Any nausea or vomiting?
+
+Patient: A bit of nausea.
+
+Nurse: Could you be pregnant?
+
+Patient: Yes, it's definitely possible.
+
+Nurse: Any history of ectopic pregnancies, pelvic infections, or surgeries?
+
+Patient: No.
+
+Nurse: Any dizziness or feeling faint?
+
+Patient: Just a bit light-headed.
+
+Nurse: Okay, I'm just going to check your vitals…
+(checks BP, HR)
+Your pulse is a bit fast but your blood pressure is okay right now.
+
+Patient: Is this serious?
+
+Nurse: Because you're late on your period and have pain on one side with spotting, we do need to rule out an ectopic pregnancy. It might be something else, but it needs timely assessment.
+
+Patient: I was worried about that.
+
+Nurse: You've done the right thing coming in. I'll get a urine pregnancy test, bloods, and organise a doctor to see you soon.","Nurse: Hi, I'm Claire. What's brought you in today? Patient: I'm having really bad lower tummy pain. I'm a week late for my period. Nurse: Okay. When did the pain start? Patient: This morning, but it's gotten much worse in the last couple of hours. Nurse: Is it across the lower abdomen or mainly one side? Patient: Mostly on the right. Sharp pain. Nurse: Any vaginal bleeding? Patient: Just some spotting earlier. Nurse: Any nausea or vomiting? Patient: A bit of nausea. Nurse: Could you be pregnant? Patient: Yes, it's definitely possible. Nurse: Any history of ectopic pregnancies, pelvic infections, or surgeries? Patient: No. Nurse: Any dizziness or feeling faint? Patient: Just a bit light-headed. Nurse: Okay, I'm just going to check your vitals…
+(checks BP, HR)
+Your pulse is a bit fast but your blood pressure is okay right now. Patient: Is this serious? Nurse: Because you're late on your period and have pain on one side with spotting, we do need to rule out an ectopic pregnancy. It might be something else, but it needs timely assessment. Patient: I was worried about that. Nurse: You've done the right thing coming in. I'll get a urine pregnancy test, bloods, and organise a doctor to see you soon.",3,2,2,3,3
+0013,Ankle Injury / Suspected Sprain - 19-year-old  Male (ATS 4),"Nurse: Hi, I'm Matt. What's happened today?
+
+Patient: I twisted my ankle playing soccer about two hours ago.
+
+Nurse: Okay. Were you able to walk on it afterwards?
+
+Patient: Barely. I can put some weight but it's really painful.
+
+Nurse: Any popping sensation at the time?
+
+Patient: Yes, like something shifted.
+
+Nurse: Any swelling since?
+
+Patient: A lot of swelling around the outside.
+
+Nurse: Any numbness or tingling in your foot?
+
+Patient: No.
+
+Nurse: Any other injuries? Did you fall on your wrist or hit your head?
+
+Patient: No, just the ankle.
+
+Nurse: Let me take a quick look.
+(inspects ankle)
+Swelling over the lateral malleolus, tender to touch. Circulation is good, toes warm and moving.
+
+Patient: Do you think it's broken?
+
+Nurse: Could be a sprain, could be a fracture - we'll need an X-ray to know for sure.
+
+Patient: Okay.
+
+Nurse: You're stable, so you'll be seen in the minor injuries area once a room is free.","Nurse: Hi, I'm Matt. What's happened today? Patient: I twisted my ankle playing soccer about two hours ago. Nurse: Okay. Were you able to walk on it afterwards? Patient: Barely. I can put some weight but it's really painful. Nurse: Any popping sensation at the time? Patient: Yes, like something shifted. Nurse: Any swelling since? Patient: A lot of swelling around the outside. Nurse: Any numbness or tingling in your foot? Patient: No. Nurse: Any other injuries? Did you fall on your wrist or hit your head? Patient: No, just the ankle. Nurse: Let me take a quick look.
+(inspects ankle)
+Swelling over the lateral malleolus, tender to touch. Circulation is good, toes warm and moving. Patient: Do you think it's broken? Nurse: Could be a sprain, could be a fracture - we'll need an X-ray to know for sure. Patient: Okay. Nurse: You're stable, so you'll be seen in the minor injuries area once a room is free.",4,3,3,4,4
+0014,Alcohol + Oxycodone Intoxication - 25-year-old Male (ATS 2),"Nurse: Hi, I'm Nina. What's brought you in tonight?
+
+Patient: I drank a lot and took some oxycodone. Now I feel really out of it.
+
+Nurse: Okay. How much did you take?
+
+Patient: About six or seven tablets. And a lot of vodka.
+
+Nurse: Were you trying to harm yourself?
+
+Patient: No, I just wasn't thinking.
+
+Nurse: Any vomiting or trouble breathing?
+
+Patient: I feel really sleepy and nauseous.
+
+Nurse: I'm going to check your vitals…
+(checks BP, HR, RR)
+Your breathing is a bit slow but stable for now. Pulse is elevated.
+
+Nurse: When did you take the oxycodone?
+
+Patient: Maybe an hour ago.
+
+Nurse: Do you take it normally for pain?
+
+Patient: No, it was my partner's medication.
+
+Nurse: Any allergies? Medical problems?
+
+Patient: No.
+
+Nurse: Given the combination of alcohol and oxycodone, you're at risk of your breathing slowing down. We're taking you straight into the acute area so you can be monitored closely.","Nurse: Hi, I'm Nina. What's brought you in tonight? Patient: I drank a lot and took some oxycodone. Now I feel really out of it. Nurse: Okay. How much did you take? Patient: About six or seven tablets. And a lot of vodka. Nurse: Were you trying to harm yourself? Patient: No, I just wasn't thinking. Nurse: Any vomiting or trouble breathing? Patient: I feel really sleepy and nauseous. Nurse: I'm going to check your vitals…
+(checks BP, HR, RR)
+Your breathing is a bit slow but stable for now. Pulse is elevated. Nurse: When did you take the oxycodone? Patient: Maybe an hour ago. Nurse: Do you take it normally for pain? Patient: No, it was my partner's medication. Nurse: Any allergies? Medical problems? Patient: No. Nurse: Given the combination of alcohol and oxycodone, you're at risk of your breathing slowing down. We're taking you straight into the acute area so you can be monitored closely.",2,1,1,2,2
+0015,Moderate Asthma Exacerbation - 20-year-old Female (ATS 3),"Nurse: Hi, I'm Lisa. What's going on today?
+
+Patient: I've got asthma. Been short of breath since this morning and it's getting worse.
+
+Nurse: Have you used your Ventolin?
+
+Patient: Yes, 6 puffs across the last hour.
+
+Nurse: Has it helped?
+
+Patient: Only a little.
+
+Nurse: Any chest pain?
+
+Patient: Tightness, no actual pain.
+
+Nurse: Any fever or cough?
+
+Patient: Cough for two days, no fever.
+
+Nurse: Can you talk in full sentences right now?
+
+Patient: Yes, but it feels harder than usual.
+
+Nurse: Let me check your oxygen…
+(checks SpO₂)
+Oxygen is 96%. You're breathing a bit fast but not severely distressed.
+
+Nurse: Any hospitalisations for asthma before?
+
+Patient: Once as a kid.
+
+Nurse: Okay. You need treatment soon but not immediately life-threatening at the moment. I'll take you to acute care shortly for nebulisers and steroids.","Nurse: Hi, I'm Lisa. What's going on today? Patient: I've got asthma. Been short of breath since this morning and it's getting worse. Nurse: Have you used your Ventolin? Patient: Yes, 6 puffs across the last hour. Nurse: Has it helped? Patient: Only a little. Nurse: Any chest pain? Patient: Tightness, no actual pain. Nurse: Any fever or cough? Patient: Cough for two days, no fever. Nurse: Can you talk in full sentences right now? Patient: Yes, but it feels harder than usual. Nurse: Let me check your oxygen…
+(checks SpO₂)
+Oxygen is 96%. You're breathing a bit fast but not severely distressed. Nurse: Any hospitalisations for asthma before? Patient: Once as a kid. Nurse: Okay. You need treatment soon but not immediately life-threatening at the moment. I'll take you to acute care shortly for nebulisers and steroids.",3,2,2,3,3
+0016,Thunderclap Headache - Possible SAH - 28-year-old Female (ATS 2),"Nurse: Hi, I'm Tom. Tell me what's happened.
+
+Patient: I suddenly got the worst headache of my life about an hour ago. It hit instantly.
+
+Nurse: Okay - sudden onset at the exact moment it started?
+
+Patient: Yes. Like someone hit me with something.
+
+Nurse: Any neck stiffness?
+
+Patient: Yes, it hurts to move my head.
+
+Nurse: Any vomiting?
+
+Patient: Once.
+
+Nurse: Any weakness in your arms or legs? Trouble speaking?
+
+Patient: No weakness, but I feel really off.
+
+Nurse: Any history of migraines?
+
+Patient: No.
+
+Nurse: I'm going to check your vitals while we keep talking…
+(checks)
+Everything's stable for now but your symptoms are concerning.
+
+Nurse: Because this was a sudden, severe ""thunderclap"" headache with neck stiffness, we need to rule out things like a bleed in the brain.
+
+Patient: Oh god.
+
+Nurse: I know it sounds scary, but this is why you came in. We'll take you straight through.","Nurse: Hi, I'm Tom. Tell me what's happened. Patient: I suddenly got the worst headache of my life about an hour ago. It hit instantly. Nurse: Okay - sudden onset at the exact moment it started? Patient: Yes. Like someone hit me with something. Nurse: Any neck stiffness? Patient: Yes, it hurts to move my head. Nurse: Any vomiting? Patient: Once. Nurse: Any weakness in your arms or legs? Trouble speaking? Patient: No weakness, but I feel really off. Nurse: Any history of migraines? Patient: No. Nurse: I'm going to check your vitals while we keep talking…
+(checks)
+Everything's stable for now but your symptoms are concerning. Nurse: Because this was a sudden, severe ""thunderclap"" headache with neck stiffness, we need to rule out things like a bleed in the brain. Patient: Oh god. Nurse: I know it sounds scary, but this is why you came in. We'll take you straight through.",2,1,1,2,2
+0017,Cellulitis with Systemic Symptoms - 27-year-old Female (ATS 3),"Nurse: Hi, I'm Jenna. What's going on with your leg?
+
+Patient: It's swollen and red. Started as a small cut two days ago.
+
+Nurse: Okay. Has the redness been spreading?
+
+Patient: Yes, up my calf.
+
+Nurse: Any fever or chills?
+
+Patient: I had chills last night.
+
+Nurse: Any pus or discharge?
+
+Patient: A little.
+
+Nurse: Any trouble walking?
+
+Patient: Painful but I can walk.
+
+Nurse: Let me check…
+(examines leg)
+Warm, swollen, red streaking up the calf.
+
+Nurse: You've likely got a skin infection that needs antibiotics. We'll get blood tests and start treatment.
+
+Patient: Okay.","Nurse: Hi, I'm Jenna. What's going on with your leg? Patient: It's swollen and red. Started as a small cut two days ago. Nurse: Okay. Has the redness been spreading? Patient: Yes, up my calf. Nurse: Any fever or chills? Patient: I had chills last night. Nurse: Any pus or discharge? Patient: A little. Nurse: Any trouble walking? Patient: Painful but I can walk. Nurse: Let me check…
+(examines leg)
+Warm, swollen, red streaking up the calf. Nurse: You've likely got a skin infection that needs antibiotics. We'll get blood tests and start treatment. Patient: Okay.",3,2,2,3,3
+0018,Syncope / Collapse - 21-year-old Male (ATS 3),"Nurse: Hi, I'm Alex. What happened today?
+
+Patient: I fainted at work. Just blacked out.
+
+Nurse: Any warning signs before you collapsed?
+
+Patient: I felt light-headed and sweaty.
+
+Nurse: Did you hit your head?
+
+Patient: No, someone caught me.
+
+Nurse: Any chest pain, palpitations, or shortness of breath?
+
+Patient: No chest pain. Maybe a fast heartbeat.
+
+Nurse: Any previous fainting episodes?
+
+Patient: No.
+
+Nurse: Are you on any medications?
+
+Patient: No.
+
+Nurse: I'll check your vitals…
+(checks BP, HR)
+Pulse is a bit fast; BP is stable.
+
+Nurse: We'll get an ECG and bloods to investigate. You look stable for now.","Nurse: Hi, I'm Alex. What happened today? Patient: I fainted at work. Just blacked out. Nurse: Any warning signs before you collapsed? Patient: I felt light-headed and sweaty. Nurse: Did you hit your head? Patient: No, someone caught me. Nurse: Any chest pain, palpitations, or shortness of breath? Patient: No chest pain. Maybe a fast heartbeat. Nurse: Any previous fainting episodes? Patient: No. Nurse: Are you on any medications? Patient: No. Nurse: I'll check your vitals…
+(checks BP, HR)
+Pulse is a bit fast; BP is stable. Nurse: We'll get an ECG and bloods to investigate. You look stable for now.",3,2,2,3,3
+0019,Renal Colic - Severe Flank Pain - 26-year-old Male (ATS 3),"Nurse: Hi, I'm Priya. What's brought you in?
+
+Patient: I've got the worst pain in my right side. Comes in waves.
+
+Nurse: When did it start?
+
+Patient: About two hours ago.
+
+Nurse: Any burning when you pee?
+
+Patient: Yes, and my urine looked pink.
+
+Nurse: Any vomiting?
+
+Patient: Nauseous but no vomiting.
+
+Nurse: Pain out of 10?
+
+Patient: Ten. It's brutal.
+
+Nurse: Any fever or chills?
+
+Patient: No.
+
+Nurse: Let me check your vitals…
+(assesses)
+Pulse is elevated; BP okay.
+
+Nurse: This sounds like renal colic. We'll get you pain relief and tests shortly.","Nurse: Hi, I'm Priya. What's brought you in? Patient: I've got the worst pain in my right side. Comes in waves. Nurse: When did it start? Patient: About two hours ago. Nurse: Any burning when you pee? Patient: Yes, and my urine looked pink. Nurse: Any vomiting? Patient: Nauseous but no vomiting. Nurse: Pain out of 10? Patient: Ten. It's brutal. Nurse: Any fever or chills? Patient: No. Nurse: Let me check your vitals…
+(assesses)
+Pulse is elevated; BP okay. Nurse: This sounds like renal colic. We'll get you pain relief and tests shortly.",3,2,2,3,3
+0020,Assault / Domestic Violence - 24-year-old Female (ATS 3),"Nurse: Hi, I'm Mark. Are you okay to speak here or need a private room?
+
+Patient: Private room, please.
+
+(Moved to private area)
+
+Nurse: Take your time. Tell me what happened.
+
+Patient: My partner hit me tonight. Punched me in the ribs and face.
+
+Nurse: I'm very sorry that happened. Any loss of consciousness?
+
+Patient: No.
+
+Nurse: Any trouble breathing or severe pain?
+
+Patient: My ribs hurt a lot when I breathe.
+
+Nurse: Any weapons used?
+
+Patient: No.
+
+Nurse: Do you feel safe to return home tonight?
+
+Patient: No. Absolutely not.
+
+Nurse: Okay. We'll involve the doctor, social work, and support services. I'm going to check your vitals.
+(checks)
+Pulse is up but stable.
+
+Nurse: You'll be seen in the acute care area shortly, and we'll make sure you're supported and safe.","Nurse: Hi, I'm Mark. Are you okay to speak here or need a private room? Patient: Private room, please. (Moved to private area) Nurse: Take your time. Tell me what happened. Patient: My partner hit me tonight. Punched me in the ribs and face. Nurse: I'm very sorry that happened. Any loss of consciousness? Patient: No. Nurse: Any trouble breathing or severe pain? Patient: My ribs hurt a lot when I breathe. Nurse: Any weapons used? Patient: No. Nurse: Do you feel safe to return home tonight? Patient: No. Absolutely not. Nurse: Okay. We'll involve the doctor, social work, and support services. I'm going to check your vitals.
+(checks)
+Pulse is up but stable. Nurse: You'll be seen in the acute care area shortly, and we'll make sure you're supported and safe.",3,2,2,3,3
+0021,Chest Pain - Possible ACS - 54-year-old (ATS 2) Female,"Nurse: Hi, I'm Sarah. Let's get you sitting down. Tell me what brought you in today.
+
+Patient: I've got this chest pain. Started about 30 minutes ago while I was watching TV.
+
+Nurse: Okay. Can you point to where it hurts?
+
+Patient: Right in the centre. It's tight. And it's going into my left arm.
+
+Nurse: Did it come on suddenly or build up?
+
+Patient: Pretty suddenly.
+
+Nurse: Any shortness of breath?
+
+Patient: Yes, I feel like I can't get a full breath.
+
+Nurse: Any nausea or sweating?
+
+Patient: Sweating heaps. Felt sick too.
+
+Nurse: Have you had chest pain like this before?
+
+Patient: No, never.
+
+Nurse: Any heart problems? High blood pressure, high cholesterol?
+
+Patient: Yeah, I've got high blood pressure and I smoke.
+
+Nurse: Okay. I'm just putting this pulse oximeter on your finger and checking your blood pressure…
+(checks)
+Your blood pressure is a bit elevated and your heart rate's fast.
+
+Nurse: Have you taken anything for the pain?
+
+Patient: No.
+
+Nurse: Any recent long trips or calf pain?
+
+Patient: No.
+
+Nurse: Okay. Your symptoms are concerning for a heart-related cause, so we'll get an ECG straight away and bring you through to the acute area now.
+
+Patient: Is it a heart attack?
+
+Nurse: We don't know yet, but we need to check urgently. You're in the right place.","Nurse: Hi, I'm Sarah. Let's get you sitting down. Tell me what brought you in today. Patient: I've got this chest pain. Started about 30 minutes ago while I was watching TV. Nurse: Okay. Can you point to where it hurts? Patient: Right in the centre. It's tight. And it's going into my left arm. Nurse: Did it come on suddenly or build up? Patient: Pretty suddenly. Nurse: Any shortness of breath? Patient: Yes, I feel like I can't get a full breath. Nurse: Any nausea or sweating? Patient: Sweating heaps. Felt sick too. Nurse: Have you had chest pain like this before? Patient: No, never. Nurse: Any heart problems? High blood pressure, high cholesterol? Patient: Yeah, I've got high blood pressure and I smoke. Nurse: Okay. I'm just putting this pulse oximeter on your finger and checking your blood pressure…
+(checks)
+Your blood pressure is a bit elevated and your heart rate's fast. Nurse: Have you taken anything for the pain? Patient: No. Nurse: Any recent long trips or calf pain? Patient: No. Nurse: Okay. Your symptoms are concerning for a heart-related cause, so we'll get an ECG straight away and bring you through to the acute area now. Patient: Is it a heart attack? Nurse: We don't know yet, but we need to check urgently. You're in the right place.",2,1,1,2,2
+0022,Right Upper Quadrant Abdominal Pain - Possible Cholecystitis - 45-year-old Female (ATS 3),"Nurse: Hi, I'm James. What's brought you in today?
+
+Patient: Bad pain under my right ribs since last night. It's getting worse.
+
+Nurse: When did it start exactly?
+
+Patient: After dinner yesterday. It hasn't gone away.
+
+Nurse: What did you eat?
+
+Patient: Fried chicken and chips.
+
+Nurse: Does the pain move anywhere?
+
+Patient: Into my back, sort of under my shoulder blade.
+
+Nurse: Any nausea or vomiting?
+
+Patient: Yes, vomited once this morning.
+
+Nurse: Any fever?
+
+Patient: Felt hot overnight.
+
+Nurse: Passing urine normally? Any dark-coloured urine?
+
+Patient: Urine looks normal.
+
+Nurse: Any yellowing of the eyes or skin?
+
+Patient: No.
+
+Nurse: Any previous gallbladder issues?
+
+Patient: No.
+
+Nurse: I'm just pressing gently on your tummy… tell me if it gets worse.
+(presses RUQ)
+
+Patient: Ah-yep, that hurts.
+
+Nurse: Tender on the right side. We need some blood tests and possibly an ultrasound to look at your gallbladder.
+
+Patient: Am I okay to wait?
+
+Nurse: You're stable, but you'll be seen soon in the acute area.","Nurse: Hi, I'm James. What's brought you in today? Patient: Bad pain under my right ribs since last night. It's getting worse. Nurse: When did it start exactly? Patient: After dinner yesterday. It hasn't gone away. Nurse: What did you eat? Patient: Fried chicken and chips. Nurse: Does the pain move anywhere? Patient: Into my back, sort of under my shoulder blade. Nurse: Any nausea or vomiting? Patient: Yes, vomited once this morning. Nurse: Any fever? Patient: Felt hot overnight. Nurse: Passing urine normally? Any dark-coloured urine? Patient: Urine looks normal. Nurse: Any yellowing of the eyes or skin? Patient: No. Nurse: Any previous gallbladder issues? Patient: No. Nurse: I'm just pressing gently on your tummy… tell me if it gets worse.
+(presses RUQ) Patient: Ah-yep, that hurts. Nurse: Tender on the right side. We need some blood tests and possibly an ultrasound to look at your gallbladder. Patient: Am I okay to wait? Nurse: You're stable, but you'll be seen soon in the acute area.",3,2,2,3,3
+0023,Shortness of Breath - COPD Exacerbation - 61-year-old Male (ATS 2),"Nurse: Hi, I'm Emma. You look a bit breathless - let's get you seated. Tell me what's going on.
+
+Patient: I've been short of breath since this morning. Getting worse.
+
+Nurse: Any cough?
+
+Patient: Yes, with greenish phlegm for a few days.
+
+Nurse: Any fever?
+
+Patient: Not sure, but I've felt hot and cold.
+
+Nurse: Any chest pain?
+
+Patient: No pain, just tight.
+
+Nurse: Do you have a history of COPD?
+
+Patient: Yes, for years.
+
+Nurse: Have you been using your inhalers?
+
+Patient: Yes, more than usual today.
+
+Nurse: I'm just going to check your oxygen…
+(checks SpO₂)
+Your oxygen level is 90% on room air.
+
+Nurse: Any swelling in your legs? Any recent long trips?
+
+Patient: No.
+
+Nurse: Alright, we need to get you onto some oxygen and nebulisers. We'll take you straight into the acute area.
+
+Patient: Okay… I'm feeling scared.
+
+Nurse: You're in the right place, we'll look after you.","Nurse: Hi, I'm Emma. You look a bit breathless - let's get you seated. Tell me what's going on. Patient: I've been short of breath since this morning. Getting worse. Nurse: Any cough? Patient: Yes, with greenish phlegm for a few days. Nurse: Any fever? Patient: Not sure, but I've felt hot and cold. Nurse: Any chest pain? Patient: No pain, just tight. Nurse: Do you have a history of COPD? Patient: Yes, for years. Nurse: Have you been using your inhalers? Patient: Yes, more than usual today. Nurse: I'm just going to check your oxygen…
+(checks SpO₂)
+Your oxygen level is 90% on room air. Nurse: Any swelling in your legs? Any recent long trips? Patient: No. Nurse: Alright, we need to get you onto some oxygen and nebulisers. We'll take you straight into the acute area. Patient: Okay… I'm feeling scared. Nurse: You're in the right place, we'll look after you.",2,1,1,2,2
+0024,Worsening Headache - Atypical Migraine vs Red Flag - 37-year-old Female (ATS 2),"Nurse: Hi, I'm Lily. What's brought you in today?
+
+Patient: I've had this headache for three days and it's getting worse. Not like my usual migraines.
+
+Nurse: Where is the pain?
+
+Patient: Across my whole head, throbbing.
+
+Nurse: Any visual changes?
+
+Patient: Blurry vision sometimes.
+
+Nurse: Nausea or vomiting?
+
+Patient: Nausea, no vomiting.
+
+Nurse: Any stiff neck?
+
+Patient: A little.
+
+Nurse: Any fevers or recent infections?
+
+Patient: I had a cold last week.
+
+Nurse: Any weakness in your arms or legs? Trouble speaking?
+
+Patient: No.
+
+Nurse: I'm going to check your pulse and BP…
+(checks)
+Vitals look okay.
+
+Nurse: Since this is different from your usual headaches and getting worse, we'll get you checked out with some investigations.
+
+Patient: Do you think it's serious?
+
+Nurse: Not necessarily, but we don't ignore headaches that change in pattern.","Nurse: Hi, I'm Lily. What's brought you in today? Patient: I've had this headache for three days and it's getting worse. Not like my usual migraines. Nurse: Where is the pain? Patient: Across my whole head, throbbing. Nurse: Any visual changes? Patient: Blurry vision sometimes. Nurse: Nausea or vomiting? Patient: Nausea, no vomiting. Nurse: Any stiff neck? Patient: A little. Nurse: Any fevers or recent infections? Patient: I had a cold last week. Nurse: Any weakness in your arms or legs? Trouble speaking? Patient: No. Nurse: I'm going to check your pulse and BP…
+(checks)
+Vitals look okay. Nurse: Since this is different from your usual headaches and getting worse, we'll get you checked out with some investigations. Patient: Do you think it's serious? Nurse: Not necessarily, but we don't ignore headaches that change in pattern.",2,1,3,4,2
+0025,Acute Back Pain - No Red Flags - 40-year-old Male (ATS 4),"Nurse: Hi, I'm Andrew. What's going on with your back today?
+
+Patient: I hurt my lower back lifting boxes yesterday. It's really painful today.
+
+Nurse: Where exactly is the pain?
+
+Patient: Lower back, mostly on the right.
+
+Nurse: Any numbness or tingling in your legs?
+
+Patient: No.
+
+Nurse: Any trouble walking?
+
+Patient: Just because of the pain.
+
+Nurse: Any trouble passing urine? Any incontinence?
+
+Patient: No.
+
+Nurse: Any fever or unexpected weight loss?
+
+Patient: No.
+
+Nurse: Any previous back problems?
+
+Patient: Just minor aches.
+
+Nurse: I'll check your movement…
+(Patient bends slightly, winces)
+Tender but no red flags.
+
+Nurse: This looks like a muscular back strain. We'll get you pain relief and a doctor will review you shortly.","Nurse: Hi, I'm Andrew. What's going on with your back today? Patient: I hurt my lower back lifting boxes yesterday. It's really painful today. Nurse: Where exactly is the pain? Patient: Lower back, mostly on the right. Nurse: Any numbness or tingling in your legs? Patient: No. Nurse: Any trouble walking? Patient: Just because of the pain. Nurse: Any trouble passing urine? Any incontinence? Patient: No. Nurse: Any fever or unexpected weight loss? Patient: No. Nurse: Any previous back problems? Patient: Just minor aches. Nurse: I'll check your movement…
+(Patient bends slightly, winces)
+Tender but no red flags. Nurse: This looks like a muscular back strain. We'll get you pain relief and a doctor will review you shortly.",4,3,3,4,4
+0026,Fall + Wrist Deformity - Possible Fracture - 48-year-old Female (ATS 3),"Nurse: Hi, I'm Tom. What happened to your wrist?
+
+Patient: I slipped at work and landed on my hand about an hour ago. It's really swollen.
+
+Nurse: Any head strike?
+
+Patient: No.
+
+Nurse: Can you move your fingers?
+
+Patient: Barely. It's very painful.
+
+Nurse: Any numbness or tingling?
+
+Patient: No.
+
+Nurse: Let me have a look…
+(examines)
+There's an obvious deformity here, likely a fracture. Fingers are warm, good colour.
+
+Patient: Is it broken?
+
+Nurse: Very likely, yes. We'll get an X-ray and pain relief started.
+
+Patient: I feel a bit shaky.
+
+Nurse: That's normal with pain. You're stable but need timely treatment. I'll get your ID band on.","Nurse: Hi, I'm Tom. What happened to your wrist? Patient: I slipped at work and landed on my hand about an hour ago. It's really swollen. Nurse: Any head strike? Patient: No. Nurse: Can you move your fingers? Patient: Barely. It's very painful. Nurse: Any numbness or tingling? Patient: No. Nurse: Let me have a look…
+(examines)
+There's an obvious deformity here, likely a fracture. Fingers are warm, good colour. Patient: Is it broken? Nurse: Very likely, yes. We'll get an X-ray and pain relief started. Patient: I feel a bit shaky. Nurse: That's normal with pain. You're stable but need timely treatment. I'll get your ID band on.",3,2,2,3,3
+0027,Vertigo - Likely Peripheral - 34-year-old Female (ATS 4),"Nurse: Hi, I'm Kate. What's happening today?
+
+Patient: The room's been spinning since this morning, especially when I move my head.
+
+Nurse: Any hearing loss or ringing?
+
+Patient: Some ringing in my left ear.
+
+Nurse: Any nausea?
+
+Patient: A bit, yes.
+
+Nurse: Any weakness, slurred speech, or trouble walking?
+
+Patient: No weakness. I can walk, just feel dizzy.
+
+Nurse: Any recent colds or ear infections?
+
+Patient: I had a cold last week.
+
+Nurse: I'll check your vitals…
+(checks)
+Stable so far.
+
+Nurse: This may be peripheral vertigo, like labyrinthitis. We'll get you assessed.","Nurse: Hi, I'm Kate. What's happening today? Patient: The room's been spinning since this morning, especially when I move my head. Nurse: Any hearing loss or ringing? Patient: Some ringing in my left ear. Nurse: Any nausea? Patient: A bit, yes. Nurse: Any weakness, slurred speech, or trouble walking? Patient: No weakness. I can walk, just feel dizzy. Nurse: Any recent colds or ear infections? Patient: I had a cold last week. Nurse: I'll check your vitals…
+(checks)
+Stable so far. Nurse: This may be peripheral vertigo, like labyrinthitis. We'll get you assessed.",4,3,3,4,4
+0028,Cellulitis - Spreading Redness - 59-year-old Male (ATS 3),"Nurse: Hi, I'm Priya. What's going on with your leg?
+
+Patient: It started as a scratch but now it's red and hot and spreading up my calf.
+
+Nurse: When did it start?
+
+Patient: Two days ago.
+
+Nurse: Any fever or chills?
+
+Patient: Yes, last night.
+
+Nurse: Any swelling or pus?
+
+Patient: Some swelling, no pus.
+
+Nurse: Are you diabetic?
+
+Patient: Yes, type 2.
+
+Nurse: Let me check…
+(examines)
+Area is warm, swollen, spreading.
+
+Nurse: This needs IV antibiotics and blood tests.","Nurse: Hi, I'm Priya. What's going on with your leg? Patient: It started as a scratch but now it's red and hot and spreading up my calf. Nurse: When did it start? Patient: Two days ago. Nurse: Any fever or chills? Patient: Yes, last night. Nurse: Any swelling or pus? Patient: Some swelling, no pus. Nurse: Are you diabetic? Patient: Yes, type 2. Nurse: Let me check…
+(examines)
+Area is warm, swollen, spreading. Nurse: This needs IV antibiotics and blood tests.",3,2,2,3,3
+0029,GI Bleed - Haematemesis - 52-year-old Male (ATS 2),"Nurse: Hi, I'm Sarah. Tell me what's going on.
+
+Patient: I vomited blood about an hour ago. Dark red.
+
+Nurse: Roughly how much?
+
+Patient: Enough to fill part of the toilet bowl.
+
+Nurse: Any black stools recently?
+
+Patient: Yes, for two days.
+
+Nurse: Any dizziness or fainting?
+
+Patient: I feel light-headed.
+
+Nurse: Any history of stomach ulcers or liver problems?
+
+Patient: I drink a lot… and I've had ulcers before.
+
+Nurse: I'm checking your vitals…
+(checks)
+Your blood pressure is a bit low and your heart rate is high.
+
+Nurse: We need to get you into resus now for urgent assessment.","Nurse: Hi, I'm Sarah. Tell me what's going on. Patient: I vomited blood about an hour ago. Dark red. Nurse: Roughly how much? Patient: Enough to fill part of the toilet bowl. Nurse: Any black stools recently? Patient: Yes, for two days. Nurse: Any dizziness or fainting? Patient: I feel light-headed. Nurse: Any history of stomach ulcers or liver problems? Patient: I drink a lot… and I've had ulcers before. Nurse: I'm checking your vitals…
+(checks)
+Your blood pressure is a bit low and your heart rate is high. Nurse: We need to get you into resus now for urgent assessment.",2,1,1,2,2
+0030,Acute Urinary Retention - 63-year-old Male (ATS 3),"Nurse: Hi, I'm Mark. What's brought you in?
+
+Patient: I haven't been able to pass urine since last night. My bladder feels like it's going to burst.
+
+Nurse: Any previous issues with your prostate?
+
+Patient: Yes, enlarged prostate.
+
+Nurse: Any blood in your urine recently?
+
+Patient: A little yesterday.
+
+Nurse: Any fever or back pain?
+
+Patient: No.
+
+Nurse: I'll press lightly over your lower belly…
+(presses)
+
+Patient: Oh! That's really uncomfortable.
+
+Nurse: Your bladder is very full. You'll need a catheter to relieve the retention. We'll get you seen soon.","Nurse: Hi, I'm Mark. What's brought you in? Patient: I haven't been able to pass urine since last night. My bladder feels like it's going to burst. Nurse: Any previous issues with your prostate? Patient: Yes, enlarged prostate. Nurse: Any blood in your urine recently? Patient: A little yesterday. Nurse: Any fever or back pain? Patient: No. Nurse: I'll press lightly over your lower belly…
+(presses) Patient: Oh! That's really uncomfortable. Nurse: Your bladder is very full. You'll need a catheter to relieve the retention. We'll get you seen soon.",3,2,2,3,3
+0031,Fall - Suspected Hip Fracture - 82-year-old Female (ATS 2),"Nurse: Hi, I'm Emma. Let's get you comfortable. Can you tell me what happened today?
+
+Patient: I fell in the bathroom this morning. My right hip hurts terribly.
+
+Nurse: I'm sorry to hear that. Did you trip or did you feel dizzy first?
+
+Patient: I think I just felt weak and my legs gave way.
+
+Nurse: Did you hit your head or lose consciousness?
+
+Patient: No, I stayed awake.
+
+Nurse: Any chest pain or palpitations before the fall?
+
+Patient: No.
+
+Nurse: Are you able to move that right leg at all?
+
+Patient: No, it's too painful.
+
+Nurse: Let me take a look…
+(observes leg)
+Your leg looks shortened and turned outward - that can happen with a hip fracture.
+
+Nurse: Do you take any blood thinners such as aspirin, warfarin, apixaban?
+
+Patient: Yes, apixaban for my AF.
+
+Nurse: Thank you. I'm going to check your blood pressure and oxygen…
+(checks vitals)
+Vitals are stable.
+
+Nurse: We need to get some strong pain relief started and X-rays urgently. You'll be going through to acute care straight away.
+
+Patient: Am I going to need surgery?
+
+Nurse: The doctors will review your scans, but it's possible. You're in the right place for quick assessment.","Nurse: Hi, I'm Emma. Let's get you comfortable. Can you tell me what happened today? Patient: I fell in the bathroom this morning. My right hip hurts terribly. Nurse: I'm sorry to hear that. Did you trip or did you feel dizzy first? Patient: I think I just felt weak and my legs gave way. Nurse: Did you hit your head or lose consciousness? Patient: No, I stayed awake. Nurse: Any chest pain or palpitations before the fall? Patient: No. Nurse: Are you able to move that right leg at all? Patient: No, it's too painful. Nurse: Let me take a look…
+(observes leg)
+Your leg looks shortened and turned outward - that can happen with a hip fracture. Nurse: Do you take any blood thinners such as aspirin, warfarin, apixaban? Patient: Yes, apixaban for my AF. Nurse: Thank you. I'm going to check your blood pressure and oxygen…
+(checks vitals)
+Vitals are stable. Nurse: We need to get some strong pain relief started and X-rays urgently. You'll be going through to acute care straight away. Patient: Am I going to need surgery? Nurse: The doctors will review your scans, but it's possible. You're in the right place for quick assessment.",2,1,1,2,2
+0032,Acute Confusion / Delirium - 78-year-old male (ATS 2),"Nurse: Hi, I'm Tom. Is this your father?
+
+Relative: Yes. He woke up very confused today, not like himself.
+
+Nurse: When did you first notice the change?
+
+Relative: When he got up this morning. He didn't recognise where he was.
+
+Nurse: Has something like this happened before?
+
+Relative: Only once with a UTI last year.
+
+Nurse: Has he had any falls recently?
+
+Relative: Yes, yesterday he slipped but said he was fine.
+
+Nurse: Any fever, cough, or pain when passing urine?
+
+Relative: He said his urine stings.
+
+Nurse: I'm going to ask him a few questions.
+(to patient)
+Sir, do you know where you are?
+
+Patient: …Home? No… I don't know.
+
+Nurse: Okay, thank you. Let me check his vitals.
+(checks)
+Temperature is up a bit, heart rate fast.
+
+Nurse: He's showing signs of delirium. Could be infection, could be related to the fall. We'll get him straight through for urgent assessment.
+
+Relative: Thank you.","Nurse: Hi, I'm Tom. Is this your father? Relative: Yes. He woke up very confused today, not like himself. Nurse: When did you first notice the change? Relative: When he got up this morning. He didn't recognise where he was. Nurse: Has something like this happened before? Relative: Only once with a UTI last year. Nurse: Has he had any falls recently? Relative: Yes, yesterday he slipped but said he was fine. Nurse: Any fever, cough, or pain when passing urine? Relative: He said his urine stings. Nurse: I'm going to ask him a few questions.
+(to patient)
+Sir, do you know where you are? Patient: …Home? No… I don't know. Nurse: Okay, thank you. Let me check his vitals.
+(checks)
+Temperature is up a bit, heart rate fast. Nurse: He's showing signs of delirium. Could be infection, could be related to the fall. We'll get him straight through for urgent assessment. Relative: Thank you.",2,1,1,2,2
+0033,Abdominal Pain - Possible Bowel Obstruction - 74-year-old Female (ATS 3),"Nurse: Hi, I'm Lily. Tell me what's happening today.
+
+Patient: My stomach's been hurting since last night. It's crampy and feels full.
+
+Nurse: Where exactly is the pain?
+
+Patient: All over, but worse around the middle.
+
+Nurse: Any vomiting?
+
+Patient: Yes, twice this morning.
+
+Nurse: When did you last pass wind or have a bowel motion?
+
+Patient: Yesterday morning. Nothing since.
+
+Nurse: Any previous abdominal surgeries?
+
+Patient: Yes, bowel surgery 20 years ago.
+
+Nurse: Any fevers?
+
+Patient: I don't think so.
+
+Nurse: I'll just press on your abdomen gently…
+(assesses)
+It's tender and quite distended.
+
+Nurse: You may have a bowel obstruction. We'll get an abdominal X-ray and CT organised.
+
+Patient: Okay.
+
+Nurse: You're stable, so I'll put an ID band on and move you to acute care shortly.","Nurse: Hi, I'm Lily. Tell me what's happening today. Patient: My stomach's been hurting since last night. It's crampy and feels full. Nurse: Where exactly is the pain? Patient: All over, but worse around the middle. Nurse: Any vomiting? Patient: Yes, twice this morning. Nurse: When did you last pass wind or have a bowel motion? Patient: Yesterday morning. Nothing since. Nurse: Any previous abdominal surgeries? Patient: Yes, bowel surgery 20 years ago. Nurse: Any fevers? Patient: I don't think so. Nurse: I'll just press on your abdomen gently…
+(assesses)
+It's tender and quite distended. Nurse: You may have a bowel obstruction. We'll get an abdominal X-ray and CT organised. Patient: Okay. Nurse: You're stable, so I'll put an ID band on and move you to acute care shortly.",3,2,2,3,3
+0034,Shortness of Breath - Heart Failure Exacerbation - 79-year-old Male (ATS 2),"Nurse: Hi, I'm James. You look breathless - let's get you sitting upright. What's been happening?
+
+Patient: I suddenly got very short of breath this afternoon.
+
+Nurse: Any chest pain?
+
+Patient: Just tightness.
+
+Nurse: Any swelling in your legs recently?
+
+Patient: Yes, more than usual this week.
+
+Nurse: Do you have heart problems?
+
+Patient: Yes, heart failure.
+
+Nurse: I'm checking your oxygen…
+(checks)
+Your oxygen is low at 88% on room air.
+
+Nurse: Any cough? Fever?
+
+Patient: No fever.
+
+Nurse: Any recent increase in your weight or fluid retention?
+
+Patient: Yes, I've been heavier this week.
+
+Nurse: Okay. You need oxygen, monitoring, and urgent treatment. We'll take you straight into the acute area now.
+
+Patient: Thank you, I was really scared.","Nurse: Hi, I'm James. You look breathless - let's get you sitting upright. What's been happening? Patient: I suddenly got very short of breath this afternoon. Nurse: Any chest pain? Patient: Just tightness. Nurse: Any swelling in your legs recently? Patient: Yes, more than usual this week. Nurse: Do you have heart problems? Patient: Yes, heart failure. Nurse: I'm checking your oxygen…
+(checks)
+Your oxygen is low at 88% on room air. Nurse: Any cough? Fever? Patient: No fever. Nurse: Any recent increase in your weight or fluid retention? Patient: Yes, I've been heavier this week. Nurse: Okay. You need oxygen, monitoring, and urgent treatment. We'll take you straight into the acute area now. Patient: Thank you, I was really scared.",2,1,1,2,2
+0035,Atypical Chest Pain / Possible ACS - 73-year-old Female (ATS 2),"Nurse: Hi, I'm Priya. Tell me what brought you in today.
+
+Patient: I've been feeling weak and breathless. A pressure in my chest but not really pain.
+
+Nurse: When did this start?
+
+Patient: A couple of hours ago.
+
+Nurse: Any nausea or sweating?
+
+Patient: A bit sweaty.
+
+Nurse: Any history of heart conditions?
+
+Patient: I had a heart attack five years ago.
+
+Nurse: I'm going to check your vitals…
+(checks)
+Heart rate fast; BP slightly low.
+
+Nurse: With your history and these symptoms, we need an ECG straight away. We'll bring you through to the acute area.
+
+Patient: Am I having another heart attack?
+
+Nurse: Not necessarily, but we can't delay checking.","Nurse: Hi, I'm Priya. Tell me what brought you in today. Patient: I've been feeling weak and breathless. A pressure in my chest but not really pain. Nurse: When did this start? Patient: A couple of hours ago. Nurse: Any nausea or sweating? Patient: A bit sweaty. Nurse: Any history of heart conditions? Patient: I had a heart attack five years ago. Nurse: I'm going to check your vitals…
+(checks)
+Heart rate fast; BP slightly low. Nurse: With your history and these symptoms, we need an ECG straight away. We'll bring you through to the acute area. Patient: Am I having another heart attack? Nurse: Not necessarily, but we can't delay checking.",2,1,1,2,2
+0036,Fall With Laceration - On Anticoagulants - 85-year-old Female (ATS 3),"Nurse: Hi, I'm Alex. What happened today?
+
+Patient: I tripped over the rug and cut my arm.
+
+Nurse: Did you hit your head?
+
+Patient: No.
+
+Nurse: Any dizziness before the fall?
+
+Patient: No, just clumsy.
+
+Nurse: Are you on any blood thinners?
+
+Patient: Yes, warfarin.
+
+Nurse: Let me examine the cut…
+(inspects)
+It's a 4cm laceration. Bleeding is controlled.
+
+Nurse: With your blood thinner, we'll need blood tests to check clotting before stitching.
+
+Patient: Okay.
+
+Nurse: You're stable, so I'll get you into minors shortly.","Nurse: Hi, I'm Alex. What happened today? Patient: I tripped over the rug and cut my arm. Nurse: Did you hit your head? Patient: No. Nurse: Any dizziness before the fall? Patient: No, just clumsy. Nurse: Are you on any blood thinners? Patient: Yes, warfarin. Nurse: Let me examine the cut…
+(inspects)
+It's a 4cm laceration. Bleeding is controlled. Nurse: With your blood thinner, we'll need blood tests to check clotting before stitching. Patient: Okay. Nurse: You're stable, so I'll get you into minors shortly.",3,2,3,4,3
+0037,Suspected Urosepsis - 76-year-old Female (ATS 2),"Nurse: Hi, I'm Jess. What's been happening?
+
+Relative: Mum's been very sleepy and confused. Her urine smells strong.
+
+Nurse: Has she had fever or shaking chills?
+
+Relative: Yes, she was burning up last night.
+
+Nurse: Any pain when passing urine?
+
+Relative: She said yes yesterday.
+
+Nurse: I'm going to check her vitals…
+(checks)
+Temp 38.9, HR 112, BP low-normal.
+
+Nurse: These signs could indicate a serious infection coming from the urinary tract. We need to bring her straight into the acute area for blood tests, fluids, and antibiotics.
+
+Relative: Okay.","Nurse: Hi, I'm Jess. What's been happening? Relative: Mum's been very sleepy and confused. Her urine smells strong. Nurse: Has she had fever or shaking chills? Relative: Yes, she was burning up last night. Nurse: Any pain when passing urine? Relative: She said yes yesterday. Nurse: I'm going to check her vitals…
+(checks)
+Temp 38.9, HR 112, BP low-normal. Nurse: These signs could indicate a serious infection coming from the urinary tract. We need to bring her straight into the acute area for blood tests, fluids, and antibiotics. Relative: Okay.",2,1,1,2,2
+0038,GI Bleed - Black Stools / Dizziness - 81-year-old Male (ATS 2),"Nurse: Hi, I'm Sam. Tell me what's been going on.
+
+Patient: My stools have been very dark for two days and I feel faint.
+
+Nurse: Any vomiting blood?
+
+Patient: No, just the stools.
+
+Nurse: Are you on any blood thinners?
+
+Patient: Yes, apixaban.
+
+Nurse: Any abdominal pain?
+
+Patient: Not much.
+
+Nurse: I'm checking your vitals…
+(checks)
+BP is slightly low, heart rate is high.
+
+Nurse: These signs could indicate a gastrointestinal bleed. We're going to take you straight through for urgent care.
+
+Patient: Oh dear.
+
+Nurse: You're in the right place - we'll manage it.","Nurse: Hi, I'm Sam. Tell me what's been going on. Patient: My stools have been very dark for two days and I feel faint. Nurse: Any vomiting blood? Patient: No, just the stools. Nurse: Are you on any blood thinners? Patient: Yes, apixaban. Nurse: Any abdominal pain? Patient: Not much. Nurse: I'm checking your vitals…
+(checks)
+BP is slightly low, heart rate is high. Nurse: These signs could indicate a gastrointestinal bleed. We're going to take you straight through for urgent care. Patient: Oh dear. Nurse: You're in the right place - we'll manage it.",2,1,1,2,2
+0039,Cellulitis With Chronic Wound - 72-year-old Male (ATS 3),"Nurse: Hi, I'm Megan. What's happening with your leg?
+
+Patient: My wound on my shin hasn't been healing and now the area's red and painful.
+
+Nurse: How long has the wound been there?
+
+Patient: A few weeks.
+
+Nurse: Has the redness spread recently?
+
+Patient: Yes, over the last two days.
+
+Nurse: Any fever?
+
+Patient: A little yesterday.
+
+Nurse: Let me take a look…
+(examines)
+The skin is warm, swollen, and looks infected.
+
+Nurse: We'll get blood tests, a wound swab, and start antibiotics.
+
+Patient: Okay.","Nurse: Hi, I'm Megan. What's happening with your leg? Patient: My wound on my shin hasn't been healing and now the area's red and painful. Nurse: How long has the wound been there? Patient: A few weeks. Nurse: Has the redness spread recently? Patient: Yes, over the last two days. Nurse: Any fever? Patient: A little yesterday. Nurse: Let me take a look…
+(examines)
+The skin is warm, swollen, and looks infected. Nurse: We'll get blood tests, a wound swab, and start antibiotics. Patient: Okay.",3,2,2,3,3
+0040,Dehydration / Electrolyte Disturbance - 88-year-old Male (ATS 2),"Nurse: Hi, I'm Tom. What's been happening?
+
+Relative: Dad's barely been drinking or eating for days.
+
+Nurse: Any vomiting or diarrhoea?
+
+Relative: No.
+
+Nurse: Any confusion?
+
+Relative: Yes, a bit.
+
+Nurse: I'll check his vitals…
+(assesses)
+BP is low when he sits up, pulse fast. Mouth dry.
+
+Nurse: He's dehydrated and may have some electrolyte imbalance. We'll bring him in for fluids and tests.
+
+Relative: Thank you.","Nurse: Hi, I'm Tom. What's been happening? Relative: Dad's barely been drinking or eating for days. Nurse: Any vomiting or diarrhoea? Relative: No. Nurse: Any confusion? Relative: Yes, a bit. Nurse: I'll check his vitals…
+(assesses)
+BP is low when he sits up, pulse fast. Mouth dry. Nurse: He's dehydrated and may have some electrolyte imbalance. We'll bring him in for fluids and tests. Relative: Thank you.",2,1,2,3,2
+0041,Early Pregnancy + Lower Abdominal Pain - Possible Ectopic - 7 Weeks Pregnant (ATS 2),"Nurse: Hi, I'm Emma. Come take a seat. What's been happening today?
+
+Patient: I'm about 7 weeks pregnant and having really bad lower tummy pain. It started this afternoon and it's getting worse.
+
+Nurse: Okay. Congratulations on your pregnancy. Let's go through this carefully. Is the pain on one side or across your whole lower abdomen?
+
+Patient: Mostly on the right side. It's sharp.
+
+Nurse: Any bleeding?
+
+Patient: Yes, some spotting - not heavy, just when I wipe.
+
+Nurse: Any dizziness or feeling faint?
+
+Patient: Yes, a little when the pain gets bad.
+
+Nurse: When was your last ultrasound?
+
+Patient: I haven't had one yet. I was planning to book soon.
+
+Nurse: Any previous ectopic pregnancies, miscarriages, or pelvic infections?
+
+Patient: No.
+
+Nurse: Any nausea or vomiting?
+
+Patient: Yes, but I thought it was just morning sickness.
+
+Nurse: I'm just going to check your pulse and blood pressure…
+(checks)
+Your pulse is a bit fast; blood pressure is okay for now.
+
+Nurse: Because you're early in pregnancy with one-sided pain and spotting, we need to urgently rule out an ectopic pregnancy. That can be serious if untreated.
+
+Patient: Oh… okay.
+
+Nurse: You're in the right place. We'll get blood tests, a pregnancy hormone level, and organise an urgent ultrasound. I'll band you now and move you straight into acute care.","Nurse: Hi, I'm Emma. Come take a seat. What's been happening today? Patient: I'm about 7 weeks pregnant and having really bad lower tummy pain. It started this afternoon and it's getting worse. Nurse: Okay. Congratulations on your pregnancy. Let's go through this carefully. Is the pain on one side or across your whole lower abdomen? Patient: Mostly on the right side. It's sharp. Nurse: Any bleeding? Patient: Yes, some spotting - not heavy, just when I wipe. Nurse: Any dizziness or feeling faint? Patient: Yes, a little when the pain gets bad. Nurse: When was your last ultrasound? Patient: I haven't had one yet. I was planning to book soon. Nurse: Any previous ectopic pregnancies, miscarriages, or pelvic infections? Patient: No. Nurse: Any nausea or vomiting? Patient: Yes, but I thought it was just morning sickness. Nurse: I'm just going to check your pulse and blood pressure…
+(checks)
+Your pulse is a bit fast; blood pressure is okay for now. Nurse: Because you're early in pregnancy with one-sided pain and spotting, we need to urgently rule out an ectopic pregnancy. That can be serious if untreated. Patient: Oh… okay. Nurse: You're in the right place. We'll get blood tests, a pregnancy hormone level, and organise an urgent ultrasound. I'll band you now and move you straight into acute care.",2,1,1,2,2
+0042,Second-Trimester Bleeding - 22 Weeks Pregnant (ATS 2),"Nurse: Hi, I'm Kate. I see you're pregnant - what's happened today?
+
+Patient: I'm 22 weeks and started bleeding about an hour ago. Enough to soak a pad.
+
+Nurse: Okay, let's take this slowly. Are you having any pain or cramping?
+
+Patient: Mild cramps, not severe.
+
+Nurse: Is the bleeding ongoing or slowing down?
+
+Patient: Still happening, but maybe a bit less now.
+
+Nurse: Any fluid leaking?
+
+Patient: No.
+
+Nurse: Have you been feeling the baby move?
+
+Patient: Yes, earlier today.
+
+Nurse: Any recent trauma, intercourse, or strenuous activity?
+
+Patient: No.
+
+Nurse: Any problems in this pregnancy so far?
+
+Patient: No, everything's been normal.
+
+Nurse: I'm checking your vitals…
+(assesses)
+Vitals are stable so far.
+
+Nurse: We need to get obstetrics involved straight away. Second-trimester bleeding can have several causes, some serious. You'll be going directly to the acute area so we can check baby's heart rate and get ultrasound and blood tests.
+
+Patient: Okay, thank you.","Nurse: Hi, I'm Kate. I see you're pregnant - what's happened today? Patient: I'm 22 weeks and started bleeding about an hour ago. Enough to soak a pad. Nurse: Okay, let's take this slowly. Are you having any pain or cramping? Patient: Mild cramps, not severe. Nurse: Is the bleeding ongoing or slowing down? Patient: Still happening, but maybe a bit less now. Nurse: Any fluid leaking? Patient: No. Nurse: Have you been feeling the baby move? Patient: Yes, earlier today. Nurse: Any recent trauma, intercourse, or strenuous activity? Patient: No. Nurse: Any problems in this pregnancy so far? Patient: No, everything's been normal. Nurse: I'm checking your vitals…
+(assesses)
+Vitals are stable so far. Nurse: We need to get obstetrics involved straight away. Second-trimester bleeding can have several causes, some serious. You'll be going directly to the acute area so we can check baby's heart rate and get ultrasound and blood tests. Patient: Okay, thank you.",2,1,1,2,2
+0043,Uncomplicated Cystitis - Dysuria + Frequency - 30-year-old (ATS 4),"Nurse: Hi, I'm Jenna. What brings you in today?
+
+Patient: It burns when I pee and I'm going every 10 minutes.
+
+Nurse: When did the symptoms start?
+
+Patient: Three days ago. Worse today.
+
+Nurse: Any fever?
+
+Patient: No.
+
+Nurse: Any back or flank pain?
+
+Patient: Nope, only when I urinate.
+
+Nurse: Any blood in your urine?
+
+Patient: A couple of pink-ish drops today.
+
+Nurse: Any nausea?
+
+Patient: No.
+
+Nurse: Any chance you're pregnant?
+
+Patient: No.
+
+Nurse: Any history of UTIs?
+
+Patient: A couple, years ago.
+
+Nurse: Okay, I'll get you to do a urine sample. You'll be seen in minors shortly. You're stable and this sounds like an uncomplicated urinary infection.","Nurse: Hi, I'm Jenna. What brings you in today? Patient: It burns when I pee and I'm going every 10 minutes. Nurse: When did the symptoms start? Patient: Three days ago. Worse today. Nurse: Any fever? Patient: No. Nurse: Any back or flank pain? Patient: Nope, only when I urinate. Nurse: Any blood in your urine? Patient: A couple of pink-ish drops today. Nurse: Any nausea? Patient: No. Nurse: Any chance you're pregnant? Patient: No. Nurse: Any history of UTIs? Patient: A couple, years ago. Nurse: Okay, I'll get you to do a urine sample. You'll be seen in minors shortly. You're stable and this sounds like an uncomplicated urinary infection.",4,3,3,4,4
+0044,Postpartum Mental Health Crisis - Suicidal Thoughts - 4 Weeks Postpartum (ATS 2),"Nurse: Hi, I'm Sarah. Come sit with me. How can I help today?
+
+Patient: I had a baby four weeks ago and… I just feel like I'm not coping. Sometimes I think about hurting myself.
+
+Nurse: Thank you for telling me. These thoughts must be frightening. Are you having them right now?
+
+Patient: Yes. I don't want to feel this way, but I'm scared.
+
+Nurse: Any thoughts of harming the baby?
+
+Patient: Sometimes intrusive thoughts, yes. I hate it.
+
+Nurse: It's incredibly important you came in. You're not alone, and this is something we take seriously. Have you harmed yourself today?
+
+Patient: No.
+
+Nurse: Any alcohol or medication taken today?
+
+Patient: No, nothing.
+
+Nurse: Do you have support at home?
+
+Patient: My partner's supportive but he's exhausted, and I haven't told him everything.
+
+Nurse: I'm going to check your vitals while we talk…
+(checks)
+You're physically stable.
+
+Nurse: We're going to take you straight to a safe, private room and have the mental health team see you urgently. No time in the waiting room.
+
+Patient: Thank you.","Nurse: Hi, I'm Sarah. Come sit with me. How can I help today? Patient: I had a baby four weeks ago and… I just feel like I'm not coping. Sometimes I think about hurting myself. Nurse: Thank you for telling me. These thoughts must be frightening. Are you having them right now? Patient: Yes. I don't want to feel this way, but I'm scared. Nurse: Any thoughts of harming the baby? Patient: Sometimes intrusive thoughts, yes. I hate it. Nurse: It's incredibly important you came in. You're not alone, and this is something we take seriously. Have you harmed yourself today? Patient: No. Nurse: Any alcohol or medication taken today? Patient: No, nothing. Nurse: Do you have support at home? Patient: My partner's supportive but he's exhausted, and I haven't told him everything. Nurse: I'm going to check your vitals while we talk…
+(checks)
+You're physically stable. Nurse: We're going to take you straight to a safe, private room and have the mental health team see you urgently. No time in the waiting room. Patient: Thank you.",2,1,1,2,2
+0045,Headache + Visual Changes - 32 Weeks Pregnant - Possible Pre-eclampsia (ATS 2),"Nurse: Hi, I'm Tom. You're looking uncomfortable - what's going on?
+
+Patient: I'm 32 weeks pregnant and have a really bad headache with blurry vision.
+
+Nurse: When did the headache start?
+
+Patient: This morning, but it's much worse now.
+
+Nurse: Any pain under your right ribs?
+
+Patient: Yes, actually.
+
+Nurse: Any swelling in your hands, face, or legs?
+
+Patient: My hands and face are really puffy.
+
+Nurse: Any nausea?
+
+Patient: A little.
+
+Nurse: Any known blood pressure issues in pregnancy?
+
+Patient: No, all normal until now.
+
+Nurse: I'm going to check your blood pressure now…
+(checks)
+Your BP is elevated at 162/98.
+
+Nurse: These symptoms can be signs of pre-eclampsia. We need to get you assessed urgently by obstetrics.
+
+Patient: I was worried about that…
+
+Nurse: You've done the right thing coming in. We'll take you straight to the maternal acute area.","Nurse: Hi, I'm Tom. You're looking uncomfortable - what's going on? Patient: I'm 32 weeks pregnant and have a really bad headache with blurry vision. Nurse: When did the headache start? Patient: This morning, but it's much worse now. Nurse: Any pain under your right ribs? Patient: Yes, actually. Nurse: Any swelling in your hands, face, or legs? Patient: My hands and face are really puffy. Nurse: Any nausea? Patient: A little. Nurse: Any known blood pressure issues in pregnancy? Patient: No, all normal until now. Nurse: I'm going to check your blood pressure now…
+(checks)
+Your BP is elevated at 162/98. Nurse: These symptoms can be signs of pre-eclampsia. We need to get you assessed urgently by obstetrics. Patient: I was worried about that… Nurse: You've done the right thing coming in. We'll take you straight to the maternal acute area.",2,1,1,2,2
+0046,Mastitis - Fever + Breast Pain - 29-year-old Breastfeeding (ATS 3),"Nurse: Hi, I'm Priya. What's happening today?
+
+Patient: My left breast is really sore and red. I'm breastfeeding.
+
+Nurse: How long has it been painful?
+
+Patient: Two days, but it's gotten worse today.
+
+Nurse: Any fever?
+
+Patient: Yes, chills last night and fever this morning.
+
+Nurse: Any lumps or hardness in the breast?
+
+Patient: Yes, a painful hard area on the upper part.
+
+Nurse: Any discharge or bleeding from the nipple?
+
+Patient: No.
+
+Nurse: Are you able to breastfeed from that side?
+
+Patient: It hurts too much.
+
+Nurse: I'm gently checking for an abscess…
+(assesses)
+Warm, red area but no obvious abscess.
+
+Nurse: This is likely mastitis. You'll need antibiotics and pain relief.
+
+Patient: Okay.
+
+Nurse: You're stable, so you'll be seen in acute care shortly.","Nurse: Hi, I'm Priya. What's happening today? Patient: My left breast is really sore and red. I'm breastfeeding. Nurse: How long has it been painful? Patient: Two days, but it's gotten worse today. Nurse: Any fever? Patient: Yes, chills last night and fever this morning. Nurse: Any lumps or hardness in the breast? Patient: Yes, a painful hard area on the upper part. Nurse: Any discharge or bleeding from the nipple? Patient: No. Nurse: Are you able to breastfeed from that side? Patient: It hurts too much. Nurse: I'm gently checking for an abscess…
+(assesses)
+Warm, red area but no obvious abscess. Nurse: This is likely mastitis. You'll need antibiotics and pain relief. Patient: Okay. Nurse: You're stable, so you'll be seen in acute care shortly.",3,2,3,4,3
+0047,Fall + Suspected Wrist Fracture - Osteoporosis - 68-year-old (ATS 3),"Nurse: Hi, I'm Andrew. What happened?
+
+Patient: I missed a step and fell forward. Landed on my wrist.
+
+Nurse: Any head strike?
+
+Patient: No.
+
+Nurse: Where does it hurt most?
+
+Patient: My left wrist. It's really painful.
+
+Nurse: Any numbness or tingling?
+
+Patient: No, just pain.
+
+Nurse: Do you have osteoporosis?
+
+Patient: Yes, quite bad.
+
+Nurse: Let me have a look…
+(examines wrist)
+There's swelling and a deformity - very likely a fracture. Fingers are warm and moving well.
+
+Patient: Does that mean a cast?
+
+Nurse: Most likely. We'll X-ray to confirm and give you pain relief.
+
+Patient: Okay.
+
+Nurse: I'll get your band on and move you into acute care.","Nurse: Hi, I'm Andrew. What happened? Patient: I missed a step and fell forward. Landed on my wrist. Nurse: Any head strike? Patient: No. Nurse: Where does it hurt most? Patient: My left wrist. It's really painful. Nurse: Any numbness or tingling? Patient: No, just pain. Nurse: Do you have osteoporosis? Patient: Yes, quite bad. Nurse: Let me have a look…
+(examines wrist)
+There's swelling and a deformity - very likely a fracture. Fingers are warm and moving well. Patient: Does that mean a cast? Nurse: Most likely. We'll X-ray to confirm and give you pain relief. Patient: Okay. Nurse: I'll get your band on and move you into acute care.",3,2,2,3,3
+0048,Dizziness + Heavy Periods - Possible Anaemia - 34-year-old (ATS 3),"Nurse: Hi, I'm Lisa. What brings you in?
+
+Patient: I keep feeling faint, especially when I stand up. My periods have been really heavy the last few months.
+
+Nurse: How heavy are we talking?
+
+Patient: Changing a pad every hour for two days this cycle.
+
+Nurse: Any clots?
+
+Patient: Yes, lots.
+
+Nurse: Any shortness of breath?
+
+Patient: With stairs lately, yes.
+
+Nurse: Any chest pain?
+
+Patient: No.
+
+Nurse: Let me check your vitals…
+(checks)
+Heart rate's fast; BP is a bit low when you sit up.
+
+Nurse: These symptoms could indicate anaemia from heavy bleeding. We'll get blood tests urgently.
+
+Patient: Okay, I wondered about that.
+
+Nurse: You're stable but symptomatic. We'll get you into acute care.","Nurse: Hi, I'm Lisa. What brings you in? Patient: I keep feeling faint, especially when I stand up. My periods have been really heavy the last few months. Nurse: How heavy are we talking? Patient: Changing a pad every hour for two days this cycle. Nurse: Any clots? Patient: Yes, lots. Nurse: Any shortness of breath? Patient: With stairs lately, yes. Nurse: Any chest pain? Patient: No. Nurse: Let me check your vitals…
+(checks)
+Heart rate's fast; BP is a bit low when you sit up. Nurse: These symptoms could indicate anaemia from heavy bleeding. We'll get blood tests urgently. Patient: Okay, I wondered about that. Nurse: You're stable but symptomatic. We'll get you into acute care.",3,2,2,3,3
+0049,Dermatitis / Allergic Rash - Stable - 27-year-old (ATS 4),"Nurse: Hi, I'm Sam. What's going on today?
+
+Patient: I have this really itchy rash on both my arms. Came up yesterday after gardening.
+
+Nurse: Did you touch any new plants or chemicals?
+
+Patient: Possibly some weeds, not sure.
+
+Nurse: Any swelling of your lips or eyes?
+
+Patient: No.
+
+Nurse: Any difficulty breathing?
+
+Patient: No, just itchy.
+
+Nurse: Any fever?
+
+Patient: No.
+
+Nurse: I'm just going to look at the rash…
+(examines)
+Looks like contact dermatitis - red, raised patches.
+
+Nurse: You're stable. We'll get you antihistamines and a steroid cream.","Nurse: Hi, I'm Sam. What's going on today? Patient: I have this really itchy rash on both my arms. Came up yesterday after gardening. Nurse: Did you touch any new plants or chemicals? Patient: Possibly some weeds, not sure. Nurse: Any swelling of your lips or eyes? Patient: No. Nurse: Any difficulty breathing? Patient: No, just itchy. Nurse: Any fever? Patient: No. Nurse: I'm just going to look at the rash…
+(examines)
+Looks like contact dermatitis - red, raised patches. Nurse: You're stable. We'll get you antihistamines and a steroid cream.",4,3,3,4,4
+0050,Hyperglycaemia + Vomiting - Possible DKA - 38-year-old (ATS 2),"Nurse: Hi, I'm Megan. Tell me what's been happening.
+
+Patient: I've been vomiting since last night and my sugars are high. I'm type 2 diabetic.
+
+Nurse: How high?
+
+Patient: 25 when I checked at home.
+
+Nurse: Any abdominal pain?
+
+Patient: Yes, a constant ache.
+
+Nurse: Any shortness of breath?
+
+Patient: A little.
+
+Nurse: Any recent infections or missed insulin doses?
+
+Patient: I've been sick with a cold and haven't been eating, so I skipped my insulin yesterday.
+
+Nurse: I'm checking your vitals…
+(checks)
+Pulse fast; breathing slightly rapid.
+
+Nurse: You may be going into diabetic ketoacidosis. We need to get you into the acute area immediately for blood tests, fluids, and insulin.
+
+Patient: Oh wow… okay.
+
+Nurse: You've done the right thing coming in. Let's get you through now.","Nurse: Hi, I'm Megan. Tell me what's been happening. Patient: I've been vomiting since last night and my sugars are high. I'm type 2 diabetic. Nurse: How high? Patient: 25 when I checked at home. Nurse: Any abdominal pain? Patient: Yes, a constant ache. Nurse: Any shortness of breath? Patient: A little. Nurse: Any recent infections or missed insulin doses? Patient: I've been sick with a cold and haven't been eating, so I skipped my insulin yesterday. Nurse: I'm checking your vitals…
+(checks)
+Pulse fast; breathing slightly rapid. Nurse: You may be going into diabetic ketoacidosis. We need to get you into the acute area immediately for blood tests, fluids, and insulin. Patient: Oh wow… okay. Nurse: You've done the right thing coming in. Let's get you through now.",2,1,1,2,2
