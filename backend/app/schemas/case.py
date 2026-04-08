@@ -36,7 +36,7 @@ class CaseFullOut(BaseModel):
     clinician_override_at: datetime | None = None
     resolved_at: datetime | None = None
     decision_source: str
-    rule_based_ats_category: int
+    rule_based_ats_category: int | None = None
     model_ats_category: int
 
 class ATSOverrideRequest(BaseModel):
