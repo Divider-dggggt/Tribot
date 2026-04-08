@@ -3,7 +3,6 @@ import { Controller, useForm } from "react-hook-form";
 import { 
   Alert,
   CircularProgress,
-  TextField, 
   Button, 
   Box, 
   Typography, 
@@ -18,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { ATSLevel, TriageApiResponse } from "../types/triage";
+import { FloatingTextField } from "../components/FloatingTextField";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 import { API_BASE_URL } from "../utils/constants";
@@ -196,8 +196,6 @@ export const CaseForm = (): ReactElement => {
   } = useForm<CaseFormValues>();
   const navigate = useNavigate();
   const details = watch('details', '');
-  const fieldInputSx = { borderRadius: 2, bgcolor: "#fff" } as const;
-  const requiredLabelSx = { "& .MuiInputLabel-asterisk": { color: "#dc2626" } } as const;
   const requiredFieldNames: RequiredFieldName[] = ["patientID", "patientName", "details"];
 
   const isRequiredFieldName = (value: string): value is RequiredFieldName => (
@@ -299,7 +297,7 @@ export const CaseForm = (): ReactElement => {
                       },
                     }}
                     render={({ field }) => (
-                      <TextField
+                      <FloatingTextField
                         label="Medicare Card Number"
                         value={field.value ?? ""}
                         onBlur={field.onBlur}
@@ -317,14 +315,12 @@ export const CaseForm = (): ReactElement => {
                           inputMode: "numeric",
                           maxLength: 12,
                         }}
-                        sx={requiredLabelSx}
-                        InputProps={{ sx: fieldInputSx }}
                       />
                     )}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     fullWidth
                     required
                     label="Patient Name"
@@ -336,8 +332,6 @@ export const CaseForm = (): ReactElement => {
                     helperText={errors.patientName?.message as string}
                     variant="outlined"
                     size="small"
-                    sx={requiredLabelSx}
-                    InputProps={{ sx: fieldInputSx }}
                   />
                 </Grid>
               </Grid>
@@ -348,7 +342,7 @@ export const CaseForm = (): ReactElement => {
               <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
                 Case Details
               </Typography>
-              <TextField
+              <FloatingTextField
                 fullWidth
                 required
                 label="Case Details"
@@ -360,9 +354,6 @@ export const CaseForm = (): ReactElement => {
                 rows={8}
                 error={!!errors.details}
                 helperText={errors.details?.message as string}
-                variant="outlined"
-                sx={requiredLabelSx}
-                InputProps={{ sx: fieldInputSx }}
               />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
                 {details.length} characters
@@ -376,7 +367,7 @@ export const CaseForm = (): ReactElement => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Age"
                     fullWidth
                     size="small"
@@ -389,28 +380,26 @@ export const CaseForm = (): ReactElement => {
                       onInput: handleIntegerInput,
                     }}
                     InputProps={{
-                      sx: fieldInputSx,
                       endAdornment: <InputAdornment position="end">years</InputAdornment>,
                     }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     {...register("gender")}
                     fullWidth
                     select
                     label="Gender"
                     size="small"
-                    InputProps={{ sx: fieldInputSx }}
                   >
                     <MenuItem value={undefined}><em>Unspecified</em></MenuItem>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
                     <MenuItem value="Other">Other</MenuItem>
-                  </TextField>
+                  </FloatingTextField>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Symptom Duration"
                     fullWidth
                     size="small"
@@ -423,13 +412,12 @@ export const CaseForm = (): ReactElement => {
                       onInput: handleIntegerInput,
                     }}
                     InputProps={{
-                      sx: fieldInputSx,
                       endAdornment: <InputAdornment position="end">days</InputAdornment>,
                     }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     {...register("temperature", {
                       setValueAs: toOptionalTemperature,
                     })}
@@ -443,13 +431,12 @@ export const CaseForm = (): ReactElement => {
                       onInput: handleTemperatureInput,
                     }}
                     InputProps={{
-                      sx: fieldInputSx,
                       endAdornment: <InputAdornment position="end">℃</InputAdornment>,
                     }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Heart Rate"
                     fullWidth
                     size="small"
@@ -462,13 +449,12 @@ export const CaseForm = (): ReactElement => {
                       onInput: handleIntegerInput,
                     }}
                     InputProps={{
-                      sx: fieldInputSx,
                       endAdornment: <InputAdornment position="end">bpm</InputAdornment>,
                     }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Respiration Rate"
                     fullWidth
                     size="small"
@@ -481,7 +467,6 @@ export const CaseForm = (): ReactElement => {
                       onInput: handleIntegerInput,
                     }}
                     InputProps={{
-                      sx: fieldInputSx,
                       endAdornment: <InputAdornment position="end">breaths/min</InputAdornment>,
                     }}
                   />
@@ -499,7 +484,7 @@ export const CaseForm = (): ReactElement => {
                       },
                     }}
                     render={({ field }) => (
-                      <TextField
+                      <FloatingTextField
                         label="Blood Pressure"
                         value={field.value ?? ""}
                         onBlur={field.onBlur}
@@ -518,7 +503,6 @@ export const CaseForm = (): ReactElement => {
                           placeholder: "120/80",
                         }}
                         InputProps={{
-                          sx: fieldInputSx,
                           endAdornment: <InputAdornment position="end">mmHg</InputAdornment>,
                         }}
                       />
@@ -526,39 +510,33 @@ export const CaseForm = (): ReactElement => {
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Medications"
                     fullWidth
                     {...register("medications")}
                     multiline
                     rows={4}
                     size="small"
-                    variant="outlined"
-                    InputProps={{ sx: fieldInputSx }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Allergies"
                     fullWidth
                     {...register("allergies")}
                     multiline
                     rows={4}
                     size="small"
-                    variant="outlined"
-                    InputProps={{ sx: fieldInputSx }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 12 }}>
-                  <TextField
+                  <FloatingTextField
                     label="Risk Factors & Comorbidities"
                     fullWidth
                     {...register("risks")}
                     multiline
                     rows={4}
                     size="small"
-                    variant="outlined"
-                    InputProps={{ sx: fieldInputSx }}
                   />
                 </Grid>
               </Grid>
@@ -573,9 +551,6 @@ export const CaseForm = (): ReactElement => {
                 disabled={isSubmitting}
                 sx={{ 
                   flex: 1,
-                  bgcolor: '#9333ea', 
-                  '&:hover': { bgcolor: '#7e22ce' },
-                  textTransform: 'none',
                   fontWeight: 'bold',
                   justifyContent: 'center',
                   px: 4,
@@ -598,8 +573,6 @@ export const CaseForm = (): ReactElement => {
                   minWidth: 140,
                   color: '#374151',
                   borderColor: '#d1d5db',
-                  '&:hover': { borderColor: '#9ca3af', bgcolor: '#f9fafb' },
-                  textTransform: 'none',
                   fontWeight: 'medium',
                   px: 4,
                   py: 1.5,

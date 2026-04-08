@@ -94,17 +94,10 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           variant="outlined"
           onClick={onBack}
           sx={{
-            color: "#7c3aed",
-            borderColor: "#c4b5fd",
             px: 2,
             py: 1,
             borderRadius: 2,
-            textTransform: "none",
             fontWeight: "bold",
-            "&:hover": {
-              borderColor: "#a78bfa",
-              bgcolor: "#f5f3ff",
-            },
           }}
         >
           <ArrowLeftIcon />
@@ -239,7 +232,6 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           py: 2,
           mt: 4,
           borderRadius: 2,
-          textTransform: 'none',
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}
@@ -266,12 +258,9 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           });
         }}
         sx={{ 
-          bgcolor: '#9333ea', // Purple-600
-          '&:hover': { bgcolor: '#7e22ce' }, // Purple-700
           py: 2,
           mt: 4,
           borderRadius: 2,
-          textTransform: 'none',
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}

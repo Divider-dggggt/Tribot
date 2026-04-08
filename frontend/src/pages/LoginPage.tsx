@@ -6,12 +6,11 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  TextField,
-  Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../components/AuthLogo";
+import { FloatingTextField } from "../components/FloatingTextField";
 import { PasswordField } from "../components/PasswordField";
 import { API_BASE_URL } from "../utils/constants";
 
@@ -115,12 +114,11 @@ export const LoginPage = (): ReactElement => {
                 {errorMessage}
               </Alert>
             )}
-            <Typography variant="subtitle2" sx={{ color: "#374151", mb: 0.75 }}>
-              Email
-            </Typography>
-            <TextField
+            <FloatingTextField
               fullWidth
               type="email"
+              label="Email"
+              required
               placeholder="Enter your email"
               size="small"
               sx={{ mb: 2.5 }}
@@ -134,19 +132,11 @@ export const LoginPage = (): ReactElement => {
                   message: "Please enter a valid email address.",
                 },
               })}
-              InputProps={{
-                sx: {
-                  borderRadius: 2,
-                  backgroundColor: "#fff",
-                },
-              }}
             />
-
-            <Typography variant="subtitle2" sx={{ color: "#374151", mb: 0.75 }}>
-              Password
-            </Typography>
             <PasswordField
               fullWidth
+              label="Password"
+              required
               placeholder="Enter your password"
               size="small"
               sx={{ mb: 2.5 }}
@@ -155,12 +145,6 @@ export const LoginPage = (): ReactElement => {
               {...register("password", {
                 required: "Please enter your password.",
               })}
-              InputProps={{
-                sx: {
-                  borderRadius: 2,
-                  backgroundColor: "#fff",
-                },
-              }}
             />
 
             <Button
@@ -169,15 +153,10 @@ export const LoginPage = (): ReactElement => {
               variant="contained"
               disabled={isSubmitting}
               sx={{
-                textTransform: "none",
                 borderRadius: 2,
                 py: 1.2,
                 fontWeight: 600,
                 fontSize: "1rem",
-                bgcolor: "#9333ea",
-                "&:hover": {
-                  bgcolor: "#7e22ce",
-                },
               }}
             >
               {isSubmitting ? (

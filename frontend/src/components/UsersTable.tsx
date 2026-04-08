@@ -72,17 +72,10 @@ export const UsersTable = (): ReactElement => {
           variant="outlined"
           onClick={handleOpenCreateForm}
           sx={{
-            color: "#7c3aed",
-            borderColor: "#c4b5fd",
             px: 2,
             py: 1,
             borderRadius: 2,
-            textTransform: "none",
             fontWeight: "bold",
-            "&:hover": {
-              borderColor: "#a78bfa",
-              bgcolor: "#f5f3ff",
-            },
           }}
         >
           Add User
@@ -119,9 +112,8 @@ export const UsersTable = (): ReactElement => {
                 {users.map((user) => (
                   <TableRow
                     key={user.id}
+                    hover
                     sx={{
-                      "&:hover, &.MuiTableRow-hover:hover": { bgcolor: "#f5f3ff" },
-                      "&:hover > *, &.MuiTableRow-hover:hover > *": { bgcolor: "#f5f3ff" },
                       "&:last-child td, &:last-child th": { border: 0 },
                     }}
                   >

@@ -1,7 +1,8 @@
 import { ReactElement, useMemo } from "react";
-import { Box, Button, Dialog, DialogContent, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogContent, Grid, Stack, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AuthLogo } from "./AuthLogo";
+import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
 import { API_BASE_URL } from "../utils/constants";
@@ -24,15 +25,6 @@ const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     "Access evaluation tools",
   ],
 };
-
-const requiredLabel = (text: string) => (
-  <Typography variant="subtitle2" sx={{ mb: 0.75, mt: 1, color: "#374151", fontWeight: 600 }}>
-    {text}
-    <Box component="span" sx={{ color: "#dc2626", ml: 0.5 }}>
-      *
-    </Box>
-  </Typography>
-);
 
 const readCreateUserError = async (response: Response): Promise<string> => {
   try {
@@ -166,35 +158,37 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
         <Box component="form" onSubmit={handleSubmit(handleCreate)} noValidate>
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {requiredLabel("First Name")}
-              <TextField
+              <FloatingTextField
                 fullWidth
+                label="First Name"
+                required
                 placeholder="Enter first name"
                 size="small"
                 error={Boolean(errors.firstName)}
                 helperText={errors.firstName?.message}
                 {...register("firstName", { required: "Required" })}
-                InputProps={{ sx: { borderRadius: 2 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {requiredLabel("Last Name")}
-              <TextField
+              <FloatingTextField
                 fullWidth
+                label="Last Name"
+                required
                 placeholder="Enter last name"
                 size="small"
                 error={Boolean(errors.lastName)}
                 helperText={errors.lastName?.message}
                 {...register("lastName", { required: "Required" })}
-                InputProps={{ sx: { borderRadius: 2 } }}
               />
             </Grid>
           </Grid>
-          {requiredLabel("Email Address")}
-          <TextField
+          <FloatingTextField
             fullWidth
+            label="Email Address"
+            required
             placeholder="email@example.com"
             size="small"
+            sx={{ mt: 2 }}
             error={Boolean(errors.email)}
             helperText={errors.email?.message}
             {...register("email", {
@@ -206,16 +200,17 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 message: "Enter a valid email address",
               },
             })}
-            InputProps={{ sx: { borderRadius: 2 } }}
           />
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {requiredLabel("Temporary Password")}
               <PasswordField
                 fullWidth
+                label="Temporary Password"
+                required
                 placeholder="Enter password (6-72 characters)"
                 size="small"
                 autoComplete="new-password"
+                sx={{ mt: 2 }}
                 error={Boolean(errors.password)}
                 helperText={errors.password?.message}
                 {...register("password", {
@@ -229,32 +224,33 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                     message: "Password must be 6-72 characters",
                   },
                 })}
-                InputProps={{
-                  sx: { borderRadius: 2 },
-                }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              {requiredLabel("Confirm Password")}
               <PasswordField
                 fullWidth
+                label="Confirm Password"
+                required
                 placeholder="Confirm password"
                 size="small"
                 autoComplete="new-password"
+                sx={{ mt: 2 }}
                 error={Boolean(errors.confirmPassword)}
                 helperText={errors.confirmPassword?.message}
                 {...register("confirmPassword", {
                   required: "Required",
                   validate: (value) => value === passwordValue || "Passwords do not match",
                 })}
-                InputProps={{
-                  sx: { borderRadius: 2 },
-                }}
               />
             </Grid>
           </Grid>
 
-          {requiredLabel("User Role")}
+          <Typography variant="subtitle2" sx={{ mb: 0.75, mt: 2, color: "#374151", fontWeight: 600 }}>
+            User Role
+            <Box component="span" sx={{ color: "#dc2626", ml: 0.5 }}>
+              *
+            </Box>
+          </Typography>
           <Controller
             name="role"
             control={control}
@@ -278,10 +274,6 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                           color: isSelected ? "#7e22ce" : "#374151",
                           borderColor: isSelected ? "#9333ea" : "#d1d5db",
                           backgroundColor: isSelected ? "#faf5ff" : "#fff",
-                          "&:hover": {
-                            borderColor: "#9333ea",
-                            backgroundColor: "#faf5ff",
-                          },
                         }}
                       >
                         {role}
@@ -333,15 +325,10 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
               variant="contained"
               fullWidth
               sx={{
-                textTransform: "none",
                 borderRadius: 2,
                 py: 1.25,
                 fontWeight: 600,
                 fontSize: "1.05rem",
-                bgcolor: "#9333ea",
-                "&:hover": {
-                  bgcolor: "#7e22ce",
-                },
               }}
             >
               Create User
@@ -354,12 +341,10 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 onClick={handleReset}
                 fullWidth
                 sx={{
-                  textTransform: "none",
                   borderRadius: 2,
                   py: 1.15,
                   color: "#374151",
                   borderColor: "#d1d5db",
-                  "&:hover": { borderColor: "#9ca3af", backgroundColor: "#f9fafb" },
                 }}
               >
                 Reset Form
@@ -370,12 +355,10 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 onClick={onClose}
                 fullWidth
                 sx={{
-                  textTransform: "none",
                   borderRadius: 2,
                   py: 1.15,
                   color: "#374151",
                   borderColor: "#d1d5db",
-                  "&:hover": { borderColor: "#9ca3af", backgroundColor: "#f9fafb" },
                 }}
               >
                 Cancel
