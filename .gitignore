@@ -40,4 +40,5 @@ docker-data
 # other
 # =========================
 
+.env
 .DS_Store
