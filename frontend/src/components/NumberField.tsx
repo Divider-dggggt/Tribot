@@ -50,7 +50,14 @@ export default function NumberField({
       )}
     >
       <SSRInitialFilled {...other} />
-      {label ? <InputLabel htmlFor={id}>{label}</InputLabel> : null}
+      {label ? (
+        <InputLabel
+          htmlFor={id}
+          sx={{ "& .MuiInputLabel-asterisk": { color: "#dc2626" } }}
+        >
+          {label}
+        </InputLabel>
+      ) : null}
       <BaseNumberField.Input
         id={id}
         render={(props, state) => (

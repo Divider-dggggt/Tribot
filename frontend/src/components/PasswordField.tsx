@@ -1,5 +1,6 @@
 import { ReactElement, useState } from "react";
-import { IconButton, InputAdornment, SvgIcon, TextField, TextFieldProps } from "@mui/material";
+import { IconButton, InputAdornment, SvgIcon, TextFieldProps } from "@mui/material";
+import { FloatingTextField } from "./FloatingTextField";
 
 type PasswordFieldProps = Omit<TextFieldProps, "type">;
 
@@ -19,7 +20,7 @@ export const PasswordField = ({ InputProps, ...restProps }: PasswordFieldProps):
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   return (
-    <TextField
+    <FloatingTextField
       {...restProps}
       type={isVisible ? "text" : "password"}
       InputProps={{

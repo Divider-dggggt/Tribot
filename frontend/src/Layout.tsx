@@ -164,16 +164,6 @@ function Layout() {
                 sx={{
                   mx: 1,
                   borderRadius: 2,
-                  '&.Mui-selected': {
-                    bgcolor: '#f3e8ff',
-                    color: '#7c3aed',
-                    '&:hover': {
-                      bgcolor: '#f3e8ff',
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: '#7c3aed',
-                    },
-                  },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -191,16 +181,6 @@ function Layout() {
                 sx={{
                   mx: 1,
                   borderRadius: 2,
-                  '&.Mui-selected': {
-                    bgcolor: '#f3e8ff',
-                    color: '#7c3aed',
-                    '&:hover': {
-                      bgcolor: '#f3e8ff',
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: '#7c3aed',
-                    },
-                  },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -218,16 +198,6 @@ function Layout() {
                 sx={{
                   mx: 1,
                   borderRadius: 2,
-                  '&.Mui-selected': {
-                    bgcolor: '#f3e8ff',
-                    color: '#7c3aed',
-                    '&:hover': {
-                      bgcolor: '#f3e8ff',
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: '#7c3aed',
-                    },
-                  },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>

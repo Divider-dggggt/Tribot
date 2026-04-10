@@ -6,11 +6,11 @@ import {
   DialogContent,
   DialogTitle,
   MenuItem,
-  TextField
 } from "@mui/material";
 import { ATSLevel } from "../types/triage";
 import { Controller, useForm } from "react-hook-form";
 import { API_BASE_URL } from "../utils/constants";
+import { FloatingTextField } from "./FloatingTextField";
 
 interface OverrideDialogProps {
   open: boolean;
@@ -66,11 +66,12 @@ export const OverrideDialog = ({
             control={control}
             rules={{ required: "Selection is required" }}
             render={({ field, fieldState: { error } }) => (
-              <TextField
+              <FloatingTextField
                 select
                 fullWidth
                 label="Select ATS Classification"
                 {...field}
+                required
                 error={!!error}
                 helperText={error?.message}
               >
@@ -79,7 +80,7 @@ export const OverrideDialog = ({
                 <MenuItem value={ATSLevel["ATS-3"]}>ATS 3</MenuItem>
                 <MenuItem value={ATSLevel["ATS-4"]}>ATS 4</MenuItem>
                 <MenuItem value={ATSLevel["ATS-5"]}>ATS 5</MenuItem>
-              </TextField>
+              </FloatingTextField>
             )}
           />
         </DialogContent>

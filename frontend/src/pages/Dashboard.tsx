@@ -216,12 +216,9 @@ export const Dashboard = (): ReactElement => {
         size="large"
         onClick={() => navigate('/new-case')}
         sx={{ 
-          bgcolor: '#9333ea', // Purple-600
-          '&:hover': { bgcolor: '#7e22ce' }, // Purple-700
           py: 2,
           mb: 4,
           borderRadius: 2,
-          textTransform: 'none',
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}
@@ -237,6 +234,24 @@ export const Dashboard = (): ReactElement => {
           setCaseView(newCaseView);
         }}
         exclusive
+        sx={{
+          mb: 2.5,
+          p: 0.5,
+          border: "1px solid #e5e7eb",
+          borderRadius: 2,
+          bgcolor: "#fff",
+          "& .MuiToggleButtonGroup-grouped": {
+            border: 0,
+            borderRadius: 1.5,
+            px: 2.5,
+            py: 1,
+            letterSpacing: "0.01em",
+          },
+          "& .MuiToggleButtonGroup-grouped:not(:first-of-type)": {
+            borderLeft: "1px solid #e5e7eb",
+            marginLeft: 0,
+          },
+        }}
       >
         <ToggleButton value="open-cases">
           Open
@@ -266,9 +281,6 @@ export const Dashboard = (): ReactElement => {
                   border: "1px solid #e5e7eb",
                   borderRadius: 1.5,
                   color: "#6b7280",
-                  "&:hover": {
-                    bgcolor: "#f9fafb",
-                  },
                 }}
               >
                 <SortIcon />
@@ -311,13 +323,12 @@ export const Dashboard = (): ReactElement => {
                   return (
                     <TableRow
                       key={`${item.medicare_number},${index}`}
+                      hover
                       onClick={() => {
                         navigate({ pathname: "/dashboard", search: `?case=${item.case_id}` });
                       }}
                       sx={{
                         cursor: "pointer",
-                        "&:hover, &.MuiTableRow-hover:hover": { bgcolor: "#f5f3ff" },
-                        "&:hover > *, &.MuiTableRow-hover:hover > *": { bgcolor: "#f5f3ff" },
                         "&:last-child td, &:last-child th": { border: 0 },
                       }}
                     >
