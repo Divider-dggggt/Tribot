@@ -21,6 +21,7 @@ import { FloatingTextField } from "../components/FloatingTextField";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 import { API_BASE_URL } from "../utils/constants";
+import { fetchWithAuth } from "../utils/auth";
 
 // Simple Send Icon
 const SendIcon = () => (
@@ -228,12 +229,10 @@ export const CaseForm = (): ReactElement => {
     if (data.bloodPressure) allDetails.push(`bloodPressure: ${data.bloodPressure}`);
 
     try {
-      const accessToken = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/triage`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/triage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           name: data.patientName,

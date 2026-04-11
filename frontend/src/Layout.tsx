@@ -13,7 +13,7 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { API_BASE_URL } from './utils/constants';
 import GroupIcon from '@mui/icons-material/Group';
-import { getDecodedToken } from './utils/auth';
+import { clearAuthSession, getAccessToken, getDecodedToken } from './utils/auth';
 import { UserRole } from './types/user';
 
 // Simple SVG Icons
@@ -59,7 +59,7 @@ function Layout() {
   const userRole = getDecodedToken()?.role;
 
   const handleLogout = async () => {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = getAccessToken();
 
     try {
       if (accessToken) {
@@ -73,10 +73,7 @@ function Layout() {
     } catch {
       // Ignore network errors and clear local session anyway.
     } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('token_type');
-      localStorage.removeItem('user_role');
-      localStorage.removeItem('user_email');
+      clearAuthSession();
       navigate('/login', { replace: true });
     }
   };

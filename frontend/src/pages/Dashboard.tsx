@@ -28,7 +28,7 @@ import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime, parseCaseDateTime } from "../utils/date";
 import { UserRole } from "../types/user";
-import { getDecodedToken } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { API_BASE_URL } from "../utils/constants";
 import { DashboardCaseObject } from "../types/case";
 
@@ -136,17 +136,18 @@ export const Dashboard = (): ReactElement => {
   useEffect(() => {
     const fetchCases = async (): Promise<void> => {
       setIsLoading(true);
-      const accessToken = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-      });
-      const cases = await response.json() as DashboardCaseObject[];
-      setTriageCases(cases);
-      setIsLoading(false);
+      try {
+        const response = await fetchWithAuth(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const cases = await response.json() as DashboardCaseObject[];
+        setTriageCases(cases);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     if (isViewingDashboard) {

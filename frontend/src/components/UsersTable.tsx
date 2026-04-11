@@ -18,6 +18,7 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 import { formatCaseDateTime } from "../utils/date";
 import { CreateUserForm } from "./CreateUserForm";
+import { fetchWithAuth } from "../utils/auth";
 
 const getRoleChipStyles = (role: UserRole) => {
   if (role === UserRole.Admin) {
@@ -36,13 +37,11 @@ export const UsersTable = (): ReactElement => {
   const handleCloseCreateForm = () => setIsCreatingUser(false);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
     const fetchUsers = async (): Promise<void> => {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
       const users = await response.json() as User[];
