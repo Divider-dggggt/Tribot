@@ -59,7 +59,7 @@ export const ResetPasswordDialog = ({
     setError,
     clearErrors,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, submitCount },
   } = useForm<ResetPasswordFormValues>({ defaultValues });
 
   useEffect(() => {
@@ -153,6 +153,7 @@ export const ResetPasswordDialog = ({
             autoComplete="current-password"
             error={Boolean(errors.currentPassword)}
             helperText={errors.currentPassword?.message}
+            requiredErrorSubmitCount={errors.currentPassword?.type === "required" ? submitCount : 0}
             {...register("currentPassword", {
               required: "Please enter your current password.",
             })}
@@ -166,6 +167,7 @@ export const ResetPasswordDialog = ({
             autoComplete="new-password"
             error={Boolean(errors.newPassword)}
             helperText={errors.newPassword?.message}
+            requiredErrorSubmitCount={errors.newPassword?.type === "required" ? submitCount : 0}
             {...register("newPassword", {
               required: "Please enter a new password.",
               minLength: {
@@ -186,6 +188,7 @@ export const ResetPasswordDialog = ({
             autoComplete="new-password"
             error={Boolean(errors.confirmPassword)}
             helperText={errors.confirmPassword?.message}
+            requiredErrorSubmitCount={errors.confirmPassword?.type === "required" ? submitCount : 0}
             {...register("confirmPassword", {
               required: "Please confirm your new password.",
               validate: (value, formValues) => (

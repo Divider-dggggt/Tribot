@@ -51,7 +51,7 @@ export const LoginPage = (): ReactElement => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, submitCount },
   } = useForm<LoginFormValues>({
     defaultValues: {
       email: "",
@@ -154,6 +154,7 @@ export const LoginPage = (): ReactElement => {
               disabled={isInteractionBlocked}
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
+              requiredErrorSubmitCount={errors.email?.type === "required" ? submitCount : 0}
               {...register("email", {
                 required: "Please enter your email.",
                 setValueAs: (value: string) => value.trim(),
@@ -173,6 +174,7 @@ export const LoginPage = (): ReactElement => {
               disabled={isInteractionBlocked}
               error={Boolean(errors.password)}
               helperText={errors.password?.message}
+              requiredErrorSubmitCount={errors.password?.type === "required" ? submitCount : 0}
               {...register("password", {
                 required: "Please enter your password.",
               })}

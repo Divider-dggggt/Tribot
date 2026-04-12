@@ -29,7 +29,12 @@ export const OverrideDialog = ({
   initialValue,
   caseId,
 }: OverrideDialogProps): ReactElement => {
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { submitCount },
+  } = useForm({
     defaultValues: { atsOverride: initialValue }
   });
 
@@ -74,6 +79,7 @@ export const OverrideDialog = ({
                 required
                 error={!!error}
                 helperText={error?.message}
+                requiredErrorSubmitCount={error?.type === "required" ? submitCount : 0}
               >
                 <MenuItem value={ATSLevel["ATS-1"]}>ATS 1</MenuItem>
                 <MenuItem value={ATSLevel["ATS-2"]}>ATS 2</MenuItem>

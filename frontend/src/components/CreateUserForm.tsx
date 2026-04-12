@@ -94,7 +94,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
     clearErrors,
     setError,
     watch,
-    formState: { errors },
+    formState: { errors, submitCount },
   } = useForm<CreateUserFormValues>({
     defaultValues,
   });
@@ -184,6 +184,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 size="small"
                 error={Boolean(errors.firstName)}
                 helperText={errors.firstName?.message}
+                requiredErrorSubmitCount={errors.firstName?.type === "required" ? submitCount : 0}
                 {...register("firstName", { required: "Required" })}
               />
             </Grid>
@@ -196,6 +197,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 size="small"
                 error={Boolean(errors.lastName)}
                 helperText={errors.lastName?.message}
+                requiredErrorSubmitCount={errors.lastName?.type === "required" ? submitCount : 0}
                 {...register("lastName", { required: "Required" })}
               />
             </Grid>
@@ -209,6 +211,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
             sx={{ mt: 2 }}
             error={Boolean(errors.email)}
             helperText={errors.email?.message}
+            requiredErrorSubmitCount={errors.email?.type === "required" ? submitCount : 0}
             {...register("email", {
               required: "Required",
               setValueAs: (value: string) => value.trim(),
@@ -231,6 +234,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{ mt: 2 }}
                 error={Boolean(errors.password)}
                 helperText={errors.password?.message}
+                requiredErrorSubmitCount={errors.password?.type === "required" ? submitCount : 0}
                 {...register("password", {
                   required: "Required",
                   minLength: {
@@ -255,6 +259,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{ mt: 2 }}
                 error={Boolean(errors.confirmPassword)}
                 helperText={errors.confirmPassword?.message}
+                requiredErrorSubmitCount={errors.confirmPassword?.type === "required" ? submitCount : 0}
                 {...register("confirmPassword", {
                   required: "Required",
                   validate: (value) => value === passwordValue || "Passwords do not match",
