@@ -23,8 +23,12 @@ def authenticate_user(email: str, password: str):
 
 def create_access_token(data: dict):
     to_encode = data.copy()
+    now = datetime.utcnow()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+    to_encode.update({
+        "iat": now,
+        "exp": expire,
+    })
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -35,12 +39,19 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("user_id")
+        token_iat = payload.get("iat")
+
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
 
         user = db.get_user_by_id(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found or deleted")
+
+        if token_iat and user.get("password_changed_at"):
+            password_changed_at = user["password_changed_at"].timestamp()
+            if token_iat < password_changed_at:
+                raise HTTPException(status_code=401, detail="Password changed. Please log in again")
 
         return user
     except JWTError:
@@ -51,3 +62,11 @@ def admin_required(user=Depends(get_current_user)):
     if user["role"] != "Admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
+
+def role_required(*roles):
+    def dependency(user=Depends(get_current_user)):
+        if user["role"] not in roles:
+            raise HTTPException(status_code=403, detail=f"Access restricted to: {', '.join(roles)}")
+        return user
+
+    return dependency

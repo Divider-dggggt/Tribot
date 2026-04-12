@@ -23,7 +23,11 @@ def get_user_by_id(user_id: int):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, email, role, created_at FROM users WHERE id = %s;",
+        """
+        SELECT id, name, email, role, created_at, password_changed_at
+        FROM users
+        WHERE id = %s;
+        """,
         (user_id,),
     )
     row = cur.fetchone()
@@ -39,13 +43,18 @@ def get_user_by_id(user_id: int):
         "email": row[2],
         "role": row[3],
         "created_at": row[4],
+        "password_changed_at": row[5],
     }
 
 def get_user_by_email(email: str):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, email, password, role FROM users WHERE email = %s;",
+        """
+        SELECT id, name, email, password, role, password_changed_at
+        FROM users
+        WHERE email = %s;
+        """,
         (email,),
     )
     row = cur.fetchone()
@@ -61,6 +70,7 @@ def get_user_by_email(email: str):
         "email": row[2],
         "password": row[3],
         "role": row[4],
+        "password_changed_at": row[5],
     }
 
 def create_user(name: str, email: str, password: str, role: str):
@@ -103,9 +113,13 @@ def update_user(user_id: int, name=None, email=None, password=None, role=None):
         cur.execute(
             """
             UPDATE users
-            SET name = %s, email = %s, password = %s, role = %s
+            SET name = %s,
+                email = %s,
+                password = %s,
+                role = %s,
+                password_changed_at = CURRENT_TIMESTAMP
             WHERE id = %s
-            RETURNING id, name, email, role, created_at;
+            RETURNING id, name, email, role, created_at, password_changed_at;
             """,
             (new_name, new_email, password, new_role, user_id),
         )
@@ -115,7 +129,7 @@ def update_user(user_id: int, name=None, email=None, password=None, role=None):
             UPDATE users
             SET name = %s, email = %s, role = %s
             WHERE id = %s
-            RETURNING id, name, email, role, created_at;
+            RETURNING id, name, email, role, created_at, password_changed_at;
             """,
             (new_name, new_email, new_role, user_id),
         )
@@ -134,6 +148,7 @@ def update_user(user_id: int, name=None, email=None, password=None, role=None):
         "email": row[2],
         "role": row[3],
         "created_at": row[4],
+        "password_changed_at": row[5],
     }
 
 def delete_user(user_id: int):
