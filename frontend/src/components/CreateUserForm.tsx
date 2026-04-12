@@ -6,6 +6,7 @@ import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
 import { API_BASE_URL } from "../utils/constants";
+import { fetchWithAuth } from "../utils/auth";
 
 const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   [UserRole.Admin]: [
@@ -87,14 +88,12 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
   }, [selectedRole]);
 
   const handleCreate = async (values: CreateUserFormValues): Promise<void> => {
-    const accessToken = localStorage.getItem("access_token");
     clearErrors("email");
 
-    const response = await fetch(`${API_BASE_URL}/users`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
       body: JSON.stringify({
         name: `${values.firstName} ${values.lastName}`,

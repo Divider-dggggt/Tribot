@@ -6,7 +6,7 @@ import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { API_BASE_URL } from "../utils/constants";
 import { CaseObject } from "../types/case";
 import { formatCaseDateTime } from "../utils/date";
-import { getDecodedToken } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { UserRole } from "../types/user";
 import { OverrideDialog } from "./OverrideDialog";
 
@@ -45,12 +45,10 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
 
   useEffect(() => {
     const fetchTriageCase = async (): Promise<void> => {
-      const accessToken = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/cases/${caseId}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/cases/${caseId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
 
@@ -246,12 +244,10 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         fullWidth 
         size="large"
         onClick={() => {
-          const accessToken = localStorage.getItem("access_token");
-          void fetch(`${API_BASE_URL}/cases/${triageCase.case_id}/${triageCase.resolved_at == null ? "resolve" : "reopen"}`, {
+          void fetchWithAuth(`${API_BASE_URL}/cases/${triageCase.case_id}/${triageCase.resolved_at == null ? "resolve" : "reopen"}`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
-              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             },
           }).then(() => {
             onBack();
