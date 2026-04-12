@@ -1,0 +1,7 @@
+transformers>=4.46,<5
+accelerate>=0.34
+scikit-learn>=1.4
+pandas>=2.0
+numpy>=1.24
+torch
+sentencepiece

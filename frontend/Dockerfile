@@ -2,12 +2,12 @@ FROM node:20
 
 WORKDIR /app
 
-COPY package.json yarn.lock* ./
+COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN corepack enable && yarn install
 
 COPY . .
 
 EXPOSE 5173
 
-CMD ["yarn", "dev"]
+CMD ["sh", "-c", "yarn install && yarn dev --host"]
