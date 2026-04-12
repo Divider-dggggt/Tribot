@@ -263,7 +263,14 @@ export const Dashboard = (): ReactElement => {
       </ToggleButtonGroup>
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
-        <CardContent sx={{ p: 0 }}>
+        <CardContent
+          sx={{
+            p: 0,
+            "&:last-child": {
+              pb: 0,
+            },
+          }}
+        >
           <Box sx={{ p: 2, borderBottom: '1px solid #e5e7eb', display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
             <Box>
               <Typography variant="h6" fontWeight="bold">

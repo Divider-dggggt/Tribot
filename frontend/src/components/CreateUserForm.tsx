@@ -27,6 +27,24 @@ const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   ],
 };
 
+const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: string }> = {
+  [UserRole.Admin]: {
+    text: "#6d28d9",
+    bg: "#ede9fe",
+    border: "#c4b5fd",
+  },
+  [UserRole.Clinician]: {
+    text: "#166534",
+    bg: "#dcfce7",
+    border: "#86efac",
+  },
+  [UserRole.Researcher]: {
+    text: "#0c4a6e",
+    bg: "#e0f2fe",
+    border: "#7dd3fc",
+  },
+};
+
 const readCreateUserError = async (response: Response): Promise<string> => {
   try {
     const body = await response.json() as { detail?: string };
@@ -259,6 +277,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
                   {Object.values(UserRole).map((role) => {
                     const isSelected = role === field.value;
+                    const roleColors = ROLE_BUTTON_COLORS[role];
                     return (
                       <Button
                         key={role}
@@ -270,9 +289,15 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                           borderRadius: 2,
                           textTransform: "none",
                           py: 1.1,
-                          color: isSelected ? "#7e22ce" : "#374151",
-                          borderColor: isSelected ? "#9333ea" : "#d1d5db",
-                          backgroundColor: isSelected ? "#faf5ff" : "#fff",
+                          transition: "all 160ms ease",
+                          color: isSelected ? roleColors.text : "#374151",
+                          borderColor: isSelected ? roleColors.border : "#d1d5db",
+                          backgroundColor: isSelected ? roleColors.bg : "#fff",
+                          "&:hover": {
+                            color: roleColors.text,
+                            borderColor: roleColors.border,
+                            backgroundColor: roleColors.bg,
+                          },
                         }}
                       >
                         {role}

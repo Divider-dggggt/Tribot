@@ -3,6 +3,7 @@ import { AccessTokenPayload } from "../types/user";
 
 const SESSION_STORAGE_KEYS = ["access_token", "token_type", "user_role", "user_email"] as const;
 const SESSION_EXPIRED_MESSAGE = "Session expired. Please sign in again.";
+const SESSION_EXPIRED_TRANSITION_KEY = "auth_session_expired_transition";
 
 interface ValidSession {
   token: string;
@@ -43,6 +44,10 @@ const redirectToLogin = (): void => {
   window.location.replace("/login");
 };
 
+const markSessionExpiredTransition = (): void => {
+  sessionStorage.setItem(SESSION_EXPIRED_TRANSITION_KEY, "true");
+};
+
 export const clearAuthSession = (): void => {
   SESSION_STORAGE_KEYS.forEach((key) => {
     localStorage.removeItem(key);
@@ -50,8 +55,12 @@ export const clearAuthSession = (): void => {
 };
 
 export const isAuthenticated = (): boolean => {
+  const existingToken = localStorage.getItem("access_token");
   const session = getValidSession();
   if (session == null) {
+    if (existingToken != null) {
+      markSessionExpiredTransition();
+    }
     clearAuthSession();
     return false;
   }
@@ -65,7 +74,16 @@ export const getDecodedToken = (): AccessTokenPayload | null => {
 
 export const getAccessToken = (): string | null => getValidSession()?.token ?? null;
 
+export const consumeSessionExpiredTransition = (): boolean => {
+  const shouldShowTransition = sessionStorage.getItem(SESSION_EXPIRED_TRANSITION_KEY) === "true";
+  if (shouldShowTransition) {
+    sessionStorage.removeItem(SESSION_EXPIRED_TRANSITION_KEY);
+  }
+  return shouldShowTransition;
+};
+
 export const handleUnauthorized = (): void => {
+  markSessionExpiredTransition();
   clearAuthSession();
   redirectToLogin();
 };

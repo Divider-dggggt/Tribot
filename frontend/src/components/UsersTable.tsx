@@ -81,7 +81,14 @@ export const UsersTable = (): ReactElement => {
         </Button>
       </Stack>
       <Card elevation={0} sx={{ border: "1px solid #e5e7eb", borderRadius: 2 }}>
-        <CardContent sx={{ p: 0 }}>
+        <CardContent
+          sx={{
+            p: 0,
+            "&:last-child": {
+              pb: 0,
+            },
+          }}
+        >
           <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid #e5e7eb" }}>
             <Typography variant="h6" fontWeight="bold">
               User Directory

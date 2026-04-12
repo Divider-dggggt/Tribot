@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -15,6 +15,7 @@ import { API_BASE_URL } from './utils/constants';
 import GroupIcon from '@mui/icons-material/Group';
 import { clearAuthSession, getAccessToken, getDecodedToken } from './utils/auth';
 import { UserRole } from './types/user';
+import { AuthTransitionOverlay } from './components/AuthTransitionOverlay';
 
 // Simple SVG Icons
 const DashboardIcon = () => (
@@ -51,14 +52,36 @@ const LogoutIcon = () => (
 );
 
 const drawerWidth = 240;
+const LOGOUT_NAVIGATION_DELAY_MS = 450;
+const ROLE_BADGE_STYLES: Record<UserRole, { backgroundColor: string; color: string }> = {
+  [UserRole.Admin]: {
+    backgroundColor: '#e9e1ff',
+    color: '#5b2ecb',
+  },
+  [UserRole.Clinician]: {
+    backgroundColor: '#d3efdf',
+    color: '#166534',
+  },
+  [UserRole.Researcher]: {
+    backgroundColor: '#e0f2fe',
+    color: '#0c4a6e',
+  },
+};
 
 function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
   const signedInEmail = localStorage.getItem('user_email');
   const userRole = getDecodedToken()?.role;
+  const roleBadgeStyle = userRole ? ROLE_BADGE_STYLES[userRole] : null;
 
   const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
     const accessToken = getAccessToken();
 
     try {
@@ -73,6 +96,9 @@ function Layout() {
     } catch {
       // Ignore network errors and clear local session anyway.
     } finally {
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, LOGOUT_NAVIGATION_DELAY_MS);
+      });
       clearAuthSession();
       navigate('/login', { replace: true });
     }
@@ -96,17 +122,37 @@ function Layout() {
         }}
       >
         <Toolbar sx={{ justifyContent: 'flex-end' }}>
-          <Button color="inherit" sx={{ textTransform: 'none', mr: 2 }}>
+          <Button color="inherit" sx={{ textTransform: 'none', mr: 2, px: 1.2 }}>
             <UserIcon />
-            {signedInEmail ?? 'Signed In User'}
+            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5 }}>
+              <Box component="span">{signedInEmail ?? 'Signed In User'}</Box>
+              {userRole && roleBadgeStyle ? (
+                <Box
+                  component="span"
+                  sx={{
+                    px: 1.8,
+                    py: 0.45,
+                    borderRadius: 2,
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    backgroundColor: roleBadgeStyle.backgroundColor,
+                    color: roleBadgeStyle.color,
+                  }}
+                >
+                  {userRole}
+                </Box>
+              ) : null}
+            </Box>
           </Button>
           <Button
             color="inherit"
             sx={{ textTransform: 'none' }}
             onClick={handleLogout}
+            disabled={isLoggingOut}
           >
             <LogoutIcon />
-            Logout
+            {isLoggingOut ? 'Logging out...' : 'Logout'}
           </Button>
         </Toolbar>
       </AppBar>
@@ -215,6 +261,12 @@ function Layout() {
         <Toolbar /> {/* Spacer for fixed AppBar */}
         <Outlet />
       </Box>
+      <AuthTransitionOverlay
+        open={isLoggingOut}
+        variant="logout"
+        title="Signing out"
+        subtitle="Securing your session..."
+      />
     </Box>
   );
 }
