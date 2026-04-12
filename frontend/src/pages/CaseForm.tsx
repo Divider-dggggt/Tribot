@@ -20,6 +20,7 @@ import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { FloatingTextField } from "../components/FloatingTextField";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
+import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
 
@@ -570,15 +571,14 @@ export const CaseForm = (): ReactElement => {
                 onClick={() => navigate('/dashboard')}
                 sx={{ 
                   minWidth: 140,
-                  color: '#374151',
-                  borderColor: '#d1d5db',
                   fontWeight: 'medium',
                   px: 4,
                   py: 1.5,
-                  borderRadius: 2
+                  borderRadius: 2,
+                  ...dangerOutlinedButtonSx,
                 }}
               >
-                <Box component="span" sx={{ color: '#dc2626', display: 'inline-flex' }}>
+                <Box component="span" sx={{ color: 'inherit', display: 'inline-flex' }}>
                   <XIcon />
                 </Box>
                 Cancel

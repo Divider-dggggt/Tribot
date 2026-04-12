@@ -10,6 +10,7 @@ import {
 import { ATSLevel } from "../types/triage";
 import { Controller, useForm } from "react-hook-form";
 import { API_BASE_URL } from "../utils/constants";
+import { dangerTextButtonSx } from "../utils/buttonStyles";
 import { FloatingTextField } from "./FloatingTextField";
 import { fetchWithAuth } from "../utils/auth";
 
@@ -84,7 +85,12 @@ export const OverrideDialog = ({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button
+            onClick={onCancel}
+            sx={dangerTextButtonSx}
+          >
+            Cancel
+          </Button>
           <Button type="submit" variant="contained">Override</Button>
         </DialogActions>
       </form>

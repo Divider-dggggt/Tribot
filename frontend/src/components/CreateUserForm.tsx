@@ -5,6 +5,7 @@ import { AuthLogo } from "./AuthLogo";
 import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
+import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
 
@@ -381,8 +382,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{
                   borderRadius: 2,
                   py: 1.15,
-                  color: "#374151",
-                  borderColor: "#d1d5db",
+                  ...dangerOutlinedButtonSx,
                 }}
               >
                 Cancel
