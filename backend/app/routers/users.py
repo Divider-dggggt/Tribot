@@ -54,6 +54,22 @@ def update_user(user_id: int, user: UserUpdate, current_user=Depends(get_current
     if not is_admin and user.role is not None:
         raise HTTPException(status_code=403, detail="Only admins can change roles")
 
+    if user.password is not None:
+        if not is_admin:
+            auth_user = db.get_user_by_email(current_user["email"])
+
+            if not user.old_password:
+                raise HTTPException(status_code=400, detail="Old password is required to change password")
+
+            if not pwd_context.verify(user.old_password, auth_user["password"]):
+                raise HTTPException(status_code=403, detail="Old password is incorrect")
+
+            if pwd_context.verify(user.password, auth_user["password"]):
+                raise HTTPException(status_code=400, detail="New password cannot be the same as old password")
+
+        if is_admin and not is_self and target_user["role"] == "Admin":
+            raise HTTPException(status_code=403, detail="Admin cannot change another Admin's password")
+
     hashed_password = pwd_context.hash(user.password) if user.password else None
 
     updated_user = db.update_user(

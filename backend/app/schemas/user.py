@@ -16,6 +16,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     name: str | None = None
     email: EmailStr | None = None
+    old_password: str | None = None
     password: str | None = None
     role: str | None = None
 
