@@ -1,72 +1,57 @@
-import { ReactElement, useMemo } from "react";
-import { Box, Button, Dialog, DialogContent, Grid, Stack, Typography } from "@mui/material";
+import { ReactElement, useEffect, useMemo, useState } from "react";
+import { Box, Button, CircularProgress, Dialog, DialogContent, Grid, Stack, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AuthLogo } from "./AuthLogo";
 import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
-import { UserRole } from "../types/user";
-import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
+import { User, UserRole } from "../types/user";
 import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
 
-const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: string }> = {
-  [UserRole.Admin]: {
-    text: "#6d28d9",
-    bg: "#ede9fe",
-    border: "#c4b5fd",
-  },
-  [UserRole.Clinician]: {
-    text: "#166534",
-    bg: "#dcfce7",
-    border: "#86efac",
-  },
-  [UserRole.Researcher]: {
-    text: "#0c4a6e",
-    bg: "#e0f2fe",
-    border: "#7dd3fc",
-  },
-};
-
-const readCreateUserError = async (response: Response): Promise<string> => {
-  try {
-    const body = await response.json() as { detail?: string };
-    if (typeof body.detail === "string" && body.detail.trim()) {
-      return body.detail;
-    }
-  } catch {
-    // Fall back to status-based message below.
-  }
-
-  return `Create user failed with status ${response.status}`;
-};
-
-const isDuplicateEmailError = (message: string): boolean => (
-  /email/i.test(message) && /(duplicate key value|already exists|unique constraint)/i.test(message)
-);
-
-interface CreateUserFormValues {
-  firstName: string;
-  lastName: string;
+interface EditUserFormValues {
+  name: string;
   email: string;
   role: UserRole;
   password: string;
   confirmPassword: string;
 }
 
-interface CreateUserFormProps {
-  open: boolean;
+interface EditUserFormProps {
+  userId?: number;
   onClose: () => void;
 }
 
-export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactElement => {
-  const defaultValues: CreateUserFormValues = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    role: UserRole.Clinician,
-    password: "",
-    confirmPassword: "",
-  };
+export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactElement => {
+  const open = userId != null;
+  const [defaultValues, setDefaultValues] = useState<EditUserFormValues | undefined>();
+
+  useEffect(() => {
+    const fetchDefaultValues = async (): Promise<void> => {
+      if (userId == null) {
+        setDefaultValues(undefined);
+        return;
+      }
+      const response = await fetchWithAuth(`${API_BASE_URL}/users/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const user = await response.json() as User;
+      const newDefaultValues = {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        password: "",
+        confirmPassword: "",
+      };
+      setDefaultValues(newDefaultValues);
+      reset(newDefaultValues);
+    };
+
+    fetchDefaultValues();
+  }, [userId]);
+
   const {
     register,
     control,
@@ -75,47 +60,40 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
     clearErrors,
     setError,
     watch,
-    formState: { errors, submitCount },
-  } = useForm<CreateUserFormValues>({
+    formState: { errors },
+  } = useForm<EditUserFormValues>({
     defaultValues,
   });
   const passwordValue = watch("password", "");
-  const selectedRole = watch("role", defaultValues.role);
+  const selectedRole = watch("role", defaultValues?.role);
   const permissionColumns = useMemo(() => {
     const permissions = ROLE_PERMISSIONS[selectedRole] ?? [];
     const midpoint = Math.ceil(permissions.length / 2);
     return [permissions.slice(0, midpoint), permissions.slice(midpoint)];
   }, [selectedRole]);
 
-  const handleCreate = async (values: CreateUserFormValues): Promise<void> => {
+  const handleEdit = async (values: EditUserFormValues): Promise<void> => {
     clearErrors("email");
 
-    const response = await fetchWithAuth(`${API_BASE_URL}/users`, {
-      method: "POST",
+    if (userId == null || defaultValues == null) return;
+
+    const response = await fetchWithAuth(`${API_BASE_URL}/users/${userId}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: `${values.firstName} ${values.lastName}`,
-        email: values.email.trim(),
-        role: values.role,
-        password: values.password,
+        ...(values.name !== defaultValues.name && {name: values.name}),
+        ...(values.email !== defaultValues.email && {email: values.email}),
+        ...(values.role !== defaultValues.role && {role: values.role}),
+        ...(values.password !== "" && {password: values.password}),
       }),
     });
 
     if (!response.ok) {
-      const errorMessage = await readCreateUserError(response);
-      if (isDuplicateEmailError(errorMessage)) {
-        setError(
-          "email",
-          { type: "server", message: "An account with this email already exists" },
-          { shouldFocus: true }
-        );
-        return;
-      }
       setError(
         "email",
-        { type: "server", message: "Unable to create user. Please try again." },
+        { type: "server", message: "Unable to edit user. Please try again." },
         { shouldFocus: true }
       );
       return;
@@ -144,7 +122,20 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
         },
       }}
     >
-      <DialogContent
+      {defaultValues == null && <DialogContent
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          borderRadius: 3,
+          border: "1px solid #ede9fe",
+          boxShadow: "0 18px 40px rgba(17, 24, 39, 0.15)",
+        }}
+      >
+        <CircularProgress />
+      </DialogContent>}
+      {defaultValues != null && <DialogContent
         sx={{
           width: "100%",
           borderRadius: 3,
@@ -152,36 +143,20 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
           boxShadow: "0 18px 40px rgba(17, 24, 39, 0.15)",
         }}
       >
-        <AuthLogo subtitle="Create New User" />
+        <AuthLogo subtitle="Edit Existing User" />
 
-        <Box component="form" onSubmit={handleSubmit(handleCreate)} noValidate>
+        <Box component="form" onSubmit={handleSubmit(handleEdit)} noValidate>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FloatingTextField
-                fullWidth
-                label="First Name"
-                required
-                placeholder="Enter first name"
-                size="small"
-                error={Boolean(errors.firstName)}
-                helperText={errors.firstName?.message}
-                requiredErrorSubmitCount={errors.firstName?.type === "required" ? submitCount : 0}
-                {...register("firstName", { required: "Required" })}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FloatingTextField
-                fullWidth
-                label="Last Name"
-                required
-                placeholder="Enter last name"
-                size="small"
-                error={Boolean(errors.lastName)}
-                helperText={errors.lastName?.message}
-                requiredErrorSubmitCount={errors.lastName?.type === "required" ? submitCount : 0}
-                {...register("lastName", { required: "Required" })}
-              />
-            </Grid>
+            <FloatingTextField
+              fullWidth
+              label="Name"
+              required
+              placeholder="Enter name"
+              size="small"
+              error={Boolean(errors.name)}
+              helperText={errors.name?.message}
+              {...register("name", { required: "Required" })}
+            />
           </Grid>
           <FloatingTextField
             fullWidth
@@ -192,7 +167,6 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
             sx={{ mt: 2 }}
             error={Boolean(errors.email)}
             helperText={errors.email?.message}
-            requiredErrorSubmitCount={errors.email?.type === "required" ? submitCount : 0}
             {...register("email", {
               required: "Required",
               setValueAs: (value: string) => value.trim(),
@@ -208,16 +182,13 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
               <PasswordField
                 fullWidth
                 label="Temporary Password"
-                required
                 placeholder="Enter password (6-72 characters)"
                 size="small"
                 autoComplete="new-password"
                 sx={{ mt: 2 }}
                 error={Boolean(errors.password)}
                 helperText={errors.password?.message}
-                requiredErrorSubmitCount={errors.password?.type === "required" ? submitCount : 0}
                 {...register("password", {
-                  required: "Required",
                   minLength: {
                     value: 6,
                     message: "Password must be 6-72 characters",
@@ -233,16 +204,13 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
               <PasswordField
                 fullWidth
                 label="Confirm Password"
-                required
                 placeholder="Confirm password"
                 size="small"
                 autoComplete="new-password"
                 sx={{ mt: 2 }}
                 error={Boolean(errors.confirmPassword)}
                 helperText={errors.confirmPassword?.message}
-                requiredErrorSubmitCount={errors.confirmPassword?.type === "required" ? submitCount : 0}
                 {...register("confirmPassword", {
-                  required: "Required",
                   validate: (value) => value === passwordValue || "Passwords do not match",
                 })}
               />
@@ -264,7 +232,6 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
                   {Object.values(UserRole).map((role) => {
                     const isSelected = role === field.value;
-                    const roleColors = ROLE_BUTTON_COLORS[role];
                     return (
                       <Button
                         key={role}
@@ -276,15 +243,9 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                           borderRadius: 2,
                           textTransform: "none",
                           py: 1.1,
-                          transition: "all 160ms ease",
-                          color: isSelected ? roleColors.text : "#374151",
-                          borderColor: isSelected ? roleColors.border : "#d1d5db",
-                          backgroundColor: isSelected ? roleColors.bg : "#fff",
-                          "&:hover": {
-                            color: roleColors.text,
-                            borderColor: roleColors.border,
-                            backgroundColor: roleColors.bg,
-                          },
+                          color: isSelected ? "#7e22ce" : "#374151",
+                          borderColor: isSelected ? "#9333ea" : "#d1d5db",
+                          backgroundColor: isSelected ? "#faf5ff" : "#fff",
                         }}
                       >
                         {role}
@@ -342,7 +303,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 fontSize: "1.05rem",
               }}
             >
-              Create User
+              Update User
             </Button>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
@@ -368,7 +329,8 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{
                   borderRadius: 2,
                   py: 1.15,
-                  ...dangerOutlinedButtonSx,
+                  color: "#374151",
+                  borderColor: "#d1d5db",
                 }}
               >
                 Cancel
@@ -376,7 +338,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
             </Stack>
           </Stack>
         </Box>
-      </DialogContent>
+      </DialogContent>}
     </Dialog>
   );
 };

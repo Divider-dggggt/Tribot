@@ -23,6 +23,7 @@ import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Tooltip from "@mui/material/Tooltip";
+import { EditUserForm } from "./EditUserForm";
 
 const getRoleChipStyles = (role: UserRole) => {
   if (role === UserRole.Admin) {
@@ -39,6 +40,10 @@ export const UsersTable = (): ReactElement => {
   const [isCreatingUser, setIsCreatingUser] = useState<boolean>(false);
   const handleOpenCreateForm = () => setIsCreatingUser(true);
   const handleCloseCreateForm = () => setIsCreatingUser(false);
+  const [editingUserId, setEditingUserId] = useState<number | undefined>();
+  const isEditingUser = editingUserId != null;
+  const handleOpenEditForm = (userId: number) => setEditingUserId(userId);
+  const handleCloseEditForm = () => setEditingUserId(undefined);
 
   useEffect(() => {
     const fetchUsers = async (): Promise<void> => {
@@ -52,10 +57,10 @@ export const UsersTable = (): ReactElement => {
       setUsers(users);
     };
 
-    if (!isCreatingUser) {
+    if (!isCreatingUser && !isEditingUser) {
       fetchUsers();
     }
-  }, [isCreatingUser]);
+  }, [isCreatingUser, isEditingUser]);
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -150,7 +155,7 @@ export const UsersTable = (): ReactElement => {
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit User">
-                        <IconButton>
+                        <IconButton onClick={() => handleOpenEditForm(user.id)}>
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
@@ -170,6 +175,10 @@ export const UsersTable = (): ReactElement => {
       <CreateUserForm
         open={isCreatingUser}
         onClose={handleCloseCreateForm}
+      />
+      <EditUserForm
+        userId={editingUserId}
+        onClose={handleCloseEditForm}
       />
     </Box>
   );
