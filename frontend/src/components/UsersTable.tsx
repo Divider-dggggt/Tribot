@@ -19,6 +19,10 @@ import Chip from "@mui/material/Chip";
 import { formatCaseDateTime } from "../utils/date";
 import { CreateUserForm } from "./CreateUserForm";
 import { fetchWithAuth } from "../utils/auth";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Tooltip from "@mui/material/Tooltip";
 
 const getRoleChipStyles = (role: UserRole) => {
   if (role === UserRole.Admin) {
@@ -105,6 +109,7 @@ export const UsersTable = (): ReactElement => {
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>Email</TableCell>
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>Role</TableCell>
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>Created</TableCell>
+                  <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }} align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -142,6 +147,18 @@ export const UsersTable = (): ReactElement => {
                     </TableCell>
                     <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
                       {formatCaseDateTime(new Date(user.created_at))}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Tooltip title="Edit User">
+                        <IconButton>
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete User">
+                        <IconButton>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
