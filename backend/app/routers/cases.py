@@ -1,18 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app import db
-from app.core.security import get_current_user
+from app.core.security import get_current_user, role_required
 from app.schemas.case import CaseCreate, CaseFullOut, ATSOverrideRequest
 from app.services.anonymisation import deidentify_dialogue
 from app.services.soap_generator.summariser_service import generate_soap_summary
 from app.services.triage_classifier.triage_classifier_service import classify_triage
-from psycopg2.errors import UniqueViolation
 
 router = APIRouter()
 CLASSIFICATION_MODEL = 'setfit'
 
+def anonymise_case_for_researcher(case: dict) -> dict:
+    anonymised_case = case.copy()
+
+    if anonymised_case.get("case_details"):
+        anon_result = deidentify_dialogue(anonymised_case["case_details"])
+        anonymised_case["case_details"] = anon_result["deidentified_text"]
+
+    # Hide direct identifiers completely
+    anonymised_case["name"] = "[REDACTED]"
+    anonymised_case["medicare_number"] = "[REDACTED]"
+
+    return anonymised_case
+
 @router.post("/triage", response_model=CaseFullOut)
-def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
+def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician"))):
     try:
         # non-llm service
         classification_res = classify_triage(case.case_details) 
@@ -93,39 +105,35 @@ def create_case_endpoint(case: CaseCreate, user=Depends(get_current_user)):
 
 @router.get("/cases")
 def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):
-    if resolved:
-        return db.get_resolved_cases()
-    return db.get_open_cases()
 
+    cases = db.get_all_cases() if resolved else db.get_open_cases()
 
-#@router.get("/cases")
-#def get_open_cases(user=Depends(get_current_user)):
-#    return db.get_open_cases()
+    if user["role"] == "Researcher":
+        cases = [anonymise_case_for_researcher(case) for case in cases]
 
-#@router.get("/cases/resolved")
-#def get_resolved_cases(user=Depends(get_current_user)):
-#    return db.get_resolved_cases()
-
-#@router.get("/cases/all")
-#def get_all_cases(user=Depends(get_current_user)):
-#    return db.get_all_cases()
+    return  cases
 
 @router.get("/cases/{case_id}")
 def get_case(case_id: int, user=Depends(get_current_user)):
+
     case = db.get_case_by_id(case_id)
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
+
+    if user["role"] == "Researcher":
+        case = anonymise_case_for_researcher(case)
+
     return case
 
 @router.patch("/cases/{case_id}/resolve")
-def resolve_case_endpoint(case_id: int, user=Depends(get_current_user)):
+def resolve_case_endpoint(case_id: int, user=Depends(role_required("Clinician"))):
     resolved_case = db.resolve_case(case_id)
     if not resolved_case:
         raise HTTPException(status_code=404, detail="Case not found")
     return resolved_case
 
 @router.patch("/cases/{case_id}/reopen")
-def reopen_case_endpoint(case_id: int, user=Depends(get_current_user)):
+def reopen_case_endpoint(case_id: int, user=Depends(role_required("Clinician"))):
     reopened_case = db.reopen_case(case_id)
     if not reopened_case:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -133,12 +141,12 @@ def reopen_case_endpoint(case_id: int, user=Depends(get_current_user)):
 
 @router.patch("/cases/{case_id}/ats")
 def override_ats_classification_endpoint(
-    case_id: int,
-    payload: ATSOverrideRequest,
-    user=Depends(get_current_user),
+        case_id: int,
+        payload: ATSOverrideRequest,
+        user=Depends(role_required("Clinician")),
 ):
-    if user["role"] not in {"Admin", "Clinician"}:
-        raise HTTPException(status_code=403, detail="Only Admin or Clinician can override ATS classification")
+    #if user["role"] not in {"Admin", "Clinician"}:
+    #    raise HTTPException(status_code=403, detail="Only Admin or Clinician can override ATS classification")
 
     updated = db.override_ats_classification(
         case_id=case_id,
