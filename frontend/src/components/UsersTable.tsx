@@ -18,12 +18,13 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 import { formatCaseDateTime } from "../utils/date";
 import { CreateUserForm } from "./CreateUserForm";
-import { fetchWithAuth } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Tooltip from "@mui/material/Tooltip";
 import { EditUserForm } from "./EditUserForm";
+import { DeleteUserConfirmation } from "./DeleteUserConfirmation";
 
 const getRoleChipStyles = (role: UserRole) => {
   if (role === UserRole.Admin) {
@@ -36,10 +37,15 @@ const getRoleChipStyles = (role: UserRole) => {
 };
 
 export const UsersTable = (): ReactElement => {
+  const selfUserId = getDecodedToken()?.user_id;
   const [users, setUsers] = useState<User[]>([]);
   const [isCreatingUser, setIsCreatingUser] = useState<boolean>(false);
   const handleOpenCreateForm = () => setIsCreatingUser(true);
   const handleCloseCreateForm = () => setIsCreatingUser(false);
+  const [deletingUserId, setDeletingUserId] = useState<number | undefined>();
+  const isDeletingUser = deletingUserId != null;
+  const handleOpenDeleteDialog = (userId: number) => setDeletingUserId(userId);
+  const handleCloseDeleteDialog = () => setDeletingUserId(undefined);
   const [editingUserId, setEditingUserId] = useState<number | undefined>();
   const isEditingUser = editingUserId != null;
   const handleOpenEditForm = (userId: number) => setEditingUserId(userId);
@@ -57,10 +63,10 @@ export const UsersTable = (): ReactElement => {
       setUsers(users);
     };
 
-    if (!isCreatingUser && !isEditingUser) {
+    if (!isCreatingUser && !isEditingUser && !isDeletingUser) {
       fetchUsers();
     }
-  }, [isCreatingUser, isEditingUser]);
+  }, [isCreatingUser, isEditingUser, isDeletingUser]);
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -159,11 +165,11 @@ export const UsersTable = (): ReactElement => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete User">
-                        <IconButton>
+                      {selfUserId !== user.id && <Tooltip title="Delete User">
+                        <IconButton onClick={() => handleOpenDeleteDialog(user.id)}>
                           <DeleteIcon />
                         </IconButton>
-                      </Tooltip>
+                      </Tooltip>}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -179,6 +185,10 @@ export const UsersTable = (): ReactElement => {
       <EditUserForm
         userId={editingUserId}
         onClose={handleCloseEditForm}
+      />
+      <DeleteUserConfirmation
+        userId={deletingUserId}
+        onClose={handleCloseDeleteDialog}
       />
     </Box>
   );
