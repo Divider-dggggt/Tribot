@@ -6,7 +6,7 @@ import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { User, UserRole } from "../types/user";
 import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
-import { fetchWithAuth } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 
 interface EditUserFormValues {
   name: string;
@@ -23,6 +23,8 @@ interface EditUserFormProps {
 
 export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactElement => {
   const open = userId != null;
+  const selfUserId = getDecodedToken()?.user_id;
+  const isEditingSelf = userId === selfUserId;
   const [defaultValues, setDefaultValues] = useState<EditUserFormValues | undefined>();
 
   useEffect(() => {
@@ -217,81 +219,84 @@ export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactEleme
             </Grid>
           </Grid>
 
-          <Typography variant="subtitle2" sx={{ mb: 0.75, mt: 2, color: "#374151", fontWeight: 600 }}>
-            User Role
-            <Box component="span" sx={{ color: "#dc2626", ml: 0.5 }}>
-              *
-            </Box>
-          </Typography>
-          <Controller
-            name="role"
-            control={control}
-            rules={{ required: "Required" }}
-            render={({ field }) => (
-              <>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
-                  {Object.values(UserRole).map((role) => {
-                    const isSelected = role === field.value;
-                    return (
-                      <Button
-                        key={role}
-                        type="button"
-                        variant="outlined"
-                        onClick={() => field.onChange(role)}
-                        sx={{
-                          flex: 1,
-                          borderRadius: 2,
-                          textTransform: "none",
-                          py: 1.1,
-                          color: isSelected ? "#7e22ce" : "#374151",
-                          borderColor: isSelected ? "#9333ea" : "#d1d5db",
-                          backgroundColor: isSelected ? "#faf5ff" : "#fff",
-                        }}
-                      >
-                        {role}
-                      </Button>
-                    );
-                  })}
-                </Stack>
-                {errors.role?.message ? (
-                  <Typography variant="caption" sx={{ color: "#dc2626", mb: 2.5, display: "block" }}>
-                    {errors.role.message}
-                  </Typography>
-                ) : (
-                  <Box sx={{ mb: 2.5 }} />
-                )}
-              </>
-            )}
-          />
-
-          <Typography variant="h6" sx={{ mt: 4, mb: 1.5, fontSize: "1.1rem", fontWeight: 700 }}>
-            System Permissions
-          </Typography>
-
-          <Box
-            sx={{
-              borderRadius: 1.5,
-              bgcolor: "#f3f4f6",
-              p: 2,
-              mb: 3,
-            }}
-          >
-            <Grid container spacing={2}>
-              {permissionColumns.map((column, index) => (
-                <Grid key={index} size={{ xs: 12, md: 6 }}>
-                  <Stack spacing={0.75}>
-                    {column.map((permission) => (
-                      <Typography key={permission} variant="body2" sx={{ color: "#374151" }}>
-                        {permission}
-                      </Typography>
-                    ))}
+          {/* Admins shouldn't be able to change their own roles while editing */}
+          {!isEditingSelf && <>
+            <Typography variant="subtitle2" sx={{ mb: 0.75, mt: 2, color: "#374151", fontWeight: 600 }}>
+              User Role
+              <Box component="span" sx={{ color: "#dc2626", ml: 0.5 }}>
+                *
+              </Box>
+            </Typography>
+            <Controller
+              name="role"
+              control={control}
+              rules={{ required: "Required" }}
+              render={({ field }) => (
+                <>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
+                    {Object.values(UserRole).map((role) => {
+                      const isSelected = role === field.value;
+                      return (
+                        <Button
+                          key={role}
+                          type="button"
+                          variant="outlined"
+                          onClick={() => field.onChange(role)}
+                          sx={{
+                            flex: 1,
+                            borderRadius: 2,
+                            textTransform: "none",
+                            py: 1.1,
+                            color: isSelected ? "#7e22ce" : "#374151",
+                            borderColor: isSelected ? "#9333ea" : "#d1d5db",
+                            backgroundColor: isSelected ? "#faf5ff" : "#fff",
+                          }}
+                        >
+                          {role}
+                        </Button>
+                      );
+                    })}
                   </Stack>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+                  {errors.role?.message ? (
+                    <Typography variant="caption" sx={{ color: "#dc2626", mb: 2.5, display: "block" }}>
+                      {errors.role.message}
+                    </Typography>
+                  ) : (
+                    <Box sx={{ mb: 2.5 }} />
+                  )}
+                </>
+              )}
+            />
 
-          <Stack spacing={1.5}>
+            <Typography variant="h6" sx={{ mt: 4, mb: 1.5, fontSize: "1.1rem", fontWeight: 700 }}>
+              System Permissions
+            </Typography>
+
+            <Box
+              sx={{
+                borderRadius: 1.5,
+                bgcolor: "#f3f4f6",
+                p: 2,
+                mb: 3,
+              }}
+            >
+              <Grid container spacing={2}>
+                {permissionColumns.map((column, index) => (
+                  <Grid key={index} size={{ xs: 12, md: 6 }}>
+                    <Stack spacing={0.75}>
+                      {column.map((permission) => (
+                        <Typography key={permission} variant="body2" sx={{ color: "#374151" }}>
+                          {permission}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          </>}
+
+          <Stack spacing={1.5} {...isEditingSelf && { sx: { mt: 3 } }}>
             <Button
               type="submit"
               variant="contained"
