@@ -26,6 +26,9 @@ def anonymise_case_for_researcher(case: dict) -> dict:
 @router.post("/triage", response_model=CaseFullOut)
 def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician"))):
     try:
+        if db.has_open_case_for_medicare(case.medicare_number):
+            raise HTTPException(status_code=409, detail="An open case already exists for this Medicare number")
+
         # non-llm service
         classification_res = classify_triage(case.case_details) 
 
@@ -98,10 +101,12 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
             "model_ats_category": classification_res["model_ats_category"],
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         error_text = str(e)
-
         raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
+
 
 @router.get("/cases")
 def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):

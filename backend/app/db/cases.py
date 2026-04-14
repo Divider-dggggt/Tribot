@@ -37,6 +37,28 @@ def add_case(user_id: int, name: str, medicare_number: str, case_details: str, s
     }
 
 
+def has_open_case_for_medicare(medicare_number: str) -> bool:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT medicare_number
+        FROM cases
+        WHERE resolved_at IS NULL;
+        """
+    )
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    for row in rows:
+        stored_medicare = decrypt_text(row[0])
+        if stored_medicare == medicare_number:
+            return True
+
+    return False
+
+
 def get_case_by_id(case_id: int):
     conn = get_connection()
     cur = conn.cursor()

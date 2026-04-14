@@ -23,4 +23,5 @@ from app.db.cases import (
     resolve_case,
     update_soap_summary,
     override_ats_classification,
+    has_open_case_for_medicare,
 )
