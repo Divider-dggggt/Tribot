@@ -105,13 +105,8 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
 
 @router.get("/cases")
 def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):
-    if user["role"] not in {"Clinician", "Researcher"}:
-        raise HTTPException(status_code=403, detail="Access denied")
 
     cases = db.get_all_cases() if resolved else db.get_open_cases()
-    #if resolved:
-    #    return db.get_resolved_cases()
-    #return db.get_open_cases()
 
     if user["role"] == "Researcher":
         cases = [anonymise_case_for_researcher(case) for case in cases]
@@ -120,8 +115,6 @@ def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_us
 
 @router.get("/cases/{case_id}")
 def get_case(case_id: int, user=Depends(get_current_user)):
-    if user["role"] not in {"Clinician", "Researcher"}:
-        raise HTTPException(status_code=403, detail="Access denied")
 
     case = db.get_case_by_id(case_id)
     if not case:
