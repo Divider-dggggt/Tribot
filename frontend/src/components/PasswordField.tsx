@@ -1,8 +1,8 @@
-import { ReactElement, useState } from "react";
-import { IconButton, InputAdornment, SvgIcon, TextFieldProps } from "@mui/material";
+import { ComponentProps, ReactElement, useState } from "react";
+import { IconButton, InputAdornment, SvgIcon } from "@mui/material";
 import { FloatingTextField } from "./FloatingTextField";
 
-type PasswordFieldProps = Omit<TextFieldProps, "type">;
+type PasswordFieldProps = Omit<ComponentProps<typeof FloatingTextField>, "type">;
 
 const VisibilityIcon = (): ReactElement => (
   <SvgIcon fontSize="small" viewBox="0 0 24 24">
