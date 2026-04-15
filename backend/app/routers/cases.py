@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 
 from app import db
 from app.core.security import get_current_user, role_required
@@ -8,7 +8,8 @@ from app.services.soap_generator.summariser_service import generate_soap_summary
 from app.services.triage_classifier.triage_classifier_service import classify_triage
 
 router = APIRouter()
-CLASSIFICATION_MODEL = 'setfit'
+CLASSIFICATION_MODEL = 'deberta'
+SOAP_PLACEHOLDER = "Generating clinical summary..."
 
 def anonymise_case_for_researcher(case: dict) -> dict:
     anonymised_case = case.copy()
@@ -23,26 +24,34 @@ def anonymise_case_for_researcher(case: dict) -> dict:
 
     return anonymised_case
 
+def generate_and_store_summary(case_id: int, anon_dialogue: str) -> None:
+    """
+    Runs after the response is sent.
+    Generates the SOAP summary and overwrites the placeholder in the DB.
+    """
+    try:
+        soap_object = generate_soap_summary(anon_dialogue)
+        db.update_soap_summary(case_id, soap_object["soap_markdown"])
+    except Exception as e:
+        # Replace with proper logger later
+        print(f"Failed to generate SOAP summary for case {case_id}: {e}")
+
 @router.post("/triage", response_model=CaseFullOut)
-def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician"))):
+def create_case_endpoint(
+    case: CaseCreate,
+    background_tasks: BackgroundTasks,
+    fast_response: bool = Query(default=True),
+    user=Depends(role_required("Clinician")),
+):
     try:
         # non-llm service
-        classification_res = classify_triage(case.case_details) 
+        classification_res = classify_triage(case.case_details)
 
         # precise anon
-        anon_result = deidentify_dialogue(case.case_details) 
+        anon_result = deidentify_dialogue(case.case_details)
         anon_dialogue = anon_result["deidentified_text"]
 
-        # SOAP generation with precise anon
-        soap_object = generate_soap_summary(anon_dialogue)
-        # return {
-        #     "soap_markdown": soap_markdown,
-        #     "brief_summary": brief_summary,
-        # }
-
-        # severity_info = classification_res["severity_flags"]
         is_high_severity = classification_res["is_high_severity"]
-        # flags_detected = classification_res["flags_detected"]
         severity_flag_notes = classification_res["severity_flag_notes"]
 
         new_case = db.add_case(
@@ -53,46 +62,55 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
             severity_flagged=is_high_severity,
         )
         case_id = new_case["case_id"]
-        db.update_soap_summary(case_id, soap_object["soap_markdown"])
 
         db.add_classification_model(
             case_id=case_id,
-            # model_name=classification_res["decision_source"],
             model_name=CLASSIFICATION_MODEL,
             ats_classification=classification_res["ats_category"],
             confidence_score=classification_res["model_confidence"],
         )
 
         if is_high_severity:
-            # all_reasons = []
+            db.add_severity_flag(
+                case_id,
+                classification_res["ats_category"],
+                severity_flag_notes,
+            )
 
-            # for label, ats in severity_info["matched_categories"].items():
-            #     reasons = severity_info["flags"].get(label, [])
-            #     reason_text = ", ".join(reasons) if reasons else label
+        if fast_response:
+            # Store placeholder immediately so GET /cases/{id} can show it
+            db.update_soap_summary(case_id, SOAP_PLACEHOLDER)
 
-            #     db.add_severity_flag(case_id, ats, reason_text)
-            #     all_reasons.extend(reasons)
-            db.add_severity_flag(case_id, classification_res["ats_category"], severity_flag_notes)
+            # Run summary generation after response is sent
+            background_tasks.add_task(
+                generate_and_store_summary,
+                case_id,
+                anon_dialogue,
+            )
 
-            # severity_flags_reason = ", ".join(sorted(set(all_reasons))) if all_reasons else None
+            soap_summary_for_response = SOAP_PLACEHOLDER
+            soap_note_for_response = SOAP_PLACEHOLDER
 
-            severity_flags_reason = severity_flag_notes
         else:
-            severity_flags_reason = None
+            soap_object = generate_soap_summary(anon_dialogue)
+
+            db.update_soap_summary(case_id, soap_object["soap_markdown"])
+
+            soap_summary_for_response = soap_object["soap_markdown"]
+            soap_note_for_response = soap_object["brief_summary"]
 
         return {
             "case_id": case_id,
             "name": new_case["name"],
             "medicare_number": new_case["medicare_number"],
             "severity_flagged": new_case["severity_flagged"],
-            "soap_summary": soap_object["soap_markdown"],
-            "soap_note": soap_object["brief_summary"],
+            "soap_summary": soap_summary_for_response,
+            "soap_note": soap_note_for_response,
             "ats_classification": classification_res["ats_category"],
             "confidence_score": classification_res["model_confidence"],
             "flagged_keywords": severity_flag_notes,
             "clinician_override_at": None,
             "resolved_at": new_case["resolved_at"],
-
             "decision_source": classification_res["decision_source"],
             "rule_based_ats_category": classification_res["rule_based_ats_category"],
             "model_ats_category": classification_res["model_ats_category"],
@@ -100,7 +118,6 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
 
     except Exception as e:
         error_text = str(e)
-
         raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
 
 @router.get("/cases")
