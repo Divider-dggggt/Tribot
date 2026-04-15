@@ -37,6 +37,7 @@ def generate_and_store_summary(case_id: int, anon_dialogue: str) -> None:
         print(f"Failed to generate SOAP summary for case {case_id}: {e}")
 
 @router.post("/triage", response_model=CaseFullOut)
+@router.post("/cases", response_model=CaseFullOut)
 def create_case_endpoint(
     case: CaseCreate,
     background_tasks: BackgroundTasks,
@@ -121,6 +122,7 @@ def create_case_endpoint(
         raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
 
 @router.get("/cases")
+@router.get("/triage")
 def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_user)):
 
     cases = db.get_all_cases() if resolved else db.get_open_cases()
@@ -131,6 +133,7 @@ def get_cases(resolved: bool = Query(default=False), user=Depends(get_current_us
     return  cases
 
 @router.get("/cases/{case_id}")
+@router.get("/triage/{case_id}")
 def get_case(case_id: int, user=Depends(get_current_user)):
 
     case = db.get_case_by_id(case_id)
@@ -143,6 +146,7 @@ def get_case(case_id: int, user=Depends(get_current_user)):
     return case
 
 @router.patch("/cases/{case_id}/resolve")
+@router.patch("/triage/{case_id}/resolve")
 def resolve_case_endpoint(case_id: int, user=Depends(role_required("Clinician"))):
     resolved_case = db.resolve_case(case_id)
     if not resolved_case:
@@ -150,6 +154,7 @@ def resolve_case_endpoint(case_id: int, user=Depends(role_required("Clinician"))
     return resolved_case
 
 @router.patch("/cases/{case_id}/reopen")
+@router.patch("/triage/{case_id}/reopen")
 def reopen_case_endpoint(case_id: int, user=Depends(role_required("Clinician"))):
     reopened_case = db.reopen_case(case_id)
     if not reopened_case:
@@ -157,6 +162,7 @@ def reopen_case_endpoint(case_id: int, user=Depends(role_required("Clinician")))
     return reopened_case
 
 @router.patch("/cases/{case_id}/ats")
+@router.patch("/triage/{case_id}/ats")
 def override_ats_classification_endpoint(
         case_id: int,
         payload: ATSOverrideRequest,
