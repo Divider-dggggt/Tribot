@@ -88,40 +88,37 @@ export const ResetPasswordDialog = ({
       return;
     }
 
-    const verifyCurrentPasswordResponse = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: signedInEmail,
-        password: values.currentPassword,
-      }),
-    });
-
-    if (!verifyCurrentPasswordResponse.ok) {
-      setError(
-        "currentPassword",
-        { type: "validate", message: "Current password is incorrect." },
-        { shouldFocus: true }
-      );
-      return;
-    }
-
     try {
-      // Temporary: use self-update endpoint until dedicated password endpoint is ready.
       const updatePasswordResponse = await fetchWithAuth(`${API_BASE_URL}/users/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          old_password: values.currentPassword,
           password: values.newPassword,
         }),
       });
 
       if (!updatePasswordResponse.ok) {
-        throw new Error(await readApiError(updatePasswordResponse));
+        const apiErrorMessage = await readApiError(updatePasswordResponse);
+        if (updatePasswordResponse.status === 403 && /old password/i.test(apiErrorMessage)) {
+          setError(
+            "currentPassword",
+            { type: "validate", message: "Current password is incorrect." },
+            { shouldFocus: true }
+          );
+          return;
+        }
+        if (updatePasswordResponse.status === 400 && /same as old/i.test(apiErrorMessage)) {
+          setError(
+            "newPassword",
+            { type: "validate", message: "New password cannot be the same as old password." },
+            { shouldFocus: true }
+          );
+          return;
+        }
+        throw new Error(apiErrorMessage);
       }
 
       reset(defaultValues);
