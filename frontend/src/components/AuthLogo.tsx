@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { ReactElement } from "react";
+import { BrandIcon } from "./BrandIcon";
 
 interface AuthLogoProps {
   subtitle: string;
@@ -8,31 +9,8 @@ interface AuthLogoProps {
 export const AuthLogo = ({ subtitle }: AuthLogoProps): ReactElement => {
   return (
     <Box sx={{ textAlign: "center", mb: 4 }}>
-      <Box
-        sx={{
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          mx: "auto",
-          mb: 2,
-          backgroundColor: "#7c3aed",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="white"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="22 12 18 12 15 20 10 5 7 12 2 12" />
-        </svg>
+      <Box sx={{ mx: "auto", mb: 2, display: "flex", justifyContent: "center" }}>
+        <BrandIcon size={56} iconSize={28} />
       </Box>
       <Typography
         variant="h5"

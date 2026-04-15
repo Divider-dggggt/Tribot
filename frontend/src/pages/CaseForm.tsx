@@ -23,22 +23,8 @@ import { formatCaseDateTime } from "../utils/date";
 import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
-
-// Simple Send Icon
-const SendIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <line x1="22" y1="2" x2="11" y2="13"></line>
-    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-  </svg>
-);
-
-// Simple X Icon
-const XIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-);
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 interface CaseFormValues {
   patientID: string;
@@ -549,7 +535,7 @@ export const CaseForm = (): ReactElement => {
                 {isSubmitting ? (
                   <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
                 ) : (
-                  <SendIcon />
+                  <SendRoundedIcon sx={{ mr: 1 }} />
                 )}
                 {isSubmitting ? "Submitting..." : "Submit for Triage"}
               </Button>
@@ -566,9 +552,7 @@ export const CaseForm = (): ReactElement => {
                   ...dangerOutlinedButtonSx,
                 }}
               >
-                <Box component="span" sx={{ color: 'inherit', display: 'inline-flex' }}>
-                  <XIcon />
-                </Box>
+                <CloseRoundedIcon sx={{ mr: 1 }} />
                 Cancel
               </Button>
             </Stack>

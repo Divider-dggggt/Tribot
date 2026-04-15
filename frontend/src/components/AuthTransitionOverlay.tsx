@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 import { Backdrop, Box, CircularProgress, Fade, Typography } from "@mui/material";
 import { keyframes } from "@mui/system";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import TimerOffOutlinedIcon from "@mui/icons-material/TimerOffOutlined";
 
 type AuthTransitionOverlayVariant = "login" | "logout" | "expired";
 
@@ -12,26 +15,15 @@ interface AuthTransitionOverlayProps {
 }
 
 const LoginSuccessIcon = (): ReactElement => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M8 12.5l2.5 2.5L16 9.5" />
-  </svg>
+  <TaskAltRoundedIcon sx={{ fontSize: 28 }} aria-hidden />
 );
 
 const LogoutProgressIcon = (): ReactElement => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path d="M10 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-    <polyline points="14 7 19 12 14 17" />
-    <line x1="19" y1="12" x2="9" y2="12" />
-  </svg>
+  <LogoutRoundedIcon sx={{ fontSize: 24 }} aria-hidden />
 );
 
 const SessionExpiredIcon = (): ReactElement => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7v5l3 2" />
-    <path d="m7.5 7.5 9 9" />
-  </svg>
+  <TimerOffOutlinedIcon sx={{ fontSize: 28 }} aria-hidden />
 );
 
 const panelEnter = keyframes`

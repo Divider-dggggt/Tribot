@@ -31,24 +31,8 @@ import { UserRole } from "../types/user";
 import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { API_BASE_URL } from "../utils/constants";
 import { DashboardCaseObject } from "../types/case";
-
-// Simple Plus Icon
-const PlusIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <line x1="5" y1="12" x2="19" y2="12"></line>
-  </svg>
-);
-
-const SortIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="4" y1="7" x2="14" y2="7"></line>
-    <line x1="4" y1="12" x2="18" y2="12"></line>
-    <line x1="4" y1="17" x2="10" y2="17"></line>
-    <polyline points="18 5 20 3 22 5"></polyline>
-    <line x1="20" y1="3" x2="20" y2="13"></line>
-  </svg>
-);
+import AddIcon from "@mui/icons-material/Add";
+import SortRoundedIcon from "@mui/icons-material/SortRounded";
 
 type SortOption = "severity" | "createdTime" | "alphabetical";
 
@@ -224,7 +208,7 @@ export const Dashboard = (): ReactElement => {
           fontWeight: 'bold'
         }}
       >
-        <PlusIcon />
+        <AddIcon sx={{ mr: 1 }} />
         Create New Case
       </Button>}
 
@@ -291,7 +275,7 @@ export const Dashboard = (): ReactElement => {
                   color: "#6b7280",
                 }}
               >
-                <SortIcon />
+                <SortRoundedIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
           </Box>
