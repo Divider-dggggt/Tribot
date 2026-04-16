@@ -15,59 +15,18 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { API_BASE_URL } from './utils/constants';
 import GroupIcon from '@mui/icons-material/Group';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import LockResetOutlinedIcon from '@mui/icons-material/LockResetOutlined';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { clearAuthSession, getAccessToken, getDecodedToken } from './utils/auth';
 import { dangerMenuItemHoverSx } from './utils/buttonStyles';
 import { UserRole } from './types/user';
 import { AuthTransitionOverlay } from './components/AuthTransitionOverlay';
 import { ResetPasswordDialog } from './components/ResetPasswordDialog';
-
-// Simple SVG Icons
-const DashboardIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7"></rect>
-    <rect x="14" y="3" width="7" height="7"></rect>
-    <rect x="14" y="14" width="7" height="7"></rect>
-    <rect x="3" y="14" width="7" height="7"></rect>
-  </svg>
-);
-
-const NewCaseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    <polyline points="14 2 14 8 20 8"></polyline>
-    <line x1="12" y1="18" x2="12" y2="12"></line>
-    <line x1="9" y1="15" x2="15" y2="15"></line>
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-    <circle cx="12" cy="7" r="4"></circle>
-  </svg>
-);
-
-const LogoutIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-    <polyline points="16 17 21 12 16 7"></polyline>
-    <line x1="21" y1="12" x2="9" y2="12"></line>
-  </svg>
-);
-
-const ResetPasswordIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-    <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
-    <line x1="12" y1="16" x2="12" y2="16"></line>
-  </svg>
-);
-
-const ChevronDownIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="6 9 12 15 18 9"></polyline>
-  </svg>
-);
+import { BrandIcon } from './components/BrandIcon';
 
 const drawerWidth = 240;
 const LOGOUT_NAVIGATION_DELAY_MS = 450;
@@ -195,7 +154,7 @@ function Layout() {
                 backgroundColor: ACCOUNT_MENU_HOVER_BG,
               }}
             >
-              <UserIcon />
+              <PersonOutlineIcon sx={{ fontSize: 18 }} />
             </Box>
             <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5 }}>
               <Box
@@ -238,7 +197,7 @@ function Layout() {
                   transform: isAccountMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                 }}
               >
-                <ChevronDownIcon />
+                <ExpandMoreRoundedIcon sx={{ fontSize: 18 }} />
               </Box>
             </Box>
           </Button>
@@ -280,7 +239,7 @@ function Layout() {
                 },
               }}
             >
-              <ResetPasswordIcon />
+              <LockResetOutlinedIcon sx={{ mr: 1, fontSize: 20 }} />
               Reset Password
             </MenuItem>
             <MenuItem
@@ -298,7 +257,7 @@ function Layout() {
                 ...dangerMenuItemHoverSx,
               }}
             >
-              <LogoutIcon />
+              <LogoutOutlinedIcon sx={{ mr: 1, fontSize: 20 }} />
               {isLoggingOut ? 'Logging out...' : 'Logout'}
             </MenuItem>
           </Menu>
@@ -327,9 +286,10 @@ function Layout() {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              color: '#7c3aed',
-              fontWeight: 'bold',
-              fontSize: '1.2rem',
+              color: '#111827',
+              fontWeight: 700,
+              letterSpacing: 0.4,
+              fontSize: '1.1rem',
               textDecoration: 'none',
               borderRadius: 1,
               '&:hover': {
@@ -337,11 +297,9 @@ function Layout() {
               },
             }}
           >
-            <div style={{ width: 32, height: 32, backgroundColor: '#7c3aed', borderRadius: 8, marginRight: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-              </svg>
-            </div>
+            <Box sx={{ mr: 1, display: 'inline-flex' }}>
+              <BrandIcon size={32} iconSize={18} />
+            </Box>
             TRIBOT
           </Box>
         </Toolbar>
@@ -358,7 +316,7 @@ function Layout() {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
-                  <DashboardIcon />
+                  <DashboardOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: location.pathname === '/dashboard' ? 'bold' : 'medium' }} />
               </ListItemButton>
@@ -375,7 +333,7 @@ function Layout() {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
-                  <NewCaseIcon />
+                  <NoteAddOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText primary="New Case" primaryTypographyProps={{ fontWeight: location.pathname === '/new-case' ? 'bold' : 'medium' }} />
               </ListItemButton>
