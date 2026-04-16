@@ -5,7 +5,9 @@ CREATE TABLE users (
     password TEXT NOT NULL,
     role TEXT CHECK (role IN ('Admin','Clinician','Researcher')) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    password_changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    password_changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_deactivated BOOLEAN DEFAULT FALSE,
+    deactivated_at TIMESTAMP NULL
 );
 
 INSERT INTO users (name, email, password, role) VALUES

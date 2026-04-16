@@ -1,10 +1,12 @@
 from app.db.users import (
     create_user,
-    delete_user,
+    deactivate_user,
     get_all_users,
+    get_deactivated_users,
     get_user_by_email,
     get_user_by_id,
     is_token_revoked,
+    reactivate_user,
     revoke_token,
     update_user,
 )

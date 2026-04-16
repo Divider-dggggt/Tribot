@@ -3,7 +3,12 @@ from app.db.connection import get_connection
 def get_all_users():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, name, email, role, created_at FROM users ORDER BY id;")
+    cur.execute("""
+                SELECT id, name, email, role, created_at
+                FROM users 
+                WHERE is_deactivated = FALSE 
+                ORDER BY id;
+                """)
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -26,7 +31,7 @@ def get_user_by_id(user_id: int):
         """
         SELECT id, name, email, role, created_at, password_changed_at
         FROM users
-        WHERE id = %s;
+        WHERE id = %s AND is_deactivated = FALSE;
         """,
         (user_id,),
     )
@@ -53,7 +58,7 @@ def get_user_by_email(email: str):
         """
         SELECT id, name, email, password, role, password_changed_at
         FROM users
-        WHERE email = %s;
+        WHERE email = %s AND is_deactivated = FALSE;
         """,
         (email,),
     )
@@ -151,10 +156,19 @@ def update_user(user_id: int, name=None, email=None, password=None, role=None):
         "password_changed_at": row[5],
     }
 
-def delete_user(user_id: int):
+def deactivate_user(user_id: int):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM users WHERE id = %s RETURNING id;", (user_id,))
+    cur.execute(
+        """
+        UPDATE users
+        SET is_deactivated = TRUE, deactivated_at = CURRENT_TIMESTAMP
+        WHERE id = %s AND is_deactivated = FALSE
+        RETURNING id;
+        """,
+        (user_id,),
+    )
+    #cur.execute("DELETE FROM users WHERE id = %s RETURNING id;", (user_id,))
     row = cur.fetchone()
     conn.commit()
     cur.close()
@@ -181,3 +195,55 @@ def is_token_revoked(token: str) -> bool:
     cur.close()
     conn.close()
     return row is not None
+
+def get_deactivated_users():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT id, name, email, role, created_at, deactivated_at
+        FROM users
+        WHERE is_deactivated = TRUE
+        ORDER BY id;
+        """
+    )
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return [
+        {
+            "id": row[0],
+            "name": row[1],
+            "email": row[2],
+            "role": row[3],
+            "created_at": row[4],
+            "deactivated_at": row[5],
+        }
+        for row in rows
+    ]
+
+
+def reactivate_user(user_id: int):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE users
+        SET is_deactivated = FALSE,
+            deactivated_at = NULL
+        WHERE id = %s AND is_deactivated = TRUE
+        RETURNING id;
+        """,
+        (user_id,),
+    )
+    row = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    if not row:
+        return None
+
+    return {"id": row[0]}
+
