@@ -43,6 +43,7 @@ CREATE TABLE classification_model (
     ats_classification INT, -- ATS category
     confidence_score FLOAT,
     clinician_override_at TIMESTAMP NULL,
+    clinician_override_reason TEXT NULL,
     PRIMARY KEY (case_id)
 );
 

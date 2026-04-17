@@ -94,6 +94,7 @@ def create_case_endpoint(case: CaseCreate, user=Depends(role_required("Clinician
             "confidence_score": classification_res["model_confidence"],
             "flagged_keywords": severity_flag_notes,
             "clinician_override_at": None,
+            "clinician_override_reason": None,
             "resolved_at": new_case["resolved_at"],
 
             "decision_source": classification_res["decision_source"],
@@ -156,6 +157,7 @@ def override_ats_classification_endpoint(
     updated = db.override_ats_classification(
         case_id=case_id,
         ats_classification=payload.ats_classification,
+        override_reason=payload.override_reason,
     )
 
     if not updated:
@@ -165,5 +167,6 @@ def override_ats_classification_endpoint(
         "case_id": updated["case_id"],
         "ats_classification": updated["ats_classification"],
         "clinician_override_at": updated["clinician_override_at"],
+        "clinician_override_reason": updated["clinician_override_reason"],
         "message": "ATS classification overridden successfully",
     }

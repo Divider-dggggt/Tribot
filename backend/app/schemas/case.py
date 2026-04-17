@@ -34,6 +34,7 @@ class CaseFullOut(BaseModel):
     confidence_score: float
     flagged_keywords: str | None
     clinician_override_at: datetime | None = None
+    clinician_override_reason: str | None = None
     resolved_at: datetime | None = None
     decision_source: str
     rule_based_ats_category: int | None = None
@@ -41,10 +42,19 @@ class CaseFullOut(BaseModel):
 
 class ATSOverrideRequest(BaseModel):
     ats_classification: int
+    override_reason: str
 
     @field_validator("ats_classification")
     @classmethod
     def validate_ats_classification(cls, value: int):
         if value < 1 or value > 5:
             raise ValueError("ATS classification must be between 1 and 5")
+        return value
+
+    @field_validator("override_reason")
+    @classmethod
+    def validate_override_reason(cls, value: str):
+        value = value.strip()
+        if not value:
+            raise ValueError("Override reason cannot be empty")
         return value

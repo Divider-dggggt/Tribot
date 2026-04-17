@@ -76,7 +76,8 @@ def get_case_by_id(case_id: int):
             c.created_at,
             cm.ats_classification,
             cm.confidence_score,
-            cm.clinician_override_at
+            cm.clinician_override_at,
+            cm.clinician_override_reason
         FROM cases c
         LEFT JOIN classification_model cm ON c.case_id = cm.case_id
         WHERE c.case_id = %s;
@@ -119,6 +120,7 @@ def get_case_by_id(case_id: int):
         "ats_classification": case_row[8],
         "confidence_score": case_row[9],
         "clinician_override_at": case_row[10],
+        "clinician_override_reason": case_row[11],
         "severity_flags": [
             {"flag_category": row[0], "flag_reason": row[1]}
             for row in severity_rows
@@ -141,7 +143,8 @@ def get_open_cases():
             c.created_at,
             cm.ats_classification,
             cm.confidence_score,
-            cm.clinician_override_at
+            cm.clinician_override_at,
+            cm.clinician_override_reason
         FROM cases c
         LEFT JOIN classification_model cm ON c.case_id = cm.case_id
         WHERE c.resolved_at IS NULL
@@ -165,6 +168,7 @@ def get_open_cases():
             "ats_classification": row[8],
             "confidence_score": row[9],
             "clinician_override_at": row[10],
+            "clinician_override_reason": row[11],
         }
         for row in rows
     ]
@@ -186,7 +190,8 @@ def get_resolved_cases():
             c.created_at,
             cm.ats_classification,
             cm.confidence_score,
-            cm.clinician_override_at
+            cm.clinician_override_at,
+            cm.clinician_override_reason
         FROM cases c
         LEFT JOIN classification_model cm ON c.case_id = cm.case_id
         WHERE c.resolved_at IS NOT NULL
@@ -211,6 +216,7 @@ def get_resolved_cases():
             "ats_classification": row[8],
             "confidence_score": row[9],
             "clinician_override_at": row[10],
+            "clinician_override_reason": row[11],
         }
         for row in rows
     ]
@@ -232,7 +238,8 @@ def get_all_cases():
             c.created_at,
             cm.ats_classification,
             cm.confidence_score,
-            cm.clinician_override_at
+            cm.clinician_override_at,
+            cm.clinician_override_reason
         FROM cases c
         LEFT JOIN classification_model cm ON c.case_id = cm.case_id
         ORDER BY c.created_at DESC;
@@ -255,6 +262,7 @@ def get_all_cases():
             "ats_classification": row[8],
             "confidence_score": row[9],
             "clinician_override_at": row[10],
+            "clinician_override_reason": row[11],
         }
         for row in rows
     ]
@@ -338,12 +346,13 @@ def add_classification_model(case_id: int, model_name: str, ats_classification: 
             model_name,
             ats_classification,
             confidence_score,
-            clinician_override_at
+            clinician_override_at,
+            clinician_override_reason
         )
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING case_id, model_name, ats_classification, confidence_score, clinician_override_at;
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING case_id, model_name, ats_classification, confidence_score, clinician_override_at, clinician_override_reason;
         """,
-        (case_id, model_name, ats_classification, confidence_score, None),
+        (case_id, model_name, ats_classification, confidence_score, None, None),
     )
     row = cur.fetchone()
     conn.commit()
@@ -356,6 +365,7 @@ def add_classification_model(case_id: int, model_name: str, ats_classification: 
         "ats_classification": row[2],
         "confidence_score": row[3],
         "clinician_override_at": row[4],
+        "clinician_override_reason": row[5],
     }
 
 
@@ -436,18 +446,19 @@ def get_model_metrics_by_name(model_name: str):
     }
 
 
-def override_ats_classification(case_id: int, ats_classification: int):
+def override_ats_classification(case_id: int, ats_classification: int, override_reason: str):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
         """
         UPDATE classification_model
         SET ats_classification = %s,
-            clinician_override_at = CURRENT_TIMESTAMP
+            clinician_override_at = CURRENT_TIMESTAMP,
+            clinician_override_reason = %s
         WHERE case_id = %s
-        RETURNING case_id, ats_classification, clinician_override_at;
+        RETURNING case_id, ats_classification, clinician_override_at, clinician_override_reason;
         """,
-        (ats_classification, case_id),
+        (ats_classification, override_reason, case_id),
     )
     row = cur.fetchone()
     conn.commit()
@@ -461,4 +472,5 @@ def override_ats_classification(case_id: int, ats_classification: int):
         "case_id": row[0],
         "ats_classification": row[1],
         "clinician_override_at": row[2],
+        "clinician_override_reason": row[3],
     }
