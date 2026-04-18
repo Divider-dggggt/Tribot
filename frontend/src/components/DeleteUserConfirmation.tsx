@@ -23,8 +23,8 @@ export const DeleteUserConfirmation = ({
   const handleDelete = async (): Promise<void> => {
     setLoading(true);
     try {
-      await fetchWithAuth(`${API_BASE_URL}/users/${userId}`, {
-        method: "DELETE",
+      await fetchWithAuth(`${API_BASE_URL}/users/${userId}/deactivate`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -42,10 +42,10 @@ export const DeleteUserConfirmation = ({
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>Confirm User Deletion</DialogTitle>
+      <DialogTitle>Confirm User Deactivation</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to delete this user? This action cannot be undone.
+          Are you sure you want to deactivate this user?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -56,7 +56,7 @@ export const DeleteUserConfirmation = ({
           color="error"
           startIcon={loading && <CircularProgress size={20} />}
         >
-          {loading ? "Deleting..." : "Delete"}
+          {loading ? "Deactivating..." : "Deactivate"}
         </Button>
       </DialogActions>
     </Dialog>

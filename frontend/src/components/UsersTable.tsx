@@ -21,7 +21,7 @@ import { CreateUserForm } from "./CreateUserForm";
 import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
 import Tooltip from "@mui/material/Tooltip";
 import { EditUserForm } from "./EditUserForm";
 import { DeleteUserConfirmation } from "./DeleteUserConfirmation";
@@ -165,9 +165,9 @@ export const UsersTable = (): ReactElement => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      {selfUserId !== user.id && <Tooltip title="Delete User">
+                      {selfUserId !== user.id && <Tooltip title="Deactivate User">
                         <IconButton onClick={() => handleOpenDeleteDialog(user.id)}>
-                          <DeleteIcon />
+                          <DoDisturbOnIcon />
                         </IconButton>
                       </Tooltip>}
                     </TableCell>
