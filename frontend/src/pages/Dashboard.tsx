@@ -33,6 +33,8 @@ import { API_BASE_URL } from "../utils/constants";
 import { DashboardCaseObject } from "../types/case";
 import AddIcon from "@mui/icons-material/Add";
 import SortRoundedIcon from "@mui/icons-material/SortRounded";
+import DoneIcon from "@mui/icons-material/Done";
+import UndoIcon from "@mui/icons-material/Undo";
 
 type SortOption = "severity" | "createdTime" | "alphabetical";
 
@@ -117,23 +119,23 @@ export const Dashboard = (): ReactElement => {
     })
     .map(({ item }) => item);
 
-  useEffect(() => {
-    const fetchCases = async (): Promise<void> => {
-      setIsLoading(true);
-      try {
-        const response = await fetchWithAuth(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const cases = await response.json() as DashboardCaseObject[];
-        setTriageCases(cases);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchCases = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const cases = await response.json() as DashboardCaseObject[];
+      setTriageCases(cases);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (isViewingDashboard) {
       fetchCases();
     }
@@ -300,6 +302,9 @@ export const Dashboard = (): ReactElement => {
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
                     Severity
                   </TableCell>
+                  {userRole === UserRole.Clinician && <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
+                    Actions
+                  </TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -348,6 +353,23 @@ export const Dashboard = (): ReactElement => {
                           }}
                         />
                       </TableCell>
+                      {userRole === UserRole.Clinician && <TableCell>
+                        <Tooltip title={caseView === "resolved-cases" ? "Reopen Case" : "Resolve Case"}>
+                          <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            void fetchWithAuth(`${API_BASE_URL}/cases/${item.case_id}/${caseView === "resolved-cases" ? "reopen" : "resolve"}`, {
+                              method: "PATCH",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                            }).then(() => {
+                              fetchCases();
+                            });
+                          }}>
+                            {caseView === "resolved-cases" ? <UndoIcon /> : <DoneIcon />}
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>}
                     </TableRow>
                   );
                 })}

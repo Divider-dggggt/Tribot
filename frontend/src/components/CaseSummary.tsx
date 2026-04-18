@@ -251,7 +251,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
       >
         Override
       </Button>}
-      <Button 
+      {userRole === UserRole.Clinician && <Button 
         variant="contained" 
         fullWidth 
         size="large"
@@ -274,7 +274,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         }}
       >
         {triageCase.resolved_at == null ? "Resolve" : "Reopen"}
-      </Button>
+      </Button>}
       <OverrideDialog
         open={isOverriding}
         onClose={() => {
