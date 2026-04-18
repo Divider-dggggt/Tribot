@@ -30,15 +30,16 @@ export const OverrideDialog = ({
   caseId,
 }: OverrideDialogProps): ReactElement => {
   const {
+    register,
     control,
     handleSubmit,
     reset,
     formState: { submitCount },
   } = useForm({
-    defaultValues: { atsOverride: initialValue }
+    defaultValues: { atsOverride: initialValue, atsReason: "" }
   });
 
-  const onSubmit = async (data: { atsOverride: ATSLevel }): Promise<void> => {
+  const onSubmit = async (data: { atsOverride: ATSLevel, atsReason: string }): Promise<void> => {
     if (data.atsOverride !== initialValue) {
       await fetchWithAuth(`${API_BASE_URL}/cases/${caseId}/ats`, {
         method: "PATCH",
@@ -46,7 +47,8 @@ export const OverrideDialog = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ats_classification: data.atsOverride + 1,
+          override_ats: data.atsOverride + 1,
+          ...(data.atsReason && { override_reason: data.atsReason })
         }),
       }).then(() => {
         onSuccess();
@@ -88,6 +90,14 @@ export const OverrideDialog = ({
                 <MenuItem value={ATSLevel["ATS-5"]}>ATS 5</MenuItem>
               </FloatingTextField>
             )}
+          />
+          <FloatingTextField
+            fullWidth
+            label="Override Reason"
+            multiline
+            rows={4}
+            {...register("atsReason")}
+            sx={{ mt: 2 }}
           />
         </DialogContent>
         <DialogActions>

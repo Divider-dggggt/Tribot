@@ -195,6 +195,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                   : "No safety rule override was applied."
               )
             }
+            {triageCase.override_reason && <><br/>Override Reason: {triageCase.override_reason}</>}
             {hasFlaggedKeywords ? <><br/>Severity Notes: {flaggedKeywordsText}</> : ""}
           </Alert>
           <Divider sx={{ mb: 2 }} />
