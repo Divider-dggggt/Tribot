@@ -16,7 +16,7 @@ def main() -> None:
     config_path = base_dir / 'configs' / 'app_config.yaml'
 
     scenarios_candidates = [
-        base_dir.parent / 'sample_data' / 'scenarios.json',
+        base_dir.parent.parent / 'sample_data' / 'scenarios.json',
         base_dir / 'handbook_rag_function_project' / 'scenarios.json',
     ]
     scenarios_path = next((p for p in scenarios_candidates if p.exists()), None)

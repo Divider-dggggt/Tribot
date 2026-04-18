@@ -27,7 +27,7 @@ def _load_llm_rag_predict():
         sys.path.insert(0, rag_root)
 
     try:
-        from handbook_rag_function_project.pipeline import llm_rag_predict
+        from RAG.handbook_rag_function_project.pipeline import llm_rag_predict
     except ImportError as exc:
         raise ImportError(
             "Failed to import RAG pipeline. Ensure RAG dependencies are installed."
@@ -74,7 +74,7 @@ def predict_ats(text: str) -> Dict[str, float | int]:
     ats_category = int(result["ats_category"])
     confidence = result.get("confidence")
     if confidence is None:
-        confidence = -1
+        confidence = 0
     else:
         confidence = round(float(confidence), 4)
 
