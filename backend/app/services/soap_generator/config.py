@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from urllib.parse import urlparse
 
 import yaml
 from dotenv import load_dotenv
@@ -27,51 +25,15 @@ class ConfigError(Exception):
     pass
 
 
-def _normalize_url(value: str) -> str:
-    return value.strip().rstrip("/")
-
-
-def _load_api_key_for_url(url: str) -> str:
+def _load_api_key() -> str:
     # Support local runs and docker-compose volume mount (/app/.env).
     load_dotenv(DEFAULT_ENV_PATH, override=False)
 
-    normalized_url = _normalize_url(url)
+    api_key = os.getenv("LLM_API_KEY", "").strip()
+    if api_key:
+        return api_key
 
-    keys_json = os.getenv("LLM_API_KEYS", "").strip()
-    if keys_json:
-        try:
-            key_map = json.loads(keys_json)
-        except json.JSONDecodeError as e:
-            raise ConfigError("Invalid LLM_API_KEYS in .env: must be valid JSON object.") from e
-        if not isinstance(key_map, dict):
-            raise ConfigError("Invalid LLM_API_KEYS in .env: must be a JSON object.")
-
-        normalized_map: Dict[str, str] = {}
-        for k, v in key_map.items():
-            if isinstance(k, str) and isinstance(v, str) and v.strip():
-                normalized_map[_normalize_url(k)] = v.strip()
-
-        matched_key = normalized_map.get(normalized_url)
-        if matched_key:
-            return matched_key
-
-    # Optional fallback: host-based env var name, e.g. LLM_API_KEY_O3_FAN
-    host = urlparse(normalized_url).hostname or ""
-    if host:
-        host_var = "LLM_API_KEY_" + "".join(ch if ch.isalnum() else "_" for ch in host.upper())
-        host_key = os.getenv(host_var, "").strip()
-        if host_key:
-            return host_key
-
-    # Backward-compatible single key fallback.
-    single_key = os.getenv("LLM_API_KEY", "").strip()
-    if single_key:
-        return single_key
-
-    raise ConfigError(
-        "No API key found for llm.url. Set LLM_API_KEYS JSON in backend/.env "
-        "(recommended) or fallback LLM_API_KEY."
-    )
+    raise ConfigError("No API key found. Set LLM_API_KEY in backend/.env.")
 
 
 def load_yaml_config(config_path: str | Path = DEFAULT_CONFIG_PATH) -> Dict[str, Any]:
@@ -100,7 +62,7 @@ def load_llm_settings(config_path: str | Path = DEFAULT_CONFIG_PATH) -> LLMSetti
 
     if not isinstance(url, str) or not url.strip():
         raise ConfigError("Invalid llm.url in config.")
-    api_key = _load_api_key_for_url(url)
+    api_key = _load_api_key()
 
     if isinstance(model_val, str) and model_val.strip():
         model_tree = {}

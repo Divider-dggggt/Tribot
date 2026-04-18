@@ -1,4 +1,9 @@
+# llm:
+#   url: https://api.moonshot.cn/v1
+#   # API key loaded from backend/.env: LLM_API_KEY
+#   model: kimi-latest
 llm:
-  url: https://api.moonshot.cn/v1
-  # API key now loaded from backend/.env via LLM_API_KEYS (URL -> key mapping).
-  model: kimi-latest
+  url: https://api.o3.fan/v1
+  # Single model name (used as-is for OpenAI-compatible API)
+  model: claude-sonnet-4-5-20250929
+  # model: claude-opus-4-20250514

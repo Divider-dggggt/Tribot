@@ -1,5 +1,0 @@
-{
-  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
-  "num_chunks": 633,
-  "embedding_dim": 384
-}

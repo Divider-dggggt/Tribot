@@ -1,4 +1,0 @@
-llm:
-  url: https://api.moonshot.cn/v1
-  # API key now loaded from backend/.env via LLM_API_KEYS (URL -> key mapping).
-  model: kimi-latest
