@@ -1,18 +1,20 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 
 
 class CaseCreate(BaseModel):
-    name: str
+    patient_name: str
     medicare_number: str
-    case_details: str
+    case_dialogue: str
+    age: int | None = None
+    gender: str | None = None
 
-    @field_validator("name")
+    @field_validator("patient_name")
     @classmethod
     def validate_name(cls, value: str):
         value = value.strip()
         if not value:
-            raise ValueError("Name cannot be empty")
+            raise ValueError("Patient name cannot be empty")
         return value
 
     @field_validator("medicare_number")
@@ -23,28 +25,98 @@ class CaseCreate(BaseModel):
             raise ValueError("Medicare number must be exactly 11 digits")
         return value
 
-class CaseFullOut(BaseModel):
+    @field_validator("case_dialogue")
+    @classmethod
+    def validate_case_dialogue(cls, value: str):
+        value = value.strip()
+        if not value:
+            raise ValueError("Case dialogue cannot be empty")
+        return value
+
+    @field_validator("age")
+    @classmethod
+    def validate_age(cls, value: int | None):
+        if value is not None and (value < 0 or value > 150):
+            raise ValueError("Age must be between 0 and 150")
+        return value
+
+    @field_validator("gender")
+    @classmethod
+    def validate_gender(cls, value: str | None):
+        if value is None:
+            return value
+        value = value.strip().lower()
+        if value not in {"male", "female", "other"}:
+            raise ValueError("Gender must be one of: male, female, other")
+        return value
+
+class CaseOut(BaseModel):
     case_id: int
-    name: str
+    patient_name: str
     medicare_number: str
     severity_flagged: bool
-    soap_summary: str
-    soap_note: str
-    ats_classification: int
-    confidence_score: float
-    flagged_keywords: str | None
-    clinician_override_at: datetime | None = None
+    created_at: datetime
     resolved_at: datetime | None = None
-    decision_source: str
-    rule_based_ats_category: int | None = None
-    model_ats_category: int
+    ats_category: int
+    ats_source: str
+    override_ats: int | None = None
+    override_reason: str | None = None
+    age: int | None = None
+    gender: str | None = None
+
+class CaseFullOut(BaseModel):
+    case_id: int
+    patient_name: str
+    medicare_number: str
+    case_dialogue: str
+
+    severity_flagged: bool
+    created_at: datetime
+    resolved_at: datetime | None = None
+
+    ats_category: int
+    ats_source: str
+    override_ats: int | None = None
+    override_reason: str | None = None
+
+    age: int | None = None
+    gender: str | None = None
+
+    pred_ats: int | None = None
+    pred_confidence: float | None = None
+    model_used: str | None = None
+
+    flag_ats: int | None = None
+    flag_notes: str | None = None
+
+    soap_summary: str | None = None
+    brief_summary: str | None = None
+
+    @field_validator("ats_source")
+    @classmethod
+    def validate_ats_source(cls, value: str):
+        value = value.strip().lower()
+        if value not in {"model", "rule", "override"}:
+            raise ValueError("ATS source must be one of: model, rule, override")
+        return value
+    
+    @field_validator("gender")
+    @classmethod
+    def validate_gender(cls, value: str | None):
+        if value is None:
+            return value
+        value = value.strip().lower()
+        if value not in {"male", "female", "other"}:
+            raise ValueError("Gender must be one of: male, female, other")
+        return value
 
 class ATSOverrideRequest(BaseModel):
-    ats_classification: int
+    override_ats: int
+    override_reason: str | None = None
 
-    @field_validator("ats_classification")
+    @field_validator("override_ats")
     @classmethod
     def validate_ats_classification(cls, value: int):
         if value < 1 or value > 5:
-            raise ValueError("ATS classification must be between 1 and 5")
+            raise ValueError("Override ATS must be between 1 and 5")
         return value
