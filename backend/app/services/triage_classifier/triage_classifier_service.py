@@ -6,7 +6,7 @@ from pathlib import Path
 # from .baseline_predict import predict_ats
 from .sprint2_deberta_classifier import predict_ats
 # from .sprint2_setfit_classifier import predict_ats
-from .sprint3_rag import predict_ats
+# from .sprint3_rag import predict_ats
 
 from .severity_flagging import flag_high_severity
 
