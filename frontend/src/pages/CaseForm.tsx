@@ -204,9 +204,11 @@ export const CaseForm = (): ReactElement => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: data.patientName,
+          patient_name: data.patientName,
           medicare_number: data.patientID.replace("/", ""),
-          case_details: allDetails.join("\n"),
+          case_dialogue: allDetails.join("\n"),
+          ...(data.age && { age: data.age }),
+          ...(data.gender && { gender: data.gender }),
         }),
       });
 

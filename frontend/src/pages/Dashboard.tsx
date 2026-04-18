@@ -105,14 +105,14 @@ export const Dashboard = (): ReactElement => {
     .map((item, originalIndex) => ({ item, originalIndex }))
     .sort((a, b) => {
       if (sortOption === "severity") {
-        return a.item.ats_classification - b.item.ats_classification;
+        return a.item.ats_category - b.item.ats_category;
       }
       if (sortOption === "createdTime") {
         const aTimestamp = getCaseTimestamp(a.item.created_at, a.originalIndex);
         const bTimestamp = getCaseTimestamp(b.item.created_at, b.originalIndex);
         return bTimestamp - aTimestamp;
       }
-      const nameCompareResult = compareCaseNameWithPriority(a.item.name, b.item.name);
+      const nameCompareResult = compareCaseNameWithPriority(a.item.patient_name, b.item.patient_name);
       return nameCompareResult !== 0 ? nameCompareResult : a.originalIndex - b.originalIndex;
     })
     .map(({ item }) => item);
@@ -311,7 +311,7 @@ export const Dashboard = (): ReactElement => {
                   </TableRow>
                 )}
                 {sortedTriageCases.map((item, index) => {
-                  const atsPriority = item.ats_classification - 1;
+                  const atsPriority = item.ats_category - 1;
                   return (
                     <TableRow
                       key={`${item.medicare_number},${index}`}
@@ -326,7 +326,7 @@ export const Dashboard = (): ReactElement => {
                     >
                       <TableCell component="th" scope="row" sx={{ py: 1.8 }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#111827" }}>
-                          {item.name}
+                          {item.patient_name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#9ca3af" }}>
                           {item.medicare_number}
