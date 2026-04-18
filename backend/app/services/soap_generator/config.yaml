@@ -1,16 +1,9 @@
 # llm:
-#   url: https://o3.fan/v1
-#   llm_api: sk-L9ERMdOFw04afq0R67FbCa0f2eAf41Ac97A95937677a8f00
-#   # Single model name (used as-is for OpenAI-compatible API)
-#   model: claude-sonnet-4-20250514
-
-# llm:
-#   url: https://o3.fan/v1
-#   llm_api: sk-L9ERMdOFw04afq0R67FbCa0f2eAf41Ac97A95937677a8f00
-#   # Single model name (used as-is for OpenAI-compatible API)
-#   model: claude-opus-4-20250514
-
+#   url: https://api.moonshot.cn/v1
+#   # API key loaded from backend/.env: LLM_API_KEY
+#   model: kimi-latest
 llm:
-  url: https://api.moonshot.cn/v1
-  llm_api: sk-4j0Qm2G79sFBsu9HVHzzRCe6N4nTECueLO3SPVD41ZEV1dhI
-  model: kimi-latest
+  url: https://api.o3.fan/v1
+  # Single model name (used as-is for OpenAI-compatible API)
+  model: claude-sonnet-4-5-20250929
+  # model: claude-opus-4-20250514
