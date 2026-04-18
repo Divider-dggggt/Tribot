@@ -24,9 +24,4 @@ class UserUpdate(BaseModel):
 class UserOut(UserBase):
     id: int
     created_at: datetime
-
-class DeactivatedUserOut(UserBase):
-    id: int
-    created_at: datetime
     deactivated_at: datetime | None = None
-

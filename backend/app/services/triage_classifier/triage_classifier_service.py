@@ -47,8 +47,12 @@ def classify_triage(dialogue_text: str) -> Dict[str, Any]:
     severity_flag_notes = severity_result.get("severity_flag_notes")
 
     if is_high_severity and rule_based_ats_category is not None:
-        final_ats_category = int(rule_based_ats_category)
-        decision_source = "rule_based"
+        if (rule_based_ats_category) <= int(model_ats_category):
+            final_ats_category = int(rule_based_ats_category)
+            decision_source = "rule"
+        else:
+            final_ats_category = int(model_ats_category)
+            decision_source = "model"
     else:
         final_ats_category = int(model_ats_category)
         decision_source = "model"
