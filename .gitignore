@@ -17,6 +17,8 @@ backend/.mypy_cache
 backend/.venv
 launch.json
 backend/app/services/soap_generator/scenarios.json
+backend/app/services/RAG/handbook_rag_function_project/scenarios.json
+backend/app/services/RAG/assets/emergency_triage_education_kit_-_second_edition.pdf
 
 __pycache__/
 
@@ -41,4 +43,5 @@ docker-data
 # =========================
 
 .env
+backend/.env
 .DS_Store
