@@ -195,8 +195,19 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                   : "No safety rule override was applied."
               )
             }
-            {hasFlaggedKeywords ? ` Notes: ${flaggedKeywordsText}` : ""}
+            {hasFlaggedKeywords ? <><br/>Severity Notes: {flaggedKeywordsText}</> : ""}
           </Alert>
+          <Divider sx={{ mb: 2 }} />
+          <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
+            SOAP Summary
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ whiteSpace: "pre-line", lineHeight: 1.7, mb: 3 }}
+          >
+            {triageCase.brief_summary.trim() || "No brief summary is available."}
+          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
             SOAP Summary
