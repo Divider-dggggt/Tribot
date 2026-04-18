@@ -448,6 +448,88 @@ def override_ats_classification(case_id: int, override_ats: int, override_reason
         conn.close()
 
 
+def undo_ats_override(case_id: int):
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        cur.execute(
+            """
+            SELECT
+                c.case_id,
+                c.ats_source,
+                c.override_ats,
+                mp.pred_ats,
+                sf.flag_ats
+            FROM cases c
+            LEFT JOIN model_predictions mp
+                ON c.case_id = mp.case_id
+            LEFT JOIN severity_flags sf
+                ON c.case_id = sf.case_id
+            WHERE c.case_id = %s;
+            """,
+            (case_id,),
+        )
+        row = cur.fetchone()
+
+        if not row:
+            return None
+
+        row = dict(row)
+
+        if row["ats_source"] != "override":
+            return {"error": "Case is not currently overridden"}
+
+        pred_ats = row["pred_ats"]
+        flag_ats = row["flag_ats"]
+
+        if pred_ats is None and flag_ats is None:
+            return {"error": "No model or rule ATS available to restore"}
+
+        if flag_ats is None:
+            restored_ats = pred_ats
+            restored_source = "model"
+        elif pred_ats is None:
+            restored_ats = flag_ats
+            restored_source = "rule"
+        elif flag_ats <= pred_ats:
+            restored_ats = flag_ats
+            restored_source = "rule"
+        else:
+            restored_ats = pred_ats
+            restored_source = "model"
+
+        cur.execute(
+            """
+            UPDATE cases
+            SET
+                ats_category = %s,
+                ats_source = %s,
+                override_ats = NULL,
+                override_reason = NULL
+            WHERE case_id = %s
+            RETURNING
+                case_id,
+                ats_category,
+                ats_source,
+                override_ats,
+                override_reason;
+            """,
+            (restored_ats, restored_source, case_id),
+        )
+        updated = cur.fetchone()
+        conn.commit()
+
+        return dict(updated)
+
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+
 def has_open_case_for_medicare(medicare_number: str) -> bool:
     conn = get_connection()
     cur = conn.cursor()

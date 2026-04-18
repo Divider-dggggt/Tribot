@@ -9,8 +9,8 @@ from app.services.triage_classifier.triage_classifier_service import classify_tr
 
 router = APIRouter()
 CLASSIFICATION_MODEL = 'deberta'
-SOAP_PLACEHOLDER = "Generating clinical summary..."
-BRIEF_PLACEHOLDER = "Generating brief summary..."
+SOAP_PLACEHOLDER = "Generating clinical summary...check back in 10 seconds!"
+BRIEF_PLACEHOLDER = "Generating brief summary...check back in 10 seconds!"
 
 def anonymise_case_for_researcher(case: dict) -> dict:
     anonymised_case = case.copy()
@@ -222,6 +222,32 @@ def override_ats_classification_endpoint(
         "override_ats": updated["override_ats"],
         "override_reason": updated["override_reason"],
         "message": "ATS classification overridden successfully",
+    }
+
+@router.patch("/cases/{case_id}/ats/undo")
+@router.patch("/triage/{case_id}/ats/undo")
+def undo_ats_override_endpoint(
+    case_id: int,
+    user=Depends(role_required("clinician")),
+):
+    result = db.undo_ats_override(case_id)
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if result.get("error") == "Case is not currently overridden":
+        raise HTTPException(status_code=400, detail=result["error"])
+
+    if result.get("error") == "No model or rule ATS available to restore":
+        raise HTTPException(status_code=400, detail=result["error"])
+
+    return {
+        "case_id": result["case_id"],
+        "ats_category": result["ats_category"],
+        "ats_source": result["ats_source"],
+        "override_ats": result["override_ats"],
+        "override_reason": result["override_reason"],
+        "message": "ATS override removed successfully",
     }
 
 @router.post("/cases/{case_id}/summary")
