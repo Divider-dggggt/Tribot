@@ -3,440 +3,446 @@ import json
 from app.core.crypto import decrypt_text, encrypt_text
 from app.db.connection import get_connection
 
+from psycopg2.extras import RealDictCursor
+from typing import Any
 
 
-def add_case(user_id: int, name: str, medicare_number: str, case_details: str, severity_flagged: bool = False):
+def _decrypt_case_identity(row: dict[str, Any]) -> dict[str, Any]:
+    if row.get("patient_name") is not None:
+        row["patient_name"] = decrypt_text(row["patient_name"])
+    if row.get("medicare_number") is not None:
+        row["medicare_number"] = decrypt_text(row["medicare_number"])
+    return row
 
-    encrypted_name = encrypt_text(name)
+
+def _decrypt_case_dialogue(row: dict[str, Any]) -> dict[str, Any]:
+    if row.get("case_dialogue") is not None:
+        row["case_dialogue"] = decrypt_text(row["case_dialogue"])
+    return row
+
+
+def add_case(
+    user_id: int,
+    patient_name: str,
+    medicare_number: str,
+    case_dialogue: str,
+    severity_flagged: bool,
+    ats_category: int,
+    ats_source: str,
+    age: int | None = None,
+    gender: str | None = None,
+    override_ats: int | None = None,
+    override_reason: str | None = None,
+):
+
+    encrypted_patient_name = encrypt_text(patient_name)
     encrypted_medicare_number = encrypt_text(medicare_number)
-    encrypted_case_details = encrypt_text(case_details)
+    encrypted_case_dialogue = encrypt_text(case_dialogue)
 
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO cases (user_id, name, medicare_number, case_details, severity_flagged)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING case_id, user_id, name, medicare_number, case_details, severity_flagged, resolved_at;
-        """,
-        (user_id, encrypted_name, encrypted_medicare_number, encrypted_case_details, severity_flagged),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
 
-    return {
-        "case_id": row[0],
-        "user_id": row[1],
-        "name": decrypt_text(row[2]),
-        "medicare_number": decrypt_text(row[3]),
-        "case_details": decrypt_text(row[4]),
-        "severity_flagged": row[5],
-        "resolved_at": row[6],
-    }
+    try:
+        cur.execute(
+            """
+            INSERT INTO cases (
+                user_id,
+                patient_name,
+                medicare_number,
+                severity_flagged,
+                ats_category,
+                ats_source,
+                override_ats,
+                override_reason,
+                age,
+                gender
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING
+                case_id,
+                user_id,
+                patient_name,
+                medicare_number,
+                severity_flagged,
+                created_at,
+                resolved_at,
+                ats_category,
+                ats_source,
+                override_ats,
+                override_reason,
+                age,
+                gender;
+            """,
+            (
+                user_id,
+                encrypted_patient_name,
+                encrypted_medicare_number,
+                severity_flagged,
+                ats_category,
+                ats_source,
+                override_ats,
+                override_reason,
+                age,
+                gender,
+            ),
+        )
+        case_row = dict(cur.fetchone())
+
+        cur.execute(
+            """
+            INSERT INTO case_dialogues (case_id, case_dialogue)
+            VALUES (%s, %s)
+            RETURNING case_dialogue;
+            """,
+            (case_row["case_id"], encrypted_case_dialogue),
+        )
+        dialogue_row = dict(cur.fetchone())
+
+        conn.commit()
+
+        case_row["case_dialogue"] = decrypt_text(dialogue_row["case_dialogue"])
+        return _decrypt_case_identity(case_row)
+    
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
 
 
 def get_case_by_id(case_id: int):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
 
-    cur.execute(
-        """
-        SELECT
-            c.case_id,
-            c.user_id,
-            c.name,
-            c.medicare_number,
-            c.case_details,
-            c.severity_flagged,
-            c.resolved_at,
-            c.created_at,
-            cm.ats_classification,
-            cm.confidence_score,
-            cm.clinician_override_at
-        FROM cases c
-        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
-        WHERE c.case_id = %s;
-        """,
-        (case_id,),
-    )
+    try:
+        cur.execute(
+            """
+            SELECT
+                c.case_id,
+                c.user_id,
+                c.patient_name,
+                c.medicare_number,
+                cd.case_dialogue,
+                c.severity_flagged,
+                c.created_at,
+                c.resolved_at,
+                c.ats_category,
+                c.ats_source,
+                c.override_ats,
+                c.override_reason,
+                c.age,
+                c.gender,
+                mp.pred_ats,
+                mp.pred_confidence,
+                mp.model_used,
+                sf.flag_ats,
+                sf.flag_notes,
+                cs.soap_summary,
+                cs.brief_summary
+            FROM cases c
+            LEFT JOIN case_dialogues cd
+                ON c.case_id = cd.case_id
+            LEFT JOIN model_predictions mp
+                ON c.case_id = mp.case_id
+            LEFT JOIN severity_flags sf
+                ON c.case_id = sf.case_id
+            LEFT JOIN clinical_summaries cs
+                ON c.case_id = cs.case_id
+            WHERE c.case_id = %s;
+            """,
+            (case_id,),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        
+        result = dict(row)
+        result = _decrypt_case_identity(result)
+        result = _decrypt_case_dialogue(result)
+        return result
 
-    case_row = cur.fetchone()
-    if not case_row:
+    finally:
         cur.close()
         conn.close()
-        return None
-
-    cur.execute(
-        "SELECT soap_summary FROM soap_summaries WHERE case_id = %s;",
-        (case_id,),
-    )
-    soap_row = cur.fetchone()
-    soap_summary = soap_row[0] if soap_row else ""
-
-    cur.execute(
-        "SELECT flag_category, flag_reason FROM severity_flags WHERE case_id = %s;",
-        (case_id,),
-    )
-    severity_rows = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return {
-        "case_id": case_row[0],
-        "user_id": case_row[1],
-        "name": decrypt_text(case_row[2]),
-        "medicare_number": decrypt_text(case_row[3]),
-        "case_details": decrypt_text(case_row[4]),
-        "severity_flagged": case_row[5],
-        "resolved_at": case_row[6],
-        "created_at": case_row[7],
-        "soap_summary": soap_summary,
-        "ats_classification": case_row[8],
-        "confidence_score": case_row[9],
-        "clinician_override_at": case_row[10],
-        "severity_flags": [
-            {"flag_category": row[0], "flag_reason": row[1]}
-            for row in severity_rows
-        ],
-    }
 
 def get_open_cases():
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT
-            c.case_id,
-            c.user_id,
-            c.name,
-            c.medicare_number,
-            c.case_details,
-            c.severity_flagged,
-            c.resolved_at,
-            c.created_at,
-            cm.ats_classification,
-            cm.confidence_score,
-            cm.clinician_override_at
-        FROM cases c
-        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
-        WHERE c.resolved_at IS NULL
-        ORDER BY c.created_at DESC;
-        """
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            SELECT
+                c.case_id,
+                c.user_id,
+                c.patient_name,
+                c.medicare_number,
+                c.severity_flagged,
+                c.created_at,
+                c.resolved_at,
+                c.ats_category,
+                c.ats_source,
+                c.override_ats,
+                c.override_reason,
+                c.age,
+                c.gender
+            FROM cases c
+            WHERE c.resolved_at IS NULL
+            ORDER BY c.created_at DESC;
+            """
+        )
+        rows = [dict(row) for row in cur.fetchall()]
+        return [_decrypt_case_identity(row) for row in rows]
 
-    return [
-        {
-            "case_id": row[0],
-            "user_id": row[1],
-            "name": decrypt_text(row[2]),
-            "medicare_number": decrypt_text(row[3]),
-            "case_details": decrypt_text(row[4]),
-            "severity_flagged": row[5],
-            "resolved_at": row[6],
-            "created_at": row[7],
-            "ats_classification": row[8],
-            "confidence_score": row[9],
-            "clinician_override_at": row[10],
-        }
-        for row in rows
-    ]
+    finally:
+        cur.close()
+        conn.close()
 
 
 def get_resolved_cases():
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT
-            c.case_id,
-            c.user_id,
-            c.name,
-            c.medicare_number,
-            c.case_details,
-            c.severity_flagged,
-            c.resolved_at,
-            c.created_at,
-            cm.ats_classification,
-            cm.confidence_score,
-            cm.clinician_override_at
-        FROM cases c
-        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
-        WHERE c.resolved_at IS NOT NULL
-        ORDER BY c.resolved_at DESC;
-        """
-    )
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            SELECT
+                c.case_id,
+                c.user_id,
+                c.patient_name,
+                c.medicare_number,
+                c.severity_flagged,
+                c.created_at,
+                c.resolved_at,
+                c.ats_category,
+                c.ats_source,
+                c.override_ats,
+                c.override_reason,
+                c.age,
+                c.gender
+            FROM cases c
+            WHERE c.resolved_at IS NOT NULL
+            ORDER BY c.resolved_at DESC;
+            """
+        )
+        rows = [dict(row) for row in cur.fetchall()]
+        return [_decrypt_case_identity(row) for row in rows]
 
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return [
-        {
-            "case_id": row[0],
-            "user_id": row[1],
-            "name": decrypt_text(row[2]),
-            "medicare_number": decrypt_text(row[3]),
-            "case_details": decrypt_text(row[4]),
-            "severity_flagged": row[5],
-            "resolved_at": row[6],
-            "created_at": row[7],
-            "ats_classification": row[8],
-            "confidence_score": row[9],
-            "clinician_override_at": row[10],
-        }
-        for row in rows
-    ]
+    finally:
+        cur.close()
+        conn.close()
 
 
 def get_all_cases():
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT
-            c.case_id,
-            c.user_id,
-            c.name,
-            c.medicare_number,
-            c.case_details,
-            c.severity_flagged,
-            c.resolved_at,
-            c.created_at,
-            cm.ats_classification,
-            cm.confidence_score,
-            cm.clinician_override_at
-        FROM cases c
-        LEFT JOIN classification_model cm ON c.case_id = cm.case_id
-        ORDER BY c.created_at DESC;
-        """
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            SELECT
+                c.case_id,
+                c.user_id,
+                c.patient_name,
+                c.medicare_number,
+                c.severity_flagged,
+                c.created_at,
+                c.resolved_at,
+                c.ats_category,
+                c.ats_source,
+                c.override_ats,
+                c.override_reason,
+                c.age,
+                c.gender
+            FROM cases c
+            ORDER BY c.created_at DESC;
+            """
+        )
+        rows = [dict(row) for row in cur.fetchall()]
+        return [_decrypt_case_identity(row) for row in rows]
 
-    return [
-        {
-            "case_id": row[0],
-            "user_id": row[1],
-            "name": decrypt_text(row[2]),
-            "medicare_number": decrypt_text(row[3]),
-            "case_details": decrypt_text(row[4]),
-            "severity_flagged": row[5],
-            "resolved_at": row[6],
-            "created_at": row[7],
-            "ats_classification": row[8],
-            "confidence_score": row[9],
-            "clinician_override_at": row[10],
-        }
-        for row in rows
-    ]
+    finally:
+        cur.close()
+        conn.close()
 
 def resolve_case(case_id: int):
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        UPDATE cases
-        SET resolved_at = CURRENT_TIMESTAMP
-        WHERE case_id = %s
-        RETURNING case_id, resolved_at;
-        """,
-        (case_id,),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            UPDATE cases
+            SET resolved_at = CURRENT_TIMESTAMP
+            WHERE case_id = %s
+            RETURNING case_id, resolved_at;
+            """,
+            (case_id,),
+        )
+        row = cur.fetchone()
+        conn.commit()
 
-    if not row:
-        return None
+        if not row:
+            return None
 
-    return {
-        "case_id": row[0],
-        "resolved_at": row[1],
-    }
+        return dict(row)
+
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
 
 def reopen_case(case_id: int):
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        UPDATE cases
-        SET resolved_at = NULL
-        WHERE case_id = %s
-        RETURNING case_id, resolved_at;
-        """,
-        (case_id,),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    if not row:
-        return None
-
-    return {
-        "case_id": row[0],
-        "resolved_at": row[1],
-    }
-
-
-
-def update_soap_summary(case_id: int, soap_summary: str):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO soap_summaries (case_id, soap_summary)
-        VALUES (%s, %s)
-        ON CONFLICT (case_id) DO UPDATE
-        SET soap_summary = EXCLUDED.soap_summary;
-        """,
-        (case_id, soap_summary),
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-
-
-def add_classification_model(case_id: int, model_name: str, ats_classification: int, confidence_score: float):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO classification_model (
-            case_id,
-            model_name,
-            ats_classification,
-            confidence_score,
-            clinician_override_at
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            UPDATE cases
+            SET resolved_at = NULL
+            WHERE case_id = %s
+            RETURNING case_id, resolved_at;
+            """,
+            (case_id,),
         )
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING case_id, model_name, ats_classification, confidence_score, clinician_override_at;
-        """,
-        (case_id, model_name, ats_classification, confidence_score, None),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+        row = cur.fetchone()
+        conn.commit()
 
-    return {
-        "case_id": row[0],
-        "model_name": row[1],
-        "ats_classification": row[2],
-        "confidence_score": row[3],
-        "clinician_override_at": row[4],
-    }
+        if not row:
+            return None
+
+        return dict(row)
+
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
 
 
-def add_severity_flag(case_id: int, flag_category: int, flag_reason: str):
+def upsert_clinical_summary(case_id: int, soap_summary: str, brief_summary: str):
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO severity_flags (case_id, flag_category, flag_reason)
-        VALUES (%s, %s, %s)
-        RETURNING case_id, flag_category, flag_reason;
-        """,
-        (case_id, flag_category, flag_reason),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            INSERT INTO clinical_summaries (case_id, soap_summary, brief_summary)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (case_id) DO UPDATE
+            SET
+                soap_summary = EXCLUDED.soap_summary,
+                brief_summary = EXCLUDED.brief_summary
+            RETURNING case_id, soap_summary, brief_summary;
+            """,
+            (case_id, soap_summary, brief_summary),
+        )
+        row = cur.fetchone()
+        conn.commit()
+        return dict(row)
 
-    return {
-        "case_id": row[0],
-        "flag_category": row[1],
-        "flag_reason": row[2],
-    }
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
 
 
-def add_model_eval(model_name: str, f1_score: float, precision: float, recall: float, conf_mat: json):
+def add_model_prediction(case_id: int, pred_ats: int, pred_confidence: float, model_used: str):
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO model_versions (model_name, f1_score, precision, recall, conf_mat)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING model_id, model_name, f1_score, precision, recall, conf_mat;
-        """,
-        (model_name, f1_score, precision, recall, conf_mat),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            INSERT INTO model_predictions (
+                case_id,
+                pred_ats,
+                pred_confidence,
+                model_used
+            )
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (case_id) DO UPDATE
+            SET
+                pred_ats = EXCLUDED.pred_ats,
+                pred_confidence = EXCLUDED.pred_confidence,
+                model_used = EXCLUDED.model_used
+            RETURNING case_id, pred_ats, pred_confidence, model_used;
+            """,
+            (case_id, pred_ats, pred_confidence, model_used),
+        )
+        row = cur.fetchone()
+        conn.commit()
+        return dict(row)
 
-    return {
-        "model_id": row[0],
-        "model_name": row[1],
-        "f1_score": row[2],
-        "precision": row[3],
-        "recall": row[4],
-        "confusion_matrix": row[5],
-    }
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
 
 
-def get_model_metrics_by_name(model_name: str):
+def add_severity_flag(case_id: int, flag_ats: int, flag_notes: str):
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT model_id, model_name, f1_score, precision, recall, conf_mat
-        FROM model_versions
-        WHERE model_name = %s;
-        """,
-        (model_name,),
-    )
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            INSERT INTO severity_flags (case_id, flag_ats, flag_notes)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (case_id) DO UPDATE
+            SET
+                flag_ats = EXCLUDED.flag_ats,
+                flag_notes = EXCLUDED.flag_notes
+            RETURNING case_id, flag_ats, flag_notes;
+            """,
+            (case_id, flag_ats, flag_notes),
+        )
+        row = cur.fetchone()
+        conn.commit()
+        return dict(row)
 
-    if not row:
-        return None
-
-    return {
-        "model_id": row[0],
-        "model_name": row[1],
-        "f1_score": row[2],
-        "precision": row[3],
-        "recall": row[4],
-        "confusion_matrix": row[5],
-    }
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
 
 
-def override_ats_classification(case_id: int, ats_classification: int):
+def override_ats_classification(case_id: int, override_ats: int, override_reason: str = ""):
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        UPDATE classification_model
-        SET ats_classification = %s,
-            clinician_override_at = CURRENT_TIMESTAMP
-        WHERE case_id = %s
-        RETURNING case_id, ats_classification, clinician_override_at;
-        """,
-        (ats_classification, case_id),
-    )
-    row = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cur.execute(
+            """
+            UPDATE cases
+            SET
+                override_ats = %s,
+                override_reason = %s,
+                ats_category = %s,
+                ats_source = 'override'
+            WHERE case_id = %s
+            RETURNING
+                case_id,
+                ats_category,
+                ats_source,
+                override_ats,
+                override_reason;
+            """,
+            (override_ats, override_reason, override_ats, case_id),
+        )
+        row = cur.fetchone()
+        conn.commit()
 
-    if not row:
-        return None
+        if not row:
+            return None
 
-    return {
-        "case_id": row[0],
-        "ats_classification": row[1],
-        "clinician_override_at": row[2],
-    }
+        return dict(row)
+
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
+        conn.close()
