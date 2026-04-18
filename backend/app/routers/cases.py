@@ -220,3 +220,63 @@ def override_ats_classification_endpoint(
         "override_reason": updated["override_reason"],
         "message": "ATS classification overridden successfully",
     }
+
+@router.post("/cases/{case_id}/summary")
+@router.post("/triage/{case_id}/summary")
+def generate_case_summary_endpoint(
+    case_id: int,
+    background_tasks: BackgroundTasks,
+    fast_response: bool = Query(default=False),
+    user=Depends(role_required("clinician")),
+):
+    case = db.get_case_by_id(case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if not case.get("case_dialogue"):
+        raise HTTPException(status_code=400, detail="Case dialogue not found")
+
+    try:
+        anon_result = deidentify_dialogue(case["case_dialogue"])
+        anon_dialogue = anon_result["deidentified_text"]
+
+        if fast_response:
+            db.upsert_clinical_summary(
+                case_id=case_id,
+                soap_summary=SOAP_PLACEHOLDER,
+                brief_summary=BRIEF_PLACEHOLDER,
+            )
+
+            background_tasks.add_task(
+                generate_and_store_summary,
+                case_id,
+                anon_dialogue,
+            )
+
+            return {
+                "case_id": case_id,
+                "soap_summary": SOAP_PLACEHOLDER,
+                "brief_summary": BRIEF_PLACEHOLDER,
+                "message": "Clinical summary generation started",
+            }
+
+        soap_object = generate_soap_summary(anon_dialogue)
+
+        saved_summary = db.upsert_clinical_summary(
+            case_id=case_id,
+            soap_summary=soap_object["soap_markdown"],
+            brief_summary=soap_object["brief_summary"],
+        )
+
+        return {
+            "case_id": case_id,
+            "soap_summary": saved_summary["soap_summary"],
+            "brief_summary": saved_summary["brief_summary"],
+            "message": "Clinical summary generated successfully",
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate summary: {str(e)}"
+        )
