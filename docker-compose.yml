@@ -24,11 +24,12 @@ services:
     depends_on:
       - db
     environment:
-      DB_HOST: db
-      DB_NAME: app_db
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      ENCRYPTION_KEY: "e1_SNCkNDzaHVdslhLRriPtqgdvU6U01mZAQKlxb1GY="
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     #environment:
       #DATABASE_URL: postgresql://postgres:postgres@db:5432/app_db
 

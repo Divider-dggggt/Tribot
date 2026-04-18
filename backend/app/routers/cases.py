@@ -51,6 +51,9 @@ def create_case_endpoint(
     user=Depends(role_required("clinician")),
 ):
     try:
+        if db.has_open_case_for_medicare(case.medicare_number):
+            raise HTTPException(status_code=409, detail="An open case already exists for this Medicare number")
+
         # non-llm service
         classification_res = classify_triage(case.case_dialogue)
 
