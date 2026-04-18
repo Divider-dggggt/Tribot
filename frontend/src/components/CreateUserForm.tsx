@@ -6,27 +6,8 @@ import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
 import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
-import { API_BASE_URL } from "../utils/constants";
+import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
-
-const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
-  [UserRole.Admin]: [
-    "View all patient records",
-    "Access evaluation tools",
-    "Generate reports",
-    "Administrative access",
-  ],
-  [UserRole.Clinician]: [
-    "Create new cases",
-    "Override AI predictions",
-    "Access evaluation tools",
-  ],
-  [UserRole.Researcher]: [
-    "Generate reports",
-    "View all patient records",
-    "Access evaluation tools",
-  ],
-};
 
 const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: string }> = {
   [UserRole.Admin]: {
