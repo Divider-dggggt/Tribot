@@ -47,6 +47,7 @@ def create_case_endpoint(
     case: CaseCreate,
     background_tasks: BackgroundTasks,
     fast_response: bool = Query(default=True),
+    generate_summary: bool = Query(default=True),
     user=Depends(role_required("clinician")),
 ):
     try:
@@ -89,7 +90,15 @@ def create_case_endpoint(
                 flag_notes=severity_flag_notes,
             )
 
-        if fast_response:
+        if not generate_summary:
+            soap_summary_for_response = "No summary generated"
+            brief_summary_for_response = "No summary generated"
+            # db.upsert_clinical_summary(
+            #     case_id=case_id,
+            #     soap_summary=soap_summary_for_response,
+            #     brief_summary=brief_summary_for_response,
+            # )
+        elif fast_response:
             # Store placeholder immediately so GET /cases/{id} can show it
             db.upsert_clinical_summary(
                 case_id=case_id,
