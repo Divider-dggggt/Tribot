@@ -2,7 +2,7 @@ import json
 
 from app.core.crypto import decrypt_text, encrypt_text
 from app.db.connection import get_connection
-
+from datetime import date
 from psycopg2.extras import RealDictCursor
 from typing import Any
 
@@ -468,3 +468,116 @@ def has_open_case_for_medicare(medicare_number: str) -> bool:
             return True
 
     return False
+
+
+from datetime import date
+from psycopg2.extras import RealDictCursor
+
+def get_case_analytics(target_date: date | None = None):
+    if target_date is None:
+        target_date = date.today()
+
+    print(target_date)
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        cur.execute(
+            """
+            SELECT
+                case_id,
+                resolved_at,
+                ats_category,
+                gender,
+                age,
+                created_at
+            FROM cases
+            WHERE DATE(created_at) = %s
+            ORDER BY created_at DESC;
+            """,
+            (target_date,),
+        )
+        rows = [dict(row) for row in cur.fetchall()]
+    finally:
+        cur.close()
+        conn.close()
+
+    def blank_bucket():
+        return {
+            "total_cases": 0,
+            "ats": {
+                "cat_1": 0,
+                "cat_2": 0,
+                "cat_3": 0,
+                "cat_4": 0,
+                "cat_5": 0,
+            },
+            "gender": {
+                "male": 0,
+                "female": 0,
+                "other": 0,
+                "unknown": 0,
+            },
+            "age": {
+                "0_4": 0,
+                "5_12": 0,
+                "13_17": 0,
+                "18_25": 0,
+                "26_45": 0,
+                "46_65": 0,
+                "65_plus": 0,
+                "unknown": 0,
+            },
+        }
+
+    def normalise_gender(value):
+        if not value:
+            return "unknown"
+        value = value.strip().lower()
+        if value in {"male", "m"}:
+            return "male"
+        if value in {"female", "f"}:
+            return "female"
+        if value == "other":
+            return "other"
+        return "unknown"
+
+    def age_bucket(value):
+        if value is None:
+            return "unknown"
+        if 0 <= value <= 4:
+            return "0_4"
+        if 5 <= value <= 12:
+            return "5_12"
+        if 13 <= value <= 17:
+            return "13_17"
+        if 18 <= value <= 25:
+            return "18_25"
+        if 26 <= value <= 45:
+            return "26_45"
+        if 46 <= value <= 65:
+            return "46_65"
+        if value >= 66:
+            return "65_plus"
+        return "unknown"
+
+    result = {
+        "date": str(target_date),
+        "open_cases": blank_bucket(),
+        "resolved_cases": blank_bucket(),
+    }
+
+    for row in rows:
+        bucket = result["resolved_cases"] if row["resolved_at"] is not None else result["open_cases"]
+
+        bucket["total_cases"] += 1
+
+        ats = row.get("ats_category")
+        if ats in {1, 2, 3, 4, 5}:
+            bucket["ats"][f"cat_{ats}"] += 1
+
+        bucket["gender"][normalise_gender(row.get("gender"))] += 1
+        bucket["age"][age_bucket(row.get("age"))] += 1
+
+    return result
+
