@@ -82,6 +82,15 @@ export const Metrics = (): ReactElement => {
               Confusion Matrix
             </Typography>
             <ConfusionMatrix data={metrics.metrics.confusion_matrix} labels={["ATS-1", "ATS-2", "ATS-3", "ATS-4", "ATS-5"]} />
+            <Typography>
+              Precision: {metrics.metrics.precision}
+            </Typography>
+            <Typography>
+              Recall: {metrics.metrics.recall}
+            </Typography>
+            <Typography>
+              F1 Score: {metrics.metrics.f1_score}
+            </Typography>
           </Box>}
         </CardContent>
       </Card>
