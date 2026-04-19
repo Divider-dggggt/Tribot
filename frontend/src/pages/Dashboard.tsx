@@ -317,6 +317,7 @@ export const Dashboard = (): ReactElement => {
                 )}
                 {sortedTriageCases.map((item, index) => {
                   const atsPriority = item.ats_category - 1;
+                  const hoursSinceCreation = (new Date().getTime() - new Date(item.created_at).getTime()) / 3_600_000;
                   return (
                     <TableRow
                       key={`${item.medicare_number},${index}`}
@@ -338,7 +339,16 @@ export const Dashboard = (): ReactElement => {
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
-                        {formatCaseDateTime(new Date(item.created_at))}
+                        <Typography variant="subtitle2">
+                          {formatCaseDateTime(new Date(item.created_at))}
+                        </Typography>
+                        {hoursSinceCreation > 4 && caseView === "open-cases" && <Typography
+                          variant="caption"
+                          color="warning"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {Math.round(hoursSinceCreation)} hours ago
+                        </Typography>}
                       </TableCell>
                       <TableCell>
                         <Chip
