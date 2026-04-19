@@ -552,9 +552,6 @@ def has_open_case_for_medicare(medicare_number: str) -> bool:
     return False
 
 
-from datetime import date
-from psycopg2.extras import RealDictCursor
-
 def get_case_analytics(target_date: date | None = None):
     if target_date is None:
         target_date = date.today()
