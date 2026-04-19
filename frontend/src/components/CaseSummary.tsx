@@ -200,7 +200,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           </Alert>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
-            SOAP Summary
+            Brief Summary
           </Typography>
           <Typography
             variant="body1"
