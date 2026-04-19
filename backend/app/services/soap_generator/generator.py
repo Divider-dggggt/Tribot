@@ -24,20 +24,21 @@ Important rules:
 2. Separate patient/parent-reported information from clinician-observed information.
 3. If information is missing, use null or an empty list.
 4. Preserve clinically relevant negatives (e.g. no vomiting, no rash, no chest pain).
-5. Assessment must be preliminary only, not a definitive diagnosis unless explicitly stated.
-6. Plan should include:
+5. Redact all PII (Personally Identifiable Information) in the following text by replacing sensitive details with their corresponding data types as placeholders, such as [Name], [Address], or [Phone Number].
+6. Assessment must be preliminary only, not a definitive diagnosis unless explicitly stated.
+7. Plan should include:
    - next steps
    - likely investigations
    - transfer/disposition
    - monitoring
    - review arrangements
-7. If no explicit plan is stated, prefer:
+8. If no explicit plan is stated, prefer:
    - "Awaiting medical assessment."
    If even that is not appropriate, use:
    - "Not stated."
-8. Use concise professional clinical language.
-9. Output JSON only. No markdown fences. No extra commentary.
-10. After the "soap" object, include "brief_summary": a short (2–3 sentences) summary in plain language for the patient/family or quick reading. Focus on: who, main concern, and what happens next. Do not use jargon; keep it brief and readable.
+9. Use concise professional clinical language.
+10. Output JSON only. No markdown fences. No extra commentary.
+11. After the "soap" object, include "brief_summary": a short (2–3 sentences) summary in plain language for the patient/family or quick reading. Focus on: who, main concern, and what happens next. Do not use jargon; keep it brief and readable.
 """
 
 USER_PROMPT_TEMPLATE = """
