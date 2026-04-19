@@ -3,14 +3,14 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 
 from app import db
-from app.core.security import admin_required, get_current_user, pwd_context
+from app.core.security import get_current_user, pwd_context, role_required
 from app.schemas.user import UserCreate, UserOut, UserUpdate
 
 router = APIRouter()
 
 
 @router.get("/users", response_model=List[UserOut])
-def get_users(admin=Depends(admin_required)):
+def get_users(user=Depends(role_required("admin"))):
     try:
         return db.get_active_users()
     except Exception:
@@ -18,7 +18,7 @@ def get_users(admin=Depends(admin_required)):
 
 
 @router.get("/users/all", response_model=List[UserOut])
-def get_all_users(admin=Depends(admin_required)):
+def get_all_users(user=Depends(role_required("admin"))):
     try:
         return db.get_all_users()
     except Exception:
@@ -26,7 +26,7 @@ def get_all_users(admin=Depends(admin_required)):
 
 
 @router.get("/users/deactivated", response_model=List[UserOut])
-def get_deactivated_users(admin=Depends(admin_required)):
+def get_deactivated_users(user=Depends(role_required("admin"))):
     try:
         return db.get_deactivated_users()
     except Exception:
@@ -34,7 +34,7 @@ def get_deactivated_users(admin=Depends(admin_required)):
 
 
 @router.get("/users/{user_id}", response_model=UserOut)
-def get_user(user_id: int, admin=Depends(admin_required)):
+def get_user(user_id: int, user=Depends(role_required("admin"))):
     user = db.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -42,7 +42,7 @@ def get_user(user_id: int, admin=Depends(admin_required)):
 
 
 @router.post("/users", response_model=UserOut)
-def create_user(user: UserCreate, admin=Depends(admin_required)):
+def create_user(user: UserCreate, current_user=Depends(role_required("admin"))):
     try:
         hashed_password = pwd_context.hash(user.password)
         return db.create_user(
@@ -103,8 +103,8 @@ def update_user(user_id: int, user: UserUpdate, current_user=Depends(get_current
 
 
 @router.patch("/users/{user_id}/deactivate", response_model=UserOut)
-def deactivate_user(user_id: int, admin=Depends(admin_required)):
-    if admin["id"] == user_id:
+def deactivate_user(user_id: int, current_user=Depends(role_required("admin"))):
+    if current_user["id"] == user_id:
         raise HTTPException(status_code=400, detail="Admin cannot deactivate their own account")
 
     deactivated = db.deactivate_user(user_id)
@@ -114,7 +114,7 @@ def deactivate_user(user_id: int, admin=Depends(admin_required)):
 
 
 @router.patch("/users/{user_id}/reactivate", response_model=UserOut)
-def reactivate_user(user_id: int, admin=Depends(admin_required)):
+def reactivate_user(user_id: int, current_user=Depends(role_required("admin"))):
     reactivated = db.reactivate_user(user_id)
     if not reactivated:
         raise HTTPException(status_code=404, detail="User not found or not deactivated")

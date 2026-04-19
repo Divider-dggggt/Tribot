@@ -46,7 +46,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
         user = db.get_user_by_id(user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found or deleted")
+            raise HTTPException(status_code=404, detail="User not found or deactivated")
 
         if token_iat and user.get("password_changed_at"):
             password_changed_at = user["password_changed_at"].timestamp()
@@ -58,14 +58,17 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 
-def admin_required(user=Depends(get_current_user)):
-    if user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
+#def admin_required(user=Depends(get_current_user)):
+#    if user["role"] != "admin":
+#        raise HTTPException(status_code=403, detail="Admin access required")
+#    return user
 
 def role_required(*roles):
+    allowed_roles = {role.lower() for role in roles}
+
     def dependency(user=Depends(get_current_user)):
-        if user["role"] not in roles:
+        user_role = str(user["role"]).lower()
+        if user_role not in allowed_roles:
             raise HTTPException(status_code=403, detail=f"Access restricted to: {', '.join(roles)}")
         return user
 

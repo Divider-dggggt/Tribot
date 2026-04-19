@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 
 from app.core.config import ENCRYPTION_KEY
+from app.core.security import role_required
 from app.db.connection import get_connection
 
 router = APIRouter()
 
 
 @router.get("/health")
-def health(request: Request):
+def health(request: Request, user=Depends(role_required("admin"))):
     checks = {
         "api": "ok",
         "database": "unknown",

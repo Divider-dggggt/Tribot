@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.core.security import admin_required
+from app.core.security import role_required
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ MODEL_EVAL_PATH = (
 MODEL_NAME = "sample_model_eval"
 
 @router.get("/model-metrics")
-def get_model_metrics(admin=Depends(admin_required)):
+def get_model_metrics(user=Depends(role_required("researcher"))):
     with MODEL_EVAL_PATH.open() as f:
         data = json.load(f)
 
