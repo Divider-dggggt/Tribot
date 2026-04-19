@@ -22,7 +22,13 @@ torch==2.5.1
 transformers==4.57.1
 safetensors>=0.4.3
 sentencepiece>=0.2.0
+protobuf>=4.25.0
 
 setfit==1.1.3
 sentence-transformers==5.1.1
 
+# rag
+rank-bm25
+faiss-cpu
+pymupdf
+requests

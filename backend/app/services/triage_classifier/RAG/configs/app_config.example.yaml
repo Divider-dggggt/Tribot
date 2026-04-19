@@ -1,0 +1,24 @@
+paths:
+  handbook_pdf: ../assets/emergency_triage_education_kit_-_second_edition.pdf
+  llm_config_yaml: ./llm_config.yaml
+  artifacts_dir: ../artifacts
+
+retrieval:
+  chunk_size_chars: 1400
+  chunk_overlap_chars: 200
+  bm25_top_k: 8
+  vector_top_k: 8
+  final_top_k: 6
+  embedding_model_name: sentence-transformers/all-MiniLM-L6-v2
+
+local_model:
+  mode: hf_sequence_classifier  # hf_sequence_classifier | sklearn_tfidf_logreg
+  hf_model_dir: /home/ubuntu/test/deberta_multiclass_runs/run1
+  max_length: 512
+  sklearn_vectorizer_pkl: /mnt/data/baseline_vectorizer.pkl
+  sklearn_classifier_pkl: /mnt/data/baseline_classifier.pkl
+  label_map: [1, 2, 3, 4, 5]
+
+llm:
+  max_context_chunks: 4
+  temperature: 0.1

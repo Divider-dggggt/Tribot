@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
+from dotenv import load_dotenv
 
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent / "config.yaml"
+DEFAULT_ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
 
 
 @dataclass
@@ -20,6 +23,17 @@ class LLMSettings:
 
 class ConfigError(Exception):
     pass
+
+
+def _load_api_key() -> str:
+    # Support local runs and docker-compose volume mount (/app/.env).
+    load_dotenv(DEFAULT_ENV_PATH, override=False)
+
+    api_key = os.getenv("LLM_API_KEY", "").strip()
+    if api_key:
+        return api_key
+
+    raise ConfigError("No API key found. Set LLM_API_KEY in backend/.env.")
 
 
 def load_yaml_config(config_path: str | Path = DEFAULT_CONFIG_PATH) -> Dict[str, Any]:
@@ -44,13 +58,11 @@ def load_llm_settings(config_path: str | Path = DEFAULT_CONFIG_PATH) -> LLMSetti
         raise ConfigError("Missing or invalid 'llm' section in config.")
 
     url = llm.get("url")
-    api_key = llm.get("llm_api")
     model_val = llm.get("model")
 
     if not isinstance(url, str) or not url.strip():
         raise ConfigError("Invalid llm.url in config.")
-    if not isinstance(api_key, str) or not api_key.strip():
-        raise ConfigError("Invalid llm.llm_api in config.")
+    api_key = _load_api_key()
 
     if isinstance(model_val, str) and model_val.strip():
         model_tree = {}
@@ -63,7 +75,7 @@ def load_llm_settings(config_path: str | Path = DEFAULT_CONFIG_PATH) -> LLMSetti
 
     return LLMSettings(
         url=url.strip(),
-        api_key=api_key.strip(),
+        api_key=api_key,
         model_tree=model_tree,
         default_model=default_model,
     )
