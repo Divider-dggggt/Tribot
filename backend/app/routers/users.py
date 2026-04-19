@@ -93,7 +93,7 @@ def update_user(user_id: int, user: UserUpdate, current_user=Depends(get_current
         name=user.name,
         email=user.email,
         password=hashed_password,
-        role=user.role.lower(),
+        role=user.role.lower() if user.role is not None else None,
     )
 
     if not updated_user:
