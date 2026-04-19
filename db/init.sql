@@ -4,9 +4,9 @@ CREATE TABLE users (
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT CHECK (role IN ('admin','clinician','researcher')) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    password_changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deactivated_at TIMESTAMP NULL
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    password_changed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    deactivated_at TIMESTAMPTZ NULL
 );
 
 INSERT INTO users (name, email, password, role) VALUES
@@ -23,13 +23,13 @@ CREATE TABLE cases (
     patient_name TEXT NOT NULL,
     medicare_number TEXT NOT NULL,
     severity_flagged BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    resolved_at TIMESTAMP NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMPTZ NULL,
     ats_category INT NOT NULL CHECK (ats_category BETWEEN 1 AND 5),
     ats_source TEXT NOT NULL CHECK (ats_source IN ('model', 'rule', 'override')),
     override_ats INT NULL CHECK (override_ats BETWEEN 1 AND 5),
     override_reason TEXT NULL,
-    override_at TIMESTAMP NULL,
+    override_at TIMESTAMPTZ NULL,
     age INT NULL CHECK (age >= 0 AND age <= 150),
     gender TEXT NULL CHECK (gender IN ('male', 'female', 'other'))
 );
@@ -60,5 +60,5 @@ CREATE TABLE severity_flags (
 
 CREATE TABLE revoked_tokens (
     token TEXT PRIMARY KEY,
-    revoked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    revoked_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
