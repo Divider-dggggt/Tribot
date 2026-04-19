@@ -6,8 +6,45 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { fetchWithAuth } from "../utils/auth";
+import { CircularProgress } from "@mui/material";
+// @ts-ignore no type declaration available
+import { ConfusionMatrix } from "react-confusion-matrix";
+
+interface ModelMetricsAPIResponse {
+  model_name: string;
+  metrics: {
+    f1_score: number;
+    precision: number;
+    recall: number;
+    confusion_matrix: number[][];
+  };
+}
 
 export const Metrics = (): ReactElement => {
+  const [metrics, setMetrics] = useState<ModelMetricsAPIResponse | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchMetrics = async (): Promise<void> => {
+      setIsLoading(true);
+      try {
+        const response = await fetchWithAuth(`${API_BASE_URL}/model-metrics`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const metrics_response = await response.json();
+        setMetrics(metrics_response);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
+
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
       <Stack
@@ -32,14 +69,20 @@ export const Metrics = (): ReactElement => {
             },
           }}
         >
-          <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid #e5e7eb" }}>
+          {isLoading && <Box 
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ p: 4 }}
+          >
+            <CircularProgress />
+          </Box>}
+          {!isLoading && metrics != null && <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid #e5e7eb" }}>
             <Typography variant="h6" fontWeight="bold">
               Confusion Matrix
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              TODO: content here
-            </Typography>
-          </Box>
+            <ConfusionMatrix data={metrics.metrics.confusion_matrix} labels={["ATS-1", "ATS-2", "ATS-3", "ATS-4", "ATS-5"]} />
+          </Box>}
         </CardContent>
       </Card>
     </Box>

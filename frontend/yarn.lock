@@ -1131,6 +1131,11 @@ prop-types@^15.6.2, prop-types@^15.8.1:
     object-assign "^4.1.1"
     react-is "^16.13.1"
 
+react-confusion-matrix@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/react-confusion-matrix/-/react-confusion-matrix-1.1.8.tgz#056cd12660c3313cc91c9f392acafd4c623d4418"
+  integrity sha512-ofejy5n+uqSlu190KGj5XiU42pIV4Am37kDde1Y2A75a+54m4bCciGeW5ezsOzmLj82dm6A7xhUpgyzNRyHfLw==
+
 react-dom@^19.0.0:
   version "19.2.4"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.4.tgz#6fac6bd96f7db477d966c7ec17c1a2b1ad8e6591"
