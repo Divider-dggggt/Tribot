@@ -1,6 +1,15 @@
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import React, { ReactElement, useState } from "react";
 import { fetchWithAuth } from "../utils/auth";
+import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 
 interface DeleteUserConfirmationProps {
@@ -41,20 +50,50 @@ export const DeleteUserConfirmation = ({
     <Dialog
       open={open}
       onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          border: "1px solid #ede9fe",
+          boxShadow: "0 18px 40px rgba(17, 24, 39, 0.15)",
+        },
+      }}
     >
-      <DialogTitle>Confirm User Deactivation</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
+      <DialogTitle sx={{ pt: 3, px: 3, pb: 1.25, fontSize: "2rem", fontWeight: 700, color: "#111827" }}>
+        Confirm User Deactivation
+      </DialogTitle>
+      <DialogContent sx={{ px: 3, pb: 1.5 }}>
+        <DialogContentText sx={{ fontSize: "1rem", color: "#6b7280" }}>
           Are you sure you want to deactivate this user?
         </DialogContentText>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} disabled={loading}>Cancel</Button>
+      <DialogActions sx={{ px: 3, pb: 3, pt: 0.5, gap: 1.5 }}>
+        <Button
+          onClick={handleClose}
+          disabled={loading}
+          variant="outlined"
+          sx={{
+            borderRadius: 2,
+            py: 1.1,
+            px: 2.25,
+            color: "#374151",
+            borderColor: "#d1d5db",
+          }}
+        >
+          Cancel
+        </Button>
         <Button
           onClick={handleDelete}
           disabled={loading}
-          color="error"
-          startIcon={loading && <CircularProgress size={20} />}
+          variant="outlined"
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
+          sx={{
+            borderRadius: 2,
+            py: 1.1,
+            px: 2.25,
+            ...dangerOutlinedButtonSx,
+          }}
         >
           {loading ? "Deactivating..." : "Deactivate"}
         </Button>

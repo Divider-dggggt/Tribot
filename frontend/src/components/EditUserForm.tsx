@@ -5,6 +5,7 @@ import { AuthLogo } from "./AuthLogo";
 import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { User, UserRole } from "../types/user";
+import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
 import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 
@@ -20,6 +21,24 @@ interface EditUserFormProps {
   userId?: number;
   onClose: () => void;
 }
+
+const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: string }> = {
+  [UserRole.Admin]: {
+    text: "#6d28d9",
+    bg: "#ede9fe",
+    border: "#c4b5fd",
+  },
+  [UserRole.Clinician]: {
+    text: "#166534",
+    bg: "#dcfce7",
+    border: "#86efac",
+  },
+  [UserRole.Researcher]: {
+    text: "#0c4a6e",
+    bg: "#e0f2fe",
+    border: "#7dd3fc",
+  },
+};
 
 export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactElement => {
   const open = userId != null;
@@ -236,6 +255,7 @@ export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactEleme
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
                     {Object.values(UserRole).map((role) => {
                       const isSelected = role === field.value;
+                      const roleColors = ROLE_BUTTON_COLORS[role];
                       return (
                         <Button
                           key={role}
@@ -247,9 +267,15 @@ export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactEleme
                             borderRadius: 2,
                             textTransform: "none",
                             py: 1.1,
-                            color: isSelected ? "#7e22ce" : "#374151",
-                            borderColor: isSelected ? "#9333ea" : "#d1d5db",
-                            backgroundColor: isSelected ? "#faf5ff" : "#fff",
+                            transition: "all 160ms ease",
+                            color: isSelected ? roleColors.text : "#374151",
+                            borderColor: isSelected ? roleColors.border : "#d1d5db",
+                            backgroundColor: isSelected ? roleColors.bg : "#fff",
+                            "&:hover": {
+                              color: roleColors.text,
+                              borderColor: roleColors.border,
+                              backgroundColor: roleColors.bg,
+                            },
                           }}
                         >
                           {role}
@@ -334,8 +360,7 @@ export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactEleme
                 sx={{
                   borderRadius: 2,
                   py: 1.15,
-                  color: "#374151",
-                  borderColor: "#d1d5db",
+                  ...dangerOutlinedButtonSx,
                 }}
               >
                 Cancel
