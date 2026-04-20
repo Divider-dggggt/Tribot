@@ -60,8 +60,16 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
       setTriageCase(caseResponse);
     };
 
-    fetchTriageCase();
-  }, [caseId, triageCase == null]);
+    if (triageCase == null) {
+      fetchTriageCase();
+      return;
+    }
+
+    if (triageCase?.soap_summary.startsWith("Generating")) {
+      const timerId = setTimeout(fetchTriageCase, 5000);
+      return () => clearTimeout(timerId);
+    }
+  }, [caseId, triageCase]);
 
   if (triageCase == null) {
     return <CircularProgress />;
