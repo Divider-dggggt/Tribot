@@ -1,0 +1,2333 @@
+[
+  {
+    "scenario_number": "0001",
+    "summary_header": "Fever Without a Source - 2-Month-Old Infant (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Fever and not herself",
+        "history_of_present_illness": [
+          "2-month-old infant",
+          "Felt warm mid-morning, became really hot in afternoon",
+          "Temperature 38.7°C measured at home with ear thermometer (checked twice)",
+          "More sleepy than usual, keeps dozing off during feeds",
+          "Reduced oral intake: taking approximately 50-60mls per feed compared to usual 120mls",
+          "Reduced urine output: only 2 wet nappies today compared to usual 4-5",
+          "One episode of small vomit earlier today"
+        ],
+        "associated_symptoms": [
+          "Lethargy",
+          "Poor feeding",
+          "Reduced wet nappies",
+          "Single vomiting episode"
+        ],
+        "negatives": [
+          "No cough",
+          "No runny nose",
+          "No rash",
+          "Breathing appears normal to parent",
+          "No recent travel"
+        ],
+        "relevant_history": [
+          "Full-term birth",
+          "No NICU admission",
+          "Healthy pregnancy",
+          "Vaccinations up to date (6-week immunisations completed on time)",
+          "Father currently has mild cold",
+          "No overseas visitors"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "temperature": "38.5°C (axillary)",
+          "heart_rate": "Elevated (appropriate for fever)"
+        },
+        "exam_findings": [
+          "Breathing stable and even",
+          "Colour okay",
+          "Capillary refill brisk (chest)"
+        ],
+        "observed_general_state": [
+          "Appears floppy compared to usual per parent report"
+        ]
+      },
+      "assessment": [
+        "Febrile infant under 3 months requiring urgent medical review",
+        "Possible sepsis - requires workup",
+        "Reduced feeding and urine output suggesting early dehydration"
+      ],
+      "plan": [
+        "Priority urgent assessment - bypass waiting room",
+        "Direct admission to paediatric assessment area",
+        "Likely septic workup: blood tests, urine collection, and other investigations as determined by medical officer",
+        "Admission likely given age and presentation",
+        "ID band applied",
+        "Triaged as ATS 2"
+      ]
+    },
+    "brief_summary": "Aria is a 2-month-old baby with a fever of 38.5°C who is sleepier than usual, feeding poorly, and has fewer wet nappies. Because she is so young and has a fever, she needs to be seen by a doctor urgently and will likely have some tests done and be admitted to hospital."
+  },
+  {
+    "scenario_number": "0002",
+    "summary_header": "Respiratory Distress / Asthma Exacerbation - 3-year-old (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Wheezy and struggling to breathe",
+        "history_of_present_illness": [
+          "3-year-old male with worsening respiratory symptoms since lunchtime",
+          "Cold for couple of days prior",
+          "This afternoon developed fast breathing and subcostal retractions",
+          "Given 6 puffs Ventolin in last hour with minimal improvement",
+          "Fever 38.3°C in afternoon, Panadol administered",
+          "Poor oral intake, too breathless to drink properly"
+        ],
+        "associated_symptoms": [
+          "Wheeze",
+          "Increased work of breathing",
+          "Fever 38.3°C",
+          "Poor oral intake"
+        ],
+        "negatives": [
+          "No vomiting",
+          "No diarrhoea",
+          "No cyanosis (blue lips or fingers)"
+        ],
+        "relevant_history": [
+          "Known asthma, diagnosed last year",
+          "Usually responds to puffer"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "SpO2": "92%",
+          "temperature": "38.3°C"
+        },
+        "exam_findings": [
+          "Tachypnoea",
+          "Using accessory muscles (tummy muscles)",
+          "Subcostal retractions"
+        ],
+        "observed_general_state": [
+          "Distressed",
+          "Increased work of breathing"
+        ]
+      },
+      "assessment": [
+        "Moderate to severe asthma exacerbation",
+        "Inadequate response to home bronchodilator therapy",
+        "Hypoxia (SpO2 92%)",
+        "Possible viral-induced exacerbation"
+      ],
+      "plan": [
+        "Immediate transfer to acute care area, no waiting room",
+        "Urgent asthma treatment with nebulisers",
+        "Likely systemic corticosteroids",
+        "Continuous monitoring",
+        "Medical assessment to determine need for admission versus discharge after stabilisation"
+      ]
+    },
+    "brief_summary": "Noah is a 3-year-old with known asthma who is having trouble breathing today. His oxygen level is low and his home puffer hasn't helped much. He needs urgent treatment with breathing medications right away and the doctors will decide if he needs to stay in hospital."
+  },
+  {
+    "scenario_number": "0003",
+    "summary_header": "Vomiting & Diarrhoea with Moderate Dehydration - 4-year-old (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Vomiting and diarrhoea since yesterday",
+        "history_of_present_illness": [
+          "4-year-old female with vomiting and diarrhoea onset yesterday",
+          "At least 8 episodes of vomiting since yesterday morning, mostly today",
+          "7-8 episodes of watery diarrhoea",
+          "Tolerating only tiny sips of fluid, sometimes vomits immediately after",
+          "Last urination this morning, none since (reduced from usual frequency)",
+          "Fever 38°C last night, treated with paracetamol",
+          "Attempted water and Hydralyte, vomited Hydralyte",
+          "Intermittent abdominal pain reported by patient"
+        ],
+        "associated_symptoms": [
+          "Increased lethargy, lying quietly on parent",
+          "Fever 38°C (last night)"
+        ],
+        "negatives": [
+          "No blood in stool"
+        ],
+        "relevant_history": [
+          "Brother had gastroenteritis last week, less severe illness"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "temperature": "38°C (last night, post-paracetamol status unknown)"
+        },
+        "exam_findings": [
+          "Tachycardia",
+          "Dry oral mucosa",
+          "Delayed capillary refill"
+        ],
+        "observed_general_state": [
+          "Lethargic",
+          "Quiet, lying on parent"
+        ]
+      },
+      "assessment": [
+        "Gastroenteritis with moderate dehydration",
+        "ATS Category 3"
+      ],
+      "plan": [
+        "ID band applied",
+        "Transfer to paediatric acute area for medical assessment",
+        "Oral rehydration trial likely",
+        "Intravenous fluids may be required if unable to tolerate oral intake",
+        "Close monitoring of hydration status"
+      ]
+    },
+    "brief_summary": "Lily is a 4-year-old with vomiting and diarrhoea since yesterday who is showing signs of moderate dehydration. She will be seen quickly in the paediatric area where doctors will assess her and likely start fluids, either by mouth or through a drip if needed."
+  },
+  {
+    "scenario_number": "0004",
+    "summary_header": "Minor Head Injury - 9-year-old (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Head injury from fall off monkey bars",
+        "history_of_present_illness": [
+          "9-year-old male fell off monkey bars at school approximately 1 hour prior to presentation",
+          "Struck back of head",
+          "Cried immediately after fall",
+          "Reports mild headache"
+        ],
+        "associated_symptoms": [
+          "Mild headache"
+        ],
+        "negatives": [
+          "No loss of consciousness",
+          "No vomiting",
+          "No confusion or altered behaviour",
+          "No neck pain",
+          "No difficulty moving head"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Pupils normal",
+          "Gait normal",
+          "Balance normal",
+          "Coordination normal"
+        ],
+        "observed_general_state": [
+          "Alert and oriented to person and place",
+          "Appears stable"
+        ]
+      },
+      "assessment": [
+        "Minor head injury with no red flags",
+        "No indication for CT scan based on presentation"
+      ],
+      "plan": [
+        "Placement in minor injuries area",
+        "Medical assessment and observation",
+        "CT scan unlikely based on current presentation"
+      ]
+    },
+    "brief_summary": "Max is a 9-year-old boy who fell off monkey bars and hit the back of his head about an hour ago. He has a mild headache but is acting normally with no worrying signs. He will be seen by a doctor and observed in the minor injuries area."
+  },
+  {
+    "scenario_number": "0005",
+    "summary_header": "Laceration / Wound - 7-year-old (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Laceration to forearm from metal object",
+        "history_of_present_illness": [
+          "7-year-old female slipped and cut forearm on metal approximately 40 minutes ago",
+          "Initial heavy bleeding controlled with direct pressure"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No dizziness",
+          "No fainting",
+          "No head strike",
+          "No other injuries"
+        ],
+        "relevant_history": [
+          "Vaccinations up to date including tetanus",
+          "Patient fearful of needles"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Forearm laceration approximately 3 cm in length",
+          "Straight cut",
+          "Not actively bleeding at time of examination"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Forearm laceration likely requiring closure with sutures or tissue adhesive"
+      ],
+      "plan": [
+        "Patient to be seen in minor treatment area",
+        "Local anaesthetic to be administered prior to wound closure",
+        "Child-appropriate approach given needle phobia",
+        "ID band applied",
+        "Awaiting medical assessment for definitive wound closure"
+      ]
+    },
+    "brief_summary": "Sophie, a 7-year-old girl, cut her forearm on metal about 40 minutes ago. The bleeding has stopped and the wound is stable but will likely need stitches or glue. She will be seen in the minor treatment area after a short wait."
+  },
+  {
+    "scenario_number": "0006",
+    "summary_header": "Suspected Fracture - 10-year-old (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Left wrist injury following fall from skateboard",
+        "history_of_present_illness": [
+          "10-year-old male fell off skateboard approximately 1 hour ago",
+          "Injured wrist",
+          "Reports significant pain with movement"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No numbness",
+          "No tingling",
+          "No head injury",
+          "No other injuries"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Swelling at wrist",
+          "Tenderness on palpation",
+          "Able to move fingers",
+          "Good circulation - fingers warm and pink",
+          "Neurovascularly intact"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Suspected distal radius fracture",
+        "Neurovascularly intact"
+      ],
+      "plan": [
+        "X-ray of wrist",
+        "ID band placed",
+        "Transfer to minors area",
+        "Likely cast application depending on X-ray findings"
+      ]
+    },
+    "brief_summary": "Jai, a 10-year-old boy, fell off his skateboard about an hour ago and hurt his wrist. The nurse found swelling and tenderness but good circulation and nerve function. He will get an X-ray soon and may need a cast depending on the results."
+  },
+  {
+    "scenario_number": "0007",
+    "summary_header": "Abdominal Pain - Possible Appendicitis - 11-year-old (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Abdominal pain since yesterday, worsening today",
+        "history_of_present_illness": [
+          "11-year-old male with abdominal pain onset yesterday",
+          "Pain initially periumbilical, now localized to right lower quadrant",
+          "Pain worse today",
+          "Pain worsens with walking"
+        ],
+        "associated_symptoms": [
+          "Vomiting twice today",
+          "Fever 38.2°C"
+        ],
+        "negatives": [
+          "No bowel movement today",
+          "No diarrhoea"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {
+          "temperature": "38.2°C"
+        },
+        "exam_findings": [
+          "Tender in right lower quadrant on palpation"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Possible appendicitis"
+      ],
+      "plan": [
+        "ID band applied",
+        "Transfer to acute paediatrics",
+        "Timely medical review required",
+        "Blood tests",
+        "Possible imaging",
+        "Surgical team consultation if appendicitis confirmed"
+      ]
+    },
+    "brief_summary": "Leo is an 11-year-old boy with worsening tummy pain that moved from his belly button to the lower right side, along with vomiting and fever. This could be appendicitis. He will be admitted to the children's ward for tests and review by doctors, and may need surgery if appendicitis is confirmed."
+  },
+  {
+    "scenario_number": "0008",
+    "summary_header": "Allergic Reaction / Anaphylaxis - 6-year-old (ATS 1-2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Accidental peanut ingestion with allergic reaction",
+        "history_of_present_illness": [
+          "6-year-old female accidentally ate peanuts approximately 20 minutes prior to presentation",
+          "EpiPen administered by parent 10 minutes ago",
+          "Symptoms began after ingestion"
+        ],
+        "associated_symptoms": [
+          "Hives all over body",
+          "Swollen lips",
+          "Hoarse voice",
+          "Throat tightness (patient-reported)",
+          "Difficulty breathing",
+          "Vomiting (once)"
+        ],
+        "negatives": [],
+        "relevant_history": [
+          "Known peanut allergy (implied by EpiPen availability)"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "oxygen_saturation": "okay (specific value not documented)"
+        },
+        "exam_findings": [
+          "Facial swelling",
+          "Hoarse voice",
+          "Mild respiratory effort"
+        ],
+        "observed_general_state": [
+          "Active anaphylaxis"
+        ]
+      },
+      "assessment": [
+        "Active anaphylaxis with airway involvement following peanut ingestion",
+        "ATS Category 1"
+      ],
+      "plan": [
+        "Immediate transfer to resuscitation area",
+        "No waiting - direct admission",
+        "May require additional medication for ongoing anaphylaxis",
+        "Ongoing monitoring and medical assessment in resus"
+      ]
+    },
+    "brief_summary": "Ava, a 6-year-old girl, accidentally ate peanuts and is having a serious allergic reaction with swelling, throat tightness, and breathing difficulty. Her parent gave her an EpiPen, which was the right thing to do. She is being taken immediately to the resuscitation area for urgent treatment and may need more medication."
+  },
+  {
+    "scenario_number": "0009",
+    "summary_header": "Seizure with Fever - 3-year-old (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Seizure at home with fever",
+        "history_of_present_illness": [
+          "3-year-old child presented following first-ever seizure at home",
+          "Seizure occurred approximately 10 minutes prior to arrival",
+          "Duration approximately 2 minutes",
+          "Generalised tonic-clonic seizure involving arms and legs",
+          "Cyanosis of lips noted during seizure",
+          "Fever present since afternoon",
+          "Seizure has ceased, child now post-ictal"
+        ],
+        "associated_symptoms": [
+          "Fever since afternoon"
+        ],
+        "negatives": [
+          "No previous seizures",
+          "No vomiting",
+          "No rash",
+          "No stiff neck"
+        ],
+        "relevant_history": [
+          "No prior seizure history"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Breathing adequate",
+          "Colour satisfactory on assessment"
+        ],
+        "observed_general_state": [
+          "Post-ictal state",
+          "Sleepy but appropriate for post-seizure period",
+          "Seizure activity ceased on presentation"
+        ]
+      },
+      "assessment": [
+        "First febrile seizure",
+        "Post-ictal state",
+        "ATS Category 2 - requires urgent medical assessment"
+      ],
+      "plan": [
+        "ID band applied",
+        "Immediate transfer to acute paediatrics for urgent assessment",
+        "Medical evaluation for first febrile seizure"
+      ]
+    },
+    "brief_summary": "A 3-year-old child had their first seizure at home today, lasting about 2 minutes, along with a fever. The seizure has stopped and the child is sleepy, which is normal afterward. They are being taken straight to the pediatric team for urgent assessment."
+  },
+  {
+    "scenario_number": "0010",
+    "summary_header": "Foreign Body Ingestion (Coin) - 2-year-old (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Suspected coin ingestion",
+        "history_of_present_illness": [
+          "2-year-old male swallowed coin approximately 30 minutes prior to presentation",
+          "Witnessed by sibling who saw patient put coin in mouth",
+          "Initial coughing episode at time of ingestion",
+          "Coughing has since resolved"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No current coughing",
+          "No noisy breathing",
+          "No wheezing",
+          "No difficulty breathing",
+          "No drooling",
+          "No refusal to swallow",
+          "No vomiting",
+          "Able to drink"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Chest auscultation: equal air entry bilaterally",
+          "No stridor",
+          "No wheeze"
+        ],
+        "observed_general_state": [
+          "Stable",
+          "Breathing appears normal"
+        ]
+      },
+      "assessment": [
+        "Foreign body ingestion (coin), airway secure, stable presentation"
+      ],
+      "plan": [
+        "X-ray to locate coin and assess for oesophageal impaction",
+        "ID band applied",
+        "Transfer to paediatric area for further assessment"
+      ]
+    },
+    "brief_summary": "Oliver is a 2-year-old boy who swallowed a coin about 30 minutes ago. He is breathing normally and is stable. An X-ray will be done to find out where the coin is and what needs to happen next."
+  },
+  {
+    "scenario_number": "0011",
+    "summary_header": "Mental Health Crisis / Suicidal Ideation - 22-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Suicidal ideation with safety concerns",
+        "history_of_present_illness": [
+          "Patient reports active thoughts about ending his life",
+          "States thoughts keep coming into his head and is scared he might act on them",
+          "Did not feel safe at home",
+          "Self-harmed by cutting arm earlier today, described as not deep",
+          "Consumed significant amount of alcohol today",
+          "Stopped taking antidepressant medications a few weeks ago"
+        ],
+        "associated_symptoms": [
+          "Reports feeling awful"
+        ],
+        "negatives": [
+          "No tablets or medications taken",
+          "No illicit drug use (no cannabis, pills, or methamphetamine)"
+        ],
+        "relevant_history": [
+          "Diagnosed with depression",
+          "Previous suicide attempt last year",
+          "Recently discontinued psychiatric medications (few weeks ago)",
+          "Friend accompanied patient to hospital"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "pulse": "elevated",
+          "respiratory_rate": "within normal limits"
+        },
+        "exam_findings": [
+          "Self-inflicted laceration to arm, described as superficial"
+        ],
+        "observed_general_state": [
+          "Patient appears distressed",
+          "Tachycardia noted, attributed to alcohol consumption and anxiety"
+        ]
+      },
+      "assessment": [
+        "Active suicidal ideation with recent self-harm",
+        "Acute mental health crisis",
+        "Recent alcohol intoxication",
+        "Depression, currently not on medication"
+      ],
+      "plan": [
+        "Immediate placement in safe, private room",
+        "Urgent medical assessment",
+        "Urgent mental health team consultation",
+        "Continuous safety monitoring",
+        "ID band applied",
+        "No waiting room placement due to safety concerns"
+      ]
+    },
+    "brief_summary": "A 22-year-old man came to the emergency department because he is having thoughts of ending his life and does not feel safe. He cut his arm and drank alcohol earlier today. He will be placed in a safe private room and seen urgently by the doctor and mental health team."
+  },
+  {
+    "scenario_number": "0012",
+    "summary_header": "Lower Abdominal Pain - Possible Ectopic Pregnancy - 23-year-old (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Really bad lower tummy pain",
+        "history_of_present_illness": [
+          "Pain started this morning",
+          "Pain has gotten much worse in the last couple of hours",
+          "Pain mostly on the right side, sharp in nature",
+          "One week late for period",
+          "Some vaginal spotting earlier",
+          "Pregnancy possible"
+        ],
+        "associated_symptoms": [
+          "Mild nausea",
+          "Feeling a bit light-headed"
+        ],
+        "negatives": [
+          "No vomiting",
+          "No dizziness or feeling faint (only mild light-headedness)"
+        ],
+        "relevant_history": [
+          "No history of ectopic pregnancies",
+          "No history of pelvic infections",
+          "No history of surgeries"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "heart_rate": "Elevated",
+          "blood_pressure": "Normal"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Lower abdominal pain with delayed menses and vaginal spotting",
+        "Possible ectopic pregnancy to be ruled out",
+        "Tachycardia with stable blood pressure"
+      ],
+      "plan": [
+        "Urine pregnancy test",
+        "Blood tests",
+        "Timely medical assessment by doctor",
+        "Rule out ectopic pregnancy"
+      ]
+    },
+    "brief_summary": "A 23-year-old woman came in with worsening right-sided lower abdominal pain, a late period, and some spotting. Because of concern for a possible ectopic pregnancy, she will have a pregnancy test, blood work, and be seen by a doctor soon."
+  },
+  {
+    "scenario_number": "0013",
+    "summary_header": "Ankle Injury / Suspected Sprain - 19-year-old Male (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Twisted ankle playing soccer approximately 2 hours ago",
+        "history_of_present_illness": [
+          "Injury occurred during soccer",
+          "Popping sensation felt at time of injury",
+          "Able to bear some weight but with significant pain",
+          "Significant swelling around outside of ankle since injury"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No numbness or tingling in foot",
+          "No other injuries",
+          "No fall on wrist",
+          "No head injury"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Swelling over lateral malleolus",
+          "Tender to palpation",
+          "Good circulation",
+          "Toes warm",
+          "Toes moving"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Ankle injury - suspected sprain versus fracture"
+      ],
+      "plan": [
+        "X-ray required to differentiate sprain from fracture",
+        "To be seen in minor injuries area",
+        "Awaiting room availability"
+      ]
+    },
+    "brief_summary": "A 19-year-old male twisted his ankle playing soccer two hours ago and heard a pop. There is swelling and pain, but circulation is good. He will need an X-ray to check if the ankle is broken or sprained."
+  },
+  {
+    "scenario_number": "0014",
+    "summary_header": "Alcohol + Oxycodone Intoxication - 25-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Alcohol and oxycodone ingestion, feeling really out of it",
+        "history_of_present_illness": [
+          "Ingested 6-7 oxycodone tablets approximately 1 hour prior to presentation",
+          "Consumed large amount of vodka",
+          "Oxycodone was partner's medication, not prescribed to patient",
+          "Patient does not normally take oxycodone for pain",
+          "Denies suicidal intent, states was not thinking"
+        ],
+        "associated_symptoms": [
+          "Feeling very sleepy",
+          "Nausea"
+        ],
+        "negatives": [
+          "No vomiting",
+          "No trouble breathing reported by patient"
+        ],
+        "relevant_history": [
+          "No known allergies",
+          "No medical problems"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "respiratory_rate": "Slow but stable",
+          "heart_rate": "Elevated",
+          "blood_pressure": "Checked, specific values not documented"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Appears sedated"
+        ]
+      },
+      "assessment": [
+        "Polysubstance intoxication with alcohol and oxycodone",
+        "Risk of respiratory depression",
+        "ATS Category 2"
+      ],
+      "plan": [
+        "Immediate transfer to acute area for close monitoring",
+        "Monitor respiratory status and airway",
+        "Continuous observation for respiratory depression"
+      ]
+    },
+    "brief_summary": "A 25-year-old male came to the emergency department after drinking a large amount of alcohol and taking 6-7 oxycodone tablets about an hour ago. He is feeling very sleepy and his breathing is slightly slow. He will be taken to the acute care area right away for close monitoring because this combination can cause dangerous slowing of breathing."
+  },
+  {
+    "scenario_number": "0015",
+    "summary_header": "Moderate Asthma Exacerbation - 20-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Shortness of breath",
+        "history_of_present_illness": [
+          "Known asthma",
+          "Shortness of breath since this morning, worsening",
+          "Used Ventolin 6 puffs over last hour with minimal relief",
+          "Cough for 2 days"
+        ],
+        "associated_symptoms": [
+          "Chest tightness",
+          "Cough for 2 days",
+          "Difficulty speaking in full sentences (feels harder than usual)"
+        ],
+        "negatives": [
+          "No chest pain",
+          "No fever"
+        ],
+        "relevant_history": [
+          "One previous hospitalisation for asthma as a child"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "SpO2": "96%"
+        },
+        "exam_findings": [
+          "Tachypnoea noted"
+        ],
+        "observed_general_state": [
+          "Breathing fast but not severely distressed",
+          "Able to speak in full sentences"
+        ]
+      },
+      "assessment": [
+        "Moderate asthma exacerbation",
+        "Not immediately life-threatening"
+      ],
+      "plan": [
+        "Transfer to acute care",
+        "Nebuliser therapy",
+        "Corticosteroids"
+      ]
+    },
+    "brief_summary": "A 20-year-old woman with asthma is experiencing worsening shortness of breath since this morning that hasn't improved much with her inhaler. She will be taken to acute care soon for breathing treatments and medication to help open her airways."
+  },
+  {
+    "scenario_number": "0016",
+    "summary_header": "Thunderclap Headache - Possible SAH - 28-year-old Female (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Worst headache of my life with sudden onset approximately one hour ago",
+        "history_of_present_illness": [
+          "Sudden onset thunderclap headache starting approximately 1 hour prior to presentation",
+          "Instantaneous onset described as 'like someone hit me with something'",
+          "Neck stiffness present with pain on head movement",
+          "One episode of vomiting",
+          "Patient reports feeling 'really off'"
+        ],
+        "associated_symptoms": [
+          "Neck stiffness",
+          "Vomiting (once)",
+          "Feeling unwell"
+        ],
+        "negatives": [
+          "No weakness in arms or legs",
+          "No trouble speaking",
+          "No history of migraines"
+        ],
+        "relevant_history": [
+          "No previous history of migraines"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "note": "Stable at time of assessment"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Patient alert and communicating appropriately"
+        ]
+      },
+      "assessment": [
+        "Thunderclap headache with red flag features: sudden onset, neck stiffness, vomiting",
+        "Possible subarachnoid hemorrhage requiring urgent investigation"
+      ],
+      "plan": [
+        "Immediate medical assessment",
+        "Fast-track through emergency department",
+        "Likely investigations to rule out intracranial hemorrhage"
+      ]
+    },
+    "brief_summary": "A 28-year-old woman came in with a sudden, severe headache that started instantly about an hour ago, along with neck stiffness and vomiting. Because these symptoms could indicate bleeding in the brain, she will be seen immediately by the medical team for urgent testing."
+  },
+  {
+    "scenario_number": "0017",
+    "summary_header": "Cellulitis with Systemic Symptoms - 27-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Swollen and red leg",
+        "history_of_present_illness": [
+          "Started as a small cut two days ago",
+          "Redness spreading up calf",
+          "Small amount of pus or discharge present"
+        ],
+        "associated_symptoms": [
+          "Chills last night",
+          "Pain with walking"
+        ],
+        "negatives": [],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Leg warm to touch",
+          "Swollen",
+          "Red streaking up the calf"
+        ],
+        "observed_general_state": [
+          "Able to walk despite pain"
+        ]
+      },
+      "assessment": [
+        "Likely skin infection (cellulitis)"
+      ],
+      "plan": [
+        "Blood tests to be obtained",
+        "Start antibiotic treatment"
+      ]
+    },
+    "brief_summary": "A 27-year-old woman came in with a swollen, red leg that started from a small cut two days ago. The redness is spreading and she had chills last night, suggesting an infection. She will have blood tests done and will be started on antibiotics."
+  },
+  {
+    "scenario_number": "0018",
+    "summary_header": "Syncope / Collapse - 21-year-old Male (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Fainted at work with blackout",
+        "history_of_present_illness": [
+          "Patient reports syncopal episode at work",
+          "Prodromal symptoms of light-headedness and diaphoresis",
+          "Did not hit head, was caught by someone during collapse"
+        ],
+        "associated_symptoms": [
+          "Possible tachycardia noted by patient"
+        ],
+        "negatives": [
+          "No chest pain",
+          "No shortness of breath",
+          "No head injury"
+        ],
+        "relevant_history": [
+          "No previous fainting episodes",
+          "No current medications"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "heart_rate": "elevated",
+          "blood_pressure": "stable"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Patient appears stable"
+        ]
+      },
+      "assessment": [
+        "Syncope requiring investigation"
+      ],
+      "plan": [
+        "ECG to be performed",
+        "Blood tests to be collected",
+        "Ongoing monitoring",
+        "Awaiting medical assessment"
+      ]
+    },
+    "brief_summary": "A 21-year-old male fainted at work after feeling light-headed and sweaty. He did not injure himself and his vital signs are mostly stable, though his heart rate is a bit fast. He will have an ECG and blood tests done to find out why he fainted."
+  },
+  {
+    "scenario_number": "0019",
+    "summary_header": "Renal Colic - Severe Flank Pain - 26-year-old Male (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Worst pain in right side, comes in waves",
+        "history_of_present_illness": [
+          "Severe right-sided flank pain",
+          "Onset 2 hours ago",
+          "Pain described as coming in waves",
+          "Pain severity 10/10"
+        ],
+        "associated_symptoms": [
+          "Dysuria (burning on urination)",
+          "Pink-colored urine",
+          "Nausea"
+        ],
+        "negatives": [
+          "No vomiting",
+          "No fever",
+          "No chills"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {
+          "pulse": "elevated",
+          "blood_pressure": "within normal limits"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Suspected renal colic"
+      ],
+      "plan": [
+        "Pain relief to be administered",
+        "Diagnostic tests to be ordered",
+        "Awaiting medical assessment"
+      ]
+    },
+    "brief_summary": "A 26-year-old man came to the emergency department with severe pain in his right side that started 2 hours ago. He also has burning when urinating and noticed pink urine. He will receive pain medication and have tests done to check for kidney stones."
+  },
+  {
+    "scenario_number": "0020",
+    "summary_header": "Assault / Domestic Violence - 24-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Assault by partner with punch to ribs and face",
+        "history_of_present_illness": [
+          "Patient reports being hit by partner tonight",
+          "Punched in ribs and face",
+          "Significant rib pain on breathing"
+        ],
+        "associated_symptoms": [
+          "Pain in ribs with breathing"
+        ],
+        "negatives": [
+          "No loss of consciousness",
+          "No weapons used"
+        ],
+        "relevant_history": [
+          "Does not feel safe to return home"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "pulse": "elevated but stable"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Patient requested private room for discussion"
+        ]
+      },
+      "assessment": [
+        "Assault victim with rib and facial trauma",
+        "Domestic violence",
+        "Safety concerns - patient does not feel safe to return home"
+      ],
+      "plan": [
+        "Acute care area assessment",
+        "Medical evaluation for rib and facial injuries",
+        "Social work consultation",
+        "Domestic violence support services involvement",
+        "Safety planning and accommodation arrangements"
+      ]
+    },
+    "brief_summary": "A 24-year-old woman came to the emergency department after being assaulted by her partner. She has pain in her ribs and face and does not feel safe going home. She will be seen by the medical team and connected with social work and support services to ensure her safety."
+  },
+  {
+    "scenario_number": "0021",
+    "summary_header": "Chest Pain - Possible ACS - 54-year-old (ATS 2) Female",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Chest pain",
+        "history_of_present_illness": [
+          "Chest pain started approximately 30 minutes ago while watching TV",
+          "Sudden onset",
+          "Central chest location",
+          "Described as tight",
+          "Radiating to left arm",
+          "First episode of chest pain of this nature"
+        ],
+        "associated_symptoms": [
+          "Shortness of breath",
+          "Unable to take full breath",
+          "Diaphoresis",
+          "Nausea"
+        ],
+        "negatives": [
+          "No previous chest pain like this",
+          "No recent long trips",
+          "No calf pain"
+        ],
+        "relevant_history": [
+          "Hypertension",
+          "Current smoker",
+          "No analgesia taken prior to presentation"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "blood_pressure": "elevated",
+          "heart_rate": "tachycardic"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Pulse oximeter applied"
+        ]
+      },
+      "assessment": [
+        "Chest pain with red-flag features concerning for acute coronary syndrome",
+        "ATS Category 2"
+      ],
+      "plan": [
+        "Immediate ECG",
+        "Transfer to acute area for urgent assessment",
+        "Cardiac monitoring"
+      ]
+    },
+    "brief_summary": "A 54-year-old woman came to the emergency department with sudden chest pain that started 30 minutes ago. The pain is in the center of her chest, feels tight, spreads to her left arm, and she is sweating and short of breath. She will be taken to the acute area right away for an ECG and urgent heart checks."
+  },
+  {
+    "scenario_number": "0022",
+    "summary_header": "Right Upper Quadrant Abdominal Pain - Possible Cholecystitis - 45-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Bad pain under right ribs since last night, getting worse",
+        "history_of_present_illness": [
+          "Pain started after dinner yesterday evening",
+          "Ate fried chicken and chips prior to onset",
+          "Pain has not resolved",
+          "Pain radiates to back under right shoulder blade",
+          "Felt hot overnight"
+        ],
+        "associated_symptoms": [
+          "Vomited once this morning",
+          "Nausea present"
+        ],
+        "negatives": [
+          "No jaundice (no yellowing of eyes or skin)",
+          "Urine normal colour",
+          "Passing urine normally"
+        ],
+        "relevant_history": [
+          "No previous gallbladder issues"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Right upper quadrant tenderness on palpation"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Right upper quadrant abdominal pain with fever and vomiting",
+        "Possible cholecystitis"
+      ],
+      "plan": [
+        "Blood tests",
+        "Possible ultrasound to assess gallbladder",
+        "To be seen in acute area"
+      ]
+    },
+    "brief_summary": "A 45-year-old woman came in with worsening pain under her right ribs that started after eating a fatty meal last night. The pain spreads to her back, and she has vomited and felt feverish. She will have blood tests and possibly an ultrasound to check her gallbladder, and will be seen in the acute care area."
+  },
+  {
+    "scenario_number": "0023",
+    "summary_header": "Shortness of Breath - COPD Exacerbation - 61-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Shortness of breath since this morning, getting worse",
+        "history_of_present_illness": [
+          "Shortness of breath started this morning",
+          "Progressive worsening throughout the day",
+          "Productive cough with greenish phlegm for a few days",
+          "Subjective fevers with hot and cold sensations",
+          "Chest tightness without pain",
+          "Increased inhaler use today"
+        ],
+        "associated_symptoms": [
+          "Productive cough with greenish sputum",
+          "Chest tightness",
+          "Subjective fever (hot and cold sensations)"
+        ],
+        "negatives": [
+          "No chest pain",
+          "No leg swelling",
+          "No recent long trips"
+        ],
+        "relevant_history": [
+          "COPD for years"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "SpO2": "90% on room air"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Appears breathless on presentation"
+        ]
+      },
+      "assessment": [
+        "Acute dyspnoea with hypoxia in patient with known COPD",
+        "Likely acute exacerbation of COPD with possible infective component"
+      ],
+      "plan": [
+        "Supplemental oxygen therapy",
+        "Nebuliser treatment",
+        "Transfer to acute area for immediate medical assessment",
+        "Monitoring of respiratory status"
+      ]
+    },
+    "brief_summary": "A 61-year-old man with COPD came in with worsening shortness of breath and a cough producing green phlegm. His oxygen level is low at 90%. He will be given oxygen and breathing treatments right away in the acute care area."
+  },
+  {
+    "scenario_number": "0024",
+    "summary_header": "Worsening Headache - Atypical Migraine vs Red Flag - 37-year-old Female (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Headache for three days, worsening, different from usual migraines",
+        "history_of_present_illness": [
+          "Headache present for 3 days",
+          "Progressive worsening",
+          "Atypical pattern compared to usual migraines",
+          "Pain described as throbbing across whole head"
+        ],
+        "associated_symptoms": [
+          "Intermittent blurry vision",
+          "Nausea",
+          "Mild neck stiffness",
+          "Recent cold last week"
+        ],
+        "negatives": [
+          "No vomiting",
+          "No weakness in arms or legs",
+          "No difficulty speaking"
+        ],
+        "relevant_history": [
+          "History of migraines"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "note": "Pulse and blood pressure checked, reported as okay"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Atypical worsening headache with change in pattern from usual migraines",
+        "Possible red flag features: atypical presentation, neck stiffness, visual changes, progressive worsening"
+      ],
+      "plan": [
+        "Medical assessment required",
+        "Investigations to be performed",
+        "ATS Category 2 - urgent assessment"
+      ]
+    },
+    "brief_summary": "A 37-year-old woman came in with a three-day headache that is getting worse and feels different from her usual migraines. She also has some blurry vision, nausea, and mild neck stiffness. She will be assessed urgently and have some tests done to find out what's causing this change."
+  },
+  {
+    "scenario_number": "0025",
+    "summary_header": "Acute Back Pain - No Red Flags - 40-year-old Male (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Lower back pain following lifting injury",
+        "history_of_present_illness": [
+          "Injured lower back lifting boxes yesterday",
+          "Pain is really painful today",
+          "Pain located in lower back, mostly on right side",
+          "Difficulty walking due to pain"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No numbness or tingling in legs",
+          "No trouble passing urine",
+          "No incontinence",
+          "No fever",
+          "No unexpected weight loss"
+        ],
+        "relevant_history": [
+          "Previous minor back aches only"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Tenderness on examination",
+          "Limited range of motion - patient bends slightly and winces",
+          "No red flags identified"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Muscular back strain"
+      ],
+      "plan": [
+        "Pain relief to be administered",
+        "Doctor review shortly"
+      ]
+    },
+    "brief_summary": "A 40-year-old male hurt his lower back yesterday while lifting boxes and is experiencing significant pain today. The nurse found tenderness and limited movement but no serious warning signs. He will receive pain medication and be seen by a doctor soon."
+  },
+  {
+    "scenario_number": "0026",
+    "summary_header": "Fall + Wrist Deformity - Possible Fracture - 48-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Wrist injury following fall at work",
+        "history_of_present_illness": [
+          "Slipped at work and landed on hand approximately 1 hour ago",
+          "Wrist is really swollen",
+          "Very painful",
+          "Can barely move fingers"
+        ],
+        "associated_symptoms": [
+          "Feeling shaky"
+        ],
+        "negatives": [
+          "No head strike",
+          "No numbness",
+          "No tingling"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Obvious deformity of wrist",
+          "Fingers warm",
+          "Good finger colour",
+          "Good perfusion"
+        ],
+        "observed_general_state": [
+          "Patient stable",
+          "Appears shaky"
+        ]
+      },
+      "assessment": [
+        "Likely wrist fracture with obvious deformity",
+        "Neurovascular status intact"
+      ],
+      "plan": [
+        "X-ray of wrist",
+        "Pain relief to be commenced",
+        "Timely treatment required",
+        "ID band applied"
+      ]
+    },
+    "brief_summary": "A 48-year-old woman fell at work and injured her wrist about an hour ago. The wrist appears deformed and is very likely broken. She will have an X-ray and receive pain medication."
+  },
+  {
+    "scenario_number": "0027",
+    "summary_header": "Vertigo - Likely Peripheral - 34-year-old Female (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Room spinning since this morning, especially with head movement",
+        "history_of_present_illness": [
+          "Vertigo onset this morning",
+          "Symptoms worse with head movement"
+        ],
+        "associated_symptoms": [
+          "Tinnitus in left ear",
+          "Mild nausea"
+        ],
+        "negatives": [
+          "No weakness",
+          "No slurred speech",
+          "Able to walk"
+        ],
+        "relevant_history": [
+          "Recent cold last week"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "status": "Stable"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Patient able to walk despite dizziness"
+        ]
+      },
+      "assessment": [
+        "Likely peripheral vertigo, possibly labyrinthitis"
+      ],
+      "plan": [
+        "Awaiting medical assessment"
+      ]
+    },
+    "brief_summary": "A 34-year-old woman came in with room spinning and dizziness that started this morning, worse when she moves her head. She also has ringing in her left ear and had a cold last week. She will be assessed by a doctor to confirm the cause and discuss treatment."
+  },
+  {
+    "scenario_number": "0028",
+    "summary_header": "Cellulitis - Spreading Redness - 59-year-old Male (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Red, hot, spreading rash on calf",
+        "history_of_present_illness": [
+          "Started as a scratch 2 days ago",
+          "Now red and hot",
+          "Spreading up calf",
+          "Some swelling present"
+        ],
+        "associated_symptoms": [
+          "Fever and chills last night"
+        ],
+        "negatives": [
+          "No pus"
+        ],
+        "relevant_history": [
+          "Type 2 diabetes"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Area warm to touch",
+          "Swelling present",
+          "Spreading erythema"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Cellulitis with systemic features in diabetic patient"
+      ],
+      "plan": [
+        "IV antibiotics",
+        "Blood tests"
+      ]
+    },
+    "brief_summary": "A 59-year-old man with diabetes has a spreading infection on his leg that started from a scratch two days ago. He has fever and the area is red, hot, and swollen. He will receive antibiotics through an IV and have blood tests done."
+  },
+  {
+    "scenario_number": "0029",
+    "summary_header": "GI Bleed - Haematemesis - 52-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Vomited blood approximately one hour ago",
+        "history_of_present_illness": [
+          "Haematemesis one hour prior to presentation",
+          "Dark red blood",
+          "Volume sufficient to partially fill toilet bowl",
+          "Black stools for two days"
+        ],
+        "associated_symptoms": [
+          "Light-headedness"
+        ],
+        "negatives": [],
+        "relevant_history": [
+          "History of peptic ulcers",
+          "Significant alcohol consumption"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "blood_pressure": "Low",
+          "heart_rate": "Elevated"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Haemodynamic compromise evident"
+        ]
+      },
+      "assessment": [
+        "Upper gastrointestinal bleed with haematemesis and melaena",
+        "Haemodynamic instability",
+        "ATS Category 2"
+      ],
+      "plan": [
+        "Immediate transfer to resuscitation area",
+        "Urgent medical assessment",
+        "Likely investigations: full blood count, coagulation studies, type and crossmatch, venous access",
+        "Haemodynamic monitoring and resuscitation"
+      ]
+    },
+    "brief_summary": "A 52-year-old man came to the emergency department after vomiting a large amount of dark red blood. He has low blood pressure and a fast heart rate, indicating he needs urgent treatment. He is being taken immediately to the resuscitation area for emergency care."
+  },
+  {
+    "scenario_number": "0030",
+    "summary_header": "Acute Urinary Retention - 63-year-old Male (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Unable to pass urine since last night with sensation of bladder fullness",
+        "history_of_present_illness": [
+          "Unable to urinate since last night",
+          "Bladder feels like it is going to burst",
+          "Small amount of blood in urine yesterday"
+        ],
+        "associated_symptoms": [
+          "Hematuria (small amount yesterday)"
+        ],
+        "negatives": [
+          "No fever",
+          "No back pain"
+        ],
+        "relevant_history": [
+          "Enlarged prostate"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Palpable distended bladder on lower abdominal examination",
+          "Significant tenderness on palpation of lower abdomen"
+        ],
+        "observed_general_state": [
+          "Significant discomfort"
+        ]
+      },
+      "assessment": [
+        "Acute urinary retention, likely secondary to benign prostatic hyperplasia"
+      ],
+      "plan": [
+        "Urinary catheterization required to relieve retention",
+        "Awaiting medical assessment"
+      ]
+    },
+    "brief_summary": "A 63-year-old man came in because he has not been able to urinate since last night and his bladder is very full and uncomfortable. He has a history of an enlarged prostate. A catheter will be inserted to drain his bladder and relieve the discomfort."
+  },
+  {
+    "scenario_number": "0031",
+    "summary_header": "Fall - Suspected Hip Fracture - 82-year-old Female (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Right hip pain following fall in bathroom this morning",
+        "history_of_present_illness": [
+          "Patient fell in bathroom this morning",
+          "Reports feeling weak with legs giving way prior to fall",
+          "Right hip pain, severe",
+          "Unable to move right leg due to pain"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No head injury",
+          "No loss of consciousness",
+          "No chest pain",
+          "No palpitations prior to fall",
+          "No dizziness"
+        ],
+        "relevant_history": [
+          "Takes apixaban for atrial fibrillation"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "status": "Stable"
+        },
+        "exam_findings": [
+          "Right leg shortened and externally rotated"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Suspected fractured neck of femur (hip fracture) right side"
+      ],
+      "plan": [
+        "Urgent analgesia",
+        "Urgent X-ray imaging",
+        "Transfer to acute care for immediate assessment",
+        "Surgical review pending imaging results"
+      ]
+    },
+    "brief_summary": "An 82-year-old woman fell at home this morning and has severe right hip pain. Her leg position suggests a possible hip fracture. She will receive pain relief and X-rays right away, and the doctors will assess whether surgery is needed."
+  },
+  {
+    "scenario_number": "0032",
+    "summary_header": "Acute Confusion / Delirium - 78-year-old male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Acute confusion since this morning",
+        "history_of_present_illness": [
+          "78-year-old male presented by relative with acute onset confusion noted upon waking this morning",
+          "Patient did not recognise where he was",
+          "Fall yesterday, patient reported feeling fine afterwards",
+          "Reports stinging on urination"
+        ],
+        "associated_symptoms": [
+          "Dysuria"
+        ],
+        "negatives": [
+          "No cough reported"
+        ],
+        "relevant_history": [
+          "Previous episode of confusion associated with UTI last year"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "temperature": "Elevated",
+          "heart_rate": "Tachycardic"
+        },
+        "exam_findings": [
+          "Disoriented to place",
+          "Unable to state current location"
+        ],
+        "observed_general_state": [
+          "Signs of delirium"
+        ]
+      },
+      "assessment": [
+        "Acute delirium, ATS 2",
+        "Possible urinary tract infection",
+        "Possible head injury related to recent fall"
+      ],
+      "plan": [
+        "Urgent medical assessment",
+        "Fast-track through to emergency physician",
+        "Likely investigations: urinalysis, blood work, consideration of head imaging given recent fall"
+      ]
+    },
+    "brief_summary": "A 78-year-old man arrived with sudden confusion that started this morning. He had a fall yesterday and is reporting painful urination, with a fever and fast heart rate noted. He will be seen urgently by the doctor to check for infection or injury from the fall."
+  },
+  {
+    "scenario_number": "0033",
+    "summary_header": "Abdominal Pain - Possible Bowel Obstruction - 74-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Abdominal pain since last night",
+        "history_of_present_illness": [
+          "Crampy abdominal pain since last night",
+          "Pain described as feeling full",
+          "Pain located all over abdomen, worse around the middle",
+          "Vomited twice this morning",
+          "Last bowel motion yesterday morning, nothing since",
+          "Last passed wind yesterday morning"
+        ],
+        "associated_symptoms": [
+          "Vomiting",
+          "Abdominal fullness"
+        ],
+        "negatives": [
+          "No fever reported"
+        ],
+        "relevant_history": [
+          "Previous bowel surgery 20 years ago"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Abdomen tender on palpation",
+          "Abdomen distended"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Possible bowel obstruction"
+      ],
+      "plan": [
+        "Abdominal X-ray to be organised",
+        "CT scan to be organised",
+        "ID band to be applied",
+        "Transfer to acute care"
+      ]
+    },
+    "brief_summary": "A 74-year-old woman came in with stomach pain, vomiting, and no bowel movements since yesterday. The nurse found her belly swollen and tender, and suspects a possible blockage in her bowel. She will have X-rays and a CT scan done and be moved to the acute care area for further treatment."
+  },
+  {
+    "scenario_number": "0034",
+    "summary_header": "Shortness of Breath - Heart Failure Exacerbation - 79-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Sudden onset shortness of breath",
+        "history_of_present_illness": [
+          "Sudden onset of severe shortness of breath this afternoon",
+          "Increased leg swelling this week, more than usual",
+          "Weight gain this week",
+          "Increased fluid retention"
+        ],
+        "associated_symptoms": [
+          "Chest tightness"
+        ],
+        "negatives": [
+          "No fever"
+        ],
+        "relevant_history": [
+          "Known heart failure"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "oxygen_saturation": "88% on room air"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Patient appears breathless",
+          "Patient positioned upright"
+        ]
+      },
+      "assessment": [
+        "Acute dyspnoea with hypoxia in patient with known congestive heart failure",
+        "Likely heart failure exacerbation given increased leg swelling, weight gain, and fluid retention"
+      ],
+      "plan": [
+        "Oxygen therapy initiated",
+        "Urgent transfer to acute care area",
+        "Continuous monitoring required",
+        "Urgent medical assessment and treatment"
+      ]
+    },
+    "brief_summary": "A 79-year-old man came to the emergency department with sudden severe shortness of breath and low oxygen levels. He has a history of heart failure and has noticed increased swelling and weight gain this week. He is being given oxygen and taken immediately to the acute care area for urgent treatment and monitoring."
+  },
+  {
+    "scenario_number": "0035",
+    "summary_header": "Atypical Chest Pain / Possible ACS - 73-year-old Female (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Feeling weak and breathless with pressure in chest but not really pain",
+        "history_of_present_illness": [
+          "Symptoms started a couple of hours ago",
+          "Describes chest pressure rather than pain",
+          "Associated weakness and breathlessness"
+        ],
+        "associated_symptoms": [
+          "Diaphoresis (a bit sweaty)"
+        ],
+        "negatives": [],
+        "relevant_history": [
+          "Previous myocardial infarction 5 years ago"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "heart_rate": "elevated",
+          "blood_pressure": "slightly low"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Atypical presentation concerning for acute coronary syndrome in elderly patient with previous MI"
+      ],
+      "plan": [
+        "Urgent ECG",
+        "Transfer to acute area for immediate assessment",
+        "Cardiac monitoring"
+      ]
+    },
+    "brief_summary": "A 73-year-old woman came in with chest pressure, weakness, and shortness of breath that started a couple hours ago. She had a heart attack five years ago, so the team is taking her to the acute area right away for an ECG and heart monitoring to check if this is another heart problem."
+  },
+  {
+    "scenario_number": "0036",
+    "summary_header": "Fall With Laceration - On Anticoagulants - 85-year-old Female (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Tripped over rug and cut arm",
+        "history_of_present_illness": [
+          "Mechanical trip over rug",
+          "Sustained laceration to arm"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No head strike",
+          "No dizziness before fall"
+        ],
+        "relevant_history": [
+          "On warfarin"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "4cm laceration to arm",
+          "Bleeding controlled"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Laceration to arm in patient on anticoagulation therapy",
+        "Requires coagulation studies prior to repair"
+      ],
+      "plan": [
+        "Blood tests to check clotting status",
+        "Laceration repair pending coagulation results",
+        "Transfer to minors area"
+      ]
+    },
+    "brief_summary": "An 85-year-old woman tripped on a rug and cut her arm. Because she takes a blood thinner, blood tests are needed before stitching the wound. She is stable and will be moved to the treatment area shortly."
+  },
+  {
+    "scenario_number": "0037",
+    "summary_header": "Suspected Urosepsis - 76-year-old Female (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Sleepy and confused with strong-smelling urine",
+        "history_of_present_illness": [
+          "76-year-old female presenting with altered mental status",
+          "Increased sleepiness and confusion",
+          "Strong-smelling urine noted by relative",
+          "Fever reported last night",
+          "Dysuria reported yesterday"
+        ],
+        "associated_symptoms": [
+          "Fever",
+          "Dysuria"
+        ],
+        "negatives": [],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {
+          "temperature": "38.9°C",
+          "heart_rate": "112 bpm",
+          "blood_pressure": "low-normal"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Sleepy",
+          "Confused"
+        ]
+      },
+      "assessment": [
+        "Suspected urosepsis",
+        "Suspected serious infection from urinary tract origin",
+        "ATS Category 2"
+      ],
+      "plan": [
+        "Immediate transfer to acute area",
+        "Blood tests",
+        "Intravenous fluids",
+        "Antibiotics"
+      ]
+    },
+    "brief_summary": "A 76-year-old woman came in feeling sleepy and confused with a fever and signs of a urinary infection. Her vital signs suggest a serious infection that may have spread to her bloodstream. She will be taken immediately to the acute area for blood tests, fluids through an IV, and antibiotics."
+  },
+  {
+    "scenario_number": "0038",
+    "summary_header": "GI Bleed - Black Stools / Dizziness - 81-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Dark stools for two days and feeling faint",
+        "history_of_present_illness": [
+          "Very dark stools for 2 days",
+          "Feeling faint"
+        ],
+        "associated_symptoms": [
+          "Minimal abdominal pain"
+        ],
+        "negatives": [
+          "No vomiting blood"
+        ],
+        "relevant_history": [
+          "On apixaban (anticoagulation)"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "blood_pressure": "slightly low",
+          "heart_rate": "high"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Suspected gastrointestinal bleed with haemodynamic changes in patient on anticoagulation"
+      ],
+      "plan": [
+        "Urgent care - patient to be taken straight through",
+        "Awaiting medical assessment for management of suspected GI bleed"
+      ]
+    },
+    "brief_summary": "An 81-year-old man has been passing very dark stools for two days and feels faint. He is on blood thinners and his blood pressure is low with a fast heart rate, suggesting possible bleeding in the digestive system. He will be seen urgently by the medical team."
+  },
+  {
+    "scenario_number": "0039",
+    "summary_header": "Cellulitis With Chronic Wound - 72-year-old Male (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Non-healing wound on shin with redness and pain",
+        "history_of_present_illness": [
+          "Wound on shin present for a few weeks",
+          "Wound has not been healing",
+          "Redness has spread over the last two days",
+          "Area is painful"
+        ],
+        "associated_symptoms": [
+          "Fever yesterday"
+        ],
+        "negatives": [],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Skin warm to touch",
+          "Swelling present",
+          "Wound appears infected"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Cellulitis with chronic wound"
+      ],
+      "plan": [
+        "Blood tests",
+        "Wound swab",
+        "Start antibiotics"
+      ]
+    },
+    "brief_summary": "A 72-year-old man has a wound on his shin that hasn't healed for a few weeks and has become red, swollen, and infected over the past two days. He will have blood tests and a wound swab taken, and antibiotics will be started to treat the infection."
+  },
+  {
+    "scenario_number": "0040",
+    "summary_header": "Dehydration / Electrolyte Disturbance - 88-year-old Male (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Decreased oral intake for several days",
+        "history_of_present_illness": [
+          "88-year-old male with poor oral intake (food and fluids) for days",
+          "Relative reports patient has been confused"
+        ],
+        "associated_symptoms": [
+          "Confusion"
+        ],
+        "negatives": [
+          "No vomiting",
+          "No diarrhoea"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {
+          "blood_pressure": "Low with orthostatic changes",
+          "pulse": "Fast"
+        },
+        "exam_findings": [
+          "Dry mouth",
+          "Orthostatic hypotension"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Moderate dehydration",
+        "Possible electrolyte imbalance"
+      ],
+      "plan": [
+        "Admission for intravenous fluid resuscitation",
+        "Laboratory investigations including electrolytes",
+        "Monitoring of vital signs and clinical status"
+      ]
+    },
+    "brief_summary": "An 88-year-old man has not been eating or drinking well for several days and is now confused. His blood pressure is low and he is dehydrated. He will be admitted to receive fluids through an IV and have blood tests done."
+  },
+  {
+    "scenario_number": "0041",
+    "summary_header": "Early Pregnancy + Lower Abdominal Pain - Possible Ectopic - 7 Weeks Pregnant (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Lower abdominal pain at 7 weeks gestation",
+        "history_of_present_illness": [
+          "7 weeks pregnant",
+          "Lower abdominal pain started this afternoon",
+          "Pain worsening",
+          "Pain predominantly right-sided",
+          "Sharp pain",
+          "Vaginal spotting, not heavy, noted on wiping"
+        ],
+        "associated_symptoms": [
+          "Dizziness when pain worsens",
+          "Nausea and vomiting (attributed to morning sickness)"
+        ],
+        "negatives": [
+          "No previous ectopic pregnancies",
+          "No previous miscarriages",
+          "No previous pelvic infections"
+        ],
+        "relevant_history": [
+          "No ultrasound performed yet this pregnancy"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "pulse": "Elevated",
+          "blood_pressure": "Within normal limits"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Early pregnancy (7 weeks gestation) with unilateral lower abdominal pain and vaginal spotting",
+        "Possible ectopic pregnancy - requires urgent investigation"
+      ],
+      "plan": [
+        "Urgent triage to acute care",
+        "Blood tests including serum beta-hCG (pregnancy hormone level)",
+        "Urgent pelvic ultrasound",
+        "Monitor for signs of haemodynamic instability"
+      ]
+    },
+    "brief_summary": "A pregnant woman at 7 weeks is experiencing worsening right-sided lower abdominal pain and light vaginal spotting. She will have urgent blood tests and an ultrasound to check for a possible ectopic pregnancy, which needs immediate attention."
+  },
+  {
+    "scenario_number": "0042",
+    "summary_header": "Second-Trimester Bleeding - 22 Weeks Pregnant (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Vaginal bleeding at 22 weeks gestation",
+        "history_of_present_illness": [
+          "22 weeks pregnant",
+          "Vaginal bleeding started approximately 1 hour ago",
+          "Bleeding sufficient to soak a pad",
+          "Bleeding ongoing but possibly decreasing in amount",
+          "Mild cramping present, not severe"
+        ],
+        "associated_symptoms": [
+          "Mild cramps"
+        ],
+        "negatives": [
+          "No fluid leaking",
+          "No recent trauma",
+          "No recent intercourse",
+          "No recent strenuous activity",
+          "No severe pain"
+        ],
+        "relevant_history": [
+          "Fetal movements felt earlier today",
+          "No complications in pregnancy to date",
+          "Pregnancy has been normal"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "status": "stable"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Second-trimester bleeding at 22 weeks gestation",
+        "Potential placental pathology"
+      ],
+      "plan": [
+        "Direct transfer to acute area",
+        "Obstetrics consultation",
+        "Fetal heart rate monitoring",
+        "Ultrasound assessment",
+        "Blood tests"
+      ]
+    },
+    "brief_summary": "A woman who is 22 weeks pregnant came in with vaginal bleeding that started about an hour ago. The bleeding soaked a pad and is still happening with mild cramping. She will go directly to the acute area for monitoring, ultrasound, and blood tests with the obstetrics team."
+  },
+  {
+    "scenario_number": "0043",
+    "summary_header": "Uncomplicated Cystitis - Dysuria + Frequency - 30-year-old (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Burning on urination and urinary frequency every 10 minutes",
+        "history_of_present_illness": [
+          "Symptoms started 3 days ago",
+          "Worsening today",
+          "Dysuria present",
+          "Urinary frequency approximately every 10 minutes",
+          "Pink-tinged urine noted today with a couple of drops"
+        ],
+        "associated_symptoms": [
+          "Hematuria (pink-tinged urine)"
+        ],
+        "negatives": [
+          "No fever",
+          "No back or flank pain",
+          "No nausea",
+          "Not pregnant"
+        ],
+        "relevant_history": [
+          "Previous history of UTIs several years ago"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [],
+        "observed_general_state": [
+          "Patient stable"
+        ]
+      },
+      "assessment": [
+        "Uncomplicated urinary tract infection (cystitis)"
+      ],
+      "plan": [
+        "Urine sample collection",
+        "Assessment in minors area",
+        "Awaiting medical assessment"
+      ]
+    },
+    "brief_summary": "A 30-year-old patient came in with burning during urination and needing to urinate very frequently for the past 3 days. This appears to be a straightforward bladder infection. The patient will provide a urine sample and be seen by a doctor shortly."
+  },
+  {
+    "scenario_number": "0044",
+    "summary_header": "Postpartum Mental Health Crisis - Suicidal Thoughts - 4 Weeks Postpartum (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Not coping 4 weeks postpartum with thoughts of self-harm",
+        "history_of_present_illness": [
+          "4 weeks postpartum",
+          "Reports not coping",
+          "Active suicidal ideation present at time of assessment",
+          "Experiencing intrusive thoughts about harming baby",
+          "Patient expresses fear about these thoughts",
+          "States does not want to feel this way"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No self-harm today",
+          "No alcohol consumption today",
+          "No medication taken today"
+        ],
+        "relevant_history": [
+          "Partner at home described as supportive but exhausted",
+          "Has not disclosed full extent of symptoms to partner"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [],
+        "observed_general_state": [
+          "Physically stable"
+        ]
+      },
+      "assessment": [
+        "Postpartum mental health crisis with active suicidal ideation",
+        "Intrusive thoughts of harm to infant",
+        "ATS Category 2 - immediate risk"
+      ],
+      "plan": [
+        "Immediate placement in safe, private room",
+        "No waiting room time",
+        "Urgent mental health team assessment",
+        "Close monitoring"
+      ]
+    },
+    "brief_summary": "A mother who gave birth 4 weeks ago is having thoughts of hurting herself and is very scared. She has not acted on these thoughts and came in for help. She will be taken immediately to a safe private room where a mental health team will see her right away."
+  },
+  {
+    "scenario_number": "0045",
+    "summary_header": "Headache + Visual Changes - 32 Weeks Pregnant - Possible Pre-eclampsia (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Severe headache and blurry vision at 32 weeks gestation",
+        "history_of_present_illness": [
+          "32 weeks pregnant",
+          "Headache started this morning, now much worse",
+          "Blurry vision",
+          "Right upper quadrant pain present",
+          "Swelling in hands and face described as 'really puffy'"
+        ],
+        "associated_symptoms": [
+          "Mild nausea",
+          "Facial edema",
+          "Hand edema"
+        ],
+        "negatives": [],
+        "relevant_history": [
+          "No known blood pressure issues in pregnancy until now",
+          "Reports all normal until now"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "blood_pressure": "162/98 mmHg"
+        },
+        "exam_findings": [
+          "Visible facial edema",
+          "Visible hand edema"
+        ],
+        "observed_general_state": [
+          "Appears uncomfortable"
+        ]
+      },
+      "assessment": [
+        "Possible pre-eclampsia at 32 weeks gestation with elevated blood pressure, severe headache, visual disturbance, right upper quadrant pain, and edema"
+      ],
+      "plan": [
+        "Urgent obstetrics assessment",
+        "Transfer to maternal acute area",
+        "ATS Category 2 - immediate medical review required"
+      ]
+    },
+    "brief_summary": "A pregnant woman at 32 weeks is experiencing a severe headache, blurry vision, swelling, and high blood pressure. These symptoms suggest a serious pregnancy complication called pre-eclampsia. She will be taken immediately to the maternal care area for urgent assessment by the obstetrics team."
+  },
+  {
+    "scenario_number": "0046",
+    "summary_header": "Mastitis - Fever + Breast Pain - 29-year-old Breastfeeding (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Left breast pain and redness",
+        "history_of_present_illness": [
+          "29-year-old breastfeeding patient",
+          "Left breast pain for 2 days, worsening today",
+          "Painful hard area on upper part of left breast",
+          "Fever this morning",
+          "Chills last night",
+          "Unable to breastfeed from affected side due to pain"
+        ],
+        "associated_symptoms": [
+          "Fever",
+          "Chills",
+          "Breast erythema",
+          "Breast tenderness",
+          "Hard area in breast"
+        ],
+        "negatives": [
+          "No nipple discharge",
+          "No nipple bleeding"
+        ],
+        "relevant_history": [
+          "Currently breastfeeding"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Warm, red area on left breast",
+          "No obvious abscess on examination"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Likely mastitis with systemic features"
+      ],
+      "plan": [
+        "Antibiotics required",
+        "Pain relief required",
+        "To be seen in acute care shortly"
+      ]
+    },
+    "brief_summary": "A breastfeeding mother has a painful, red, swollen area on her left breast with fever and chills for two days. This is likely an infection called mastitis. She will be seen shortly in acute care and will need antibiotics and pain medication."
+  },
+  {
+    "scenario_number": "0047",
+    "summary_header": "Fall + Suspected Wrist Fracture - Osteoporosis - 68-year-old (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Left wrist pain following fall",
+        "history_of_present_illness": [
+          "Missed a step and fell forward",
+          "Landed on left wrist",
+          "Reports severe pain in left wrist"
+        ],
+        "associated_symptoms": [],
+        "negatives": [
+          "No head strike",
+          "No numbness",
+          "No tingling"
+        ],
+        "relevant_history": [
+          "Known osteoporosis, described as quite bad"
+        ]
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Left wrist swelling present",
+          "Left wrist deformity present",
+          "Fingers warm",
+          "Fingers moving well"
+        ],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Suspected left wrist fracture"
+      ],
+      "plan": [
+        "X-ray left wrist to confirm fracture",
+        "Provide pain relief",
+        "Transfer to acute care",
+        "Likely immobilization with cast pending X-ray results"
+      ]
+    },
+    "brief_summary": "A 68-year-old patient fell and injured their left wrist. The nurse found swelling and deformity suggesting a likely fracture. The patient will have an X-ray, receive pain medication, and be moved to acute care for further treatment."
+  },
+  {
+    "scenario_number": "0048",
+    "summary_header": "Dizziness + Heavy Periods - Possible Anaemia - 34-year-old (ATS 3)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Feeling faint, especially when standing up",
+        "history_of_present_illness": [
+          "Heavy menstrual periods for the last few months",
+          "Current cycle requiring pad change every hour for two days",
+          "Passing lots of clots"
+        ],
+        "associated_symptoms": [
+          "Shortness of breath with stairs lately"
+        ],
+        "negatives": [
+          "No chest pain"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {
+          "heart_rate": "elevated",
+          "blood_pressure": "low on sitting up (postural hypotension)"
+        },
+        "exam_findings": [],
+        "observed_general_state": [
+          "Stable but symptomatic"
+        ]
+      },
+      "assessment": [
+        "Possible anaemia secondary to heavy menstrual bleeding",
+        "Symptomatic with postural dizziness and tachycardia"
+      ],
+      "plan": [
+        "Urgent blood tests",
+        "Transfer to acute care for further assessment and management"
+      ]
+    },
+    "brief_summary": "A 34-year-old woman came in feeling faint when standing up and has been having very heavy periods with clots for several months. She also gets short of breath with stairs. Blood tests will be done urgently and she will be seen in acute care to check for anaemia and manage her symptoms."
+  },
+  {
+    "scenario_number": "0049",
+    "summary_header": "Dermatitis / Allergic Rash - Stable - 27-year-old (ATS 4)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Itchy rash on both arms",
+        "history_of_present_illness": [
+          "Rash appeared yesterday after gardening",
+          "Possible exposure to weeds",
+          "Uncertain about contact with new plants or chemicals"
+        ],
+        "associated_symptoms": [
+          "Pruritus"
+        ],
+        "negatives": [
+          "No swelling of lips or eyes",
+          "No difficulty breathing",
+          "No fever"
+        ],
+        "relevant_history": []
+      },
+      "objective": {
+        "vitals": {},
+        "exam_findings": [
+          "Red, raised patches on both arms consistent with contact dermatitis"
+        ],
+        "observed_general_state": [
+          "Stable"
+        ]
+      },
+      "assessment": [
+        "Contact dermatitis"
+      ],
+      "plan": [
+        "Antihistamines",
+        "Steroid cream"
+      ]
+    },
+    "brief_summary": "A 27-year-old patient came in with an itchy rash on both arms that started after gardening yesterday. The nurse found it looks like contact dermatitis and the patient is stable. Treatment will include antihistamines and steroid cream."
+  },
+  {
+    "scenario_number": "0050",
+    "summary_header": "Hyperglycaemia + Vomiting - Possible DKA - 38-year-old (ATS 2)",
+    "soap": {
+      "subjective": {
+        "chief_complaint": "Vomiting since last night and high blood sugars",
+        "history_of_present_illness": [
+          "Vomiting since last night",
+          "Home blood glucose 25 mmol/L",
+          "Constant abdominal ache",
+          "Mild shortness of breath",
+          "Recent cold illness",
+          "Has not been eating",
+          "Skipped insulin yesterday"
+        ],
+        "associated_symptoms": [
+          "Abdominal pain (constant ache)",
+          "Shortness of breath (mild)"
+        ],
+        "negatives": [],
+        "relevant_history": [
+          "Type 2 diabetes mellitus",
+          "On insulin therapy"
+        ]
+      },
+      "objective": {
+        "vitals": {
+          "pulse": "fast",
+          "respiratory_rate": "slightly rapid"
+        },
+        "exam_findings": [],
+        "observed_general_state": []
+      },
+      "assessment": [
+        "Suspected diabetic ketoacidosis (DKA)"
+      ],
+      "plan": [
+        "Immediate transfer to acute area",
+        "Blood tests",
+        "Intravenous fluids",
+        "Insulin therapy"
+      ]
+    },
+    "brief_summary": "A 38-year-old with diabetes has been vomiting and has very high blood sugar levels after missing insulin doses while sick with a cold. The nurse suspects a serious complication called diabetic ketoacidosis and is moving the patient immediately to the acute area for blood tests, fluids, and insulin treatment."
+  }
+]
