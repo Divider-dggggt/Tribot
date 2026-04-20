@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Divider, Grid, List, ListItem, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, ButtonGroup, Card, CardContent, Chip, CircularProgress, Divider, Grid, List, ListItem, Stack, Typography } from "@mui/material";
 import React, { ReactElement, useEffect, useState } from "react";
 import { ATSLevel, TriageCase } from "../types/triage";
 import { getPriorityColor } from "../utils/color";
@@ -252,23 +252,39 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         </CardContent>
       </Card>
 
-      {userRole === UserRole.Clinician && <Button
-        variant="outlined" 
-        fullWidth 
-        size="large"
-        sx={{ 
-          py: 2,
-          mt: 4,
-          borderRadius: 2,
-          fontSize: '1.1rem',
-          fontWeight: 'bold'
-        }}
-        onClick={() => {
-          setIsOverriding(true);
-        }}
-      >
-        Override
-      </Button>}
+      {userRole === UserRole.Clinician && <ButtonGroup fullWidth>
+        <Button
+          variant="outlined" 
+          fullWidth 
+          size="large"
+          sx={{ 
+            py: 2,
+            mt: 4,
+            borderRadius: 2,
+            fontSize: '1.1rem',
+            fontWeight: 'bold'
+          }}
+          onClick={() => {
+            setIsOverriding(true);
+          }}
+        >
+          Override
+        </Button>
+        {triageCase.override_ats != null && <Button
+          variant="outlined"
+          fullWidth
+          size="large"
+          sx={{ 
+            py: 2,
+            mt: 4,
+            borderRadius: 2,
+            fontSize: '1.1rem',
+            fontWeight: 'bold'
+          }}
+        >
+          Undo Override
+        </Button>}
+      </ButtonGroup>}
       {userRole === UserRole.Clinician && <Button 
         variant="contained" 
         fullWidth 
