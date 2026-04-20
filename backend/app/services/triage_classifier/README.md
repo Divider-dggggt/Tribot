@@ -110,3 +110,13 @@ RAG was used because ATS classification is not only a prediction task but also a
 - **Best knowledge-grounded / explainable system:** RAG
 
 In practice, DeBERTa is currently the strongest pure classifier, while RAG is the most promising framework when handbook alignment, interpretability, and retrieval-grounded reasoning are important.
+
+## How to switch model for SOAP and RAG
+
+### RAG:
+
+Under **backend/app/services/triage_classifier/RAG/configs/llm_config.yaml**, replace Url, model with your own API url and model. Under **backend/.env** replace LLM_API_KEY= with your own API key.
+
+### SOAP Generation
+
+Under **backend/app/services/soap_generator/config.yaml** replace url, model with your own API url and model, Under **backend/.env** replace LLM_API_KEY= with your own API key.

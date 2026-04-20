@@ -24,7 +24,7 @@ Important rules:
 2. Separate patient/parent-reported information from clinician-observed information.
 3. If information is missing, use null or an empty list.
 4. Preserve clinically relevant negatives (e.g. no vomiting, no rash, no chest pain).
-5. Redact all PII (Personally Identifiable Information) in the following text by replacing sensitive details with their corresponding data types as placeholders, such as [Name], [Address], or [Phone Number].
+5. Do not include any PII (Personally Identifiable Information), if needed, do by their corresponding data types as placeholders, such as [Name], [Address], or [Phone Number].
 6. Assessment must be preliminary only, not a definitive diagnosis unless explicitly stated.
 7. Plan should include:
    - next steps
