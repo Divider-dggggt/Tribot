@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { fetchWithAuth } from "../utils/auth";
 import { DANGER_COLORS } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
+import { RESET_PASSWORD_DIALOG_MAX_WIDTH } from "../utils/layout";
 import { PasswordField } from "./PasswordField";
 
 interface ResetPasswordDialogProps {
@@ -134,9 +135,11 @@ export const ResetPasswordDialog = ({
       open={open}
       onClose={handleClose}
       fullWidth
-      maxWidth="sm"
+      maxWidth={false}
       PaperProps={{
         sx: {
+          width: `min(${RESET_PASSWORD_DIALOG_MAX_WIDTH}px, calc(100% - 32px))`,
+          maxWidth: `${RESET_PASSWORD_DIALOG_MAX_WIDTH}px`,
           borderRadius: 3,
           border: "1px solid #ede9fe",
           boxShadow: "0 18px 40px rgba(17, 24, 39, 0.15)",

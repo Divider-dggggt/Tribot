@@ -7,6 +7,7 @@ import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
 import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
+import { USER_DIALOG_MAX_WIDTH } from "../utils/layout";
 import { fetchWithAuth } from "../utils/auth";
 
 const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: string }> = {
@@ -139,8 +140,8 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
       maxWidth="md"
       PaperProps={{
         sx: {
-          width: "min(900px, calc(100% - 32px))",
-          maxWidth: "900px",
+          width: `min(${USER_DIALOG_MAX_WIDTH}px, calc(100% - 32px))`,
+          maxWidth: `${USER_DIALOG_MAX_WIDTH}px`,
         },
       }}
     >

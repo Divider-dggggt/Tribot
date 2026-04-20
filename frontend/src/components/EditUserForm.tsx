@@ -7,6 +7,7 @@ import { PasswordField } from "./PasswordField";
 import { User, UserRole } from "../types/user";
 import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
+import { USER_DIALOG_MAX_WIDTH } from "../utils/layout";
 import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 
 interface EditUserFormValues {
@@ -138,8 +139,8 @@ export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactEleme
       maxWidth="md"
       PaperProps={{
         sx: {
-          width: "min(900px, calc(100% - 32px))",
-          maxWidth: "900px",
+          width: `min(${USER_DIALOG_MAX_WIDTH}px, calc(100% - 32px))`,
+          maxWidth: `${USER_DIALOG_MAX_WIDTH}px`,
         },
       }}
     >

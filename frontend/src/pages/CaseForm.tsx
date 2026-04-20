@@ -18,14 +18,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { FloatingTextField } from "../components/FloatingTextField";
+import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
 import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-
-const CASE_FORM_MAX_WIDTH = 980;
 
 interface CaseFormValues {
   patientID: string;
@@ -233,7 +232,7 @@ export const CaseForm = (): ReactElement => {
   };
 
   return (
-    <Box sx={{ maxWidth: CASE_FORM_MAX_WIDTH, mx: "auto" }}>
+    <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
           Create New Case

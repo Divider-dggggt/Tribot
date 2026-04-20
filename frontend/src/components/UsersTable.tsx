@@ -25,6 +25,7 @@ import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
 import Tooltip from "@mui/material/Tooltip";
 import { EditUserForm } from "./EditUserForm";
 import { DeleteUserConfirmation } from "./DeleteUserConfirmation";
+import { DANGER_COLORS } from "../utils/buttonStyles";
 
 const getRoleChipStyles = (role: UserRole) => {
   if (role === UserRole.Admin) {
@@ -83,13 +84,17 @@ export const UsersTable = (): ReactElement => {
           </Typography>
         </Box>
         <Button
-          variant="outlined"
+          variant="contained"
           onClick={handleOpenCreateForm}
           sx={{
-            px: 2,
-            py: 1,
+            width: { xs: "100%", sm: "auto" },
+            minWidth: { sm: 130 },
+            px: 2.5,
+            py: 1.1,
             borderRadius: 2,
-            fontWeight: "bold",
+            fontSize: "0.95rem",
+            fontWeight: 700,
+            whiteSpace: "nowrap",
           }}
         >
           Add User
@@ -166,7 +171,17 @@ export const UsersTable = (): ReactElement => {
                         </IconButton>
                       </Tooltip>
                       {selfUserId !== user.id && <Tooltip title="Deactivate User">
-                        <IconButton onClick={() => handleOpenDeleteDialog(user.id)}>
+                        <IconButton
+                          onClick={() => handleOpenDeleteDialog(user.id)}
+                          sx={{
+                            color: "#6b7280",
+                            transition: "all 160ms ease",
+                            "&:hover": {
+                              color: DANGER_COLORS.hoverText,
+                              backgroundColor: DANGER_COLORS.hoverBackground,
+                            },
+                          }}
+                        >
                           <DoDisturbOnIcon />
                         </IconButton>
                       </Tooltip>}
