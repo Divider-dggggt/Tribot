@@ -16,7 +16,6 @@ and around your uploaded triage scenarios plus the ETEK handbook.
 
 - `data/gold_annotations.json`
 - `data/challenge_set.json`
-- `data/scenarios.json`
 - `benchmark/`
 - `scripts/build_handbook_index.py`
 - `scripts/evaluate_generated_json.py`
@@ -62,6 +61,16 @@ python scripts/evaluate_generated_json.py \
   --pred generated_outputs.json \
   --challenge data/challenge_set.json
 ```
+
+Rebuild benchmark gold annotations from shared scenarios:
+
+```bash
+python scripts/build_gold_from_scenarios.py \
+  --out_json data/gold_annotations.json
+```
+
+By default, scenarios are read from:
+`backend/app/services/sample_data/scenarios.json`
 
 ## Notes
 

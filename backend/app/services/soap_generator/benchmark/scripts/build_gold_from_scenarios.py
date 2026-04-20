@@ -260,7 +260,12 @@ def build_facts(record: Dict) -> List[Dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Rebuild benchmark gold annotations from scenario JSON.")
-    parser.add_argument("--scenarios", required=True, help="Path to scenarios.json")
+    default_scenarios = Path(__file__).resolve().parents[3] / "sample_data" / "scenarios.json"
+    parser.add_argument(
+        "--scenarios",
+        default=str(default_scenarios),
+        help=f"Path to scenarios.json (default: {default_scenarios})",
+    )
     parser.add_argument("--out_json", required=True, help="Path to output gold_annotations.json")
     args = parser.parse_args()
 

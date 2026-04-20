@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test soap_generator using scenarios from scenarios.json.
+Test soap_generator using scenarios from services/sample_data/scenarios.json.
 Run from backend with PYTHONPATH=. or from repo root with PYTHONPATH=backend.
 """
 from pathlib import Path
@@ -21,8 +21,9 @@ from app.services.soap_generator import init_soap_generator, generate_soap
 SCRIPT_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = SCRIPT_DIR / "config.yaml"
 SCENARIOS_CANDIDATES = [
-    SCRIPT_DIR.parent / "triage_classifier" / "sample_data" / "scenarios.json",
-    SCRIPT_DIR / "scenarios.json",
+    SCRIPT_DIR.parent / "sample_data" / "scenarios.json",
+    SCRIPT_DIR.parent / "triage_classifier" / "sample_data" / "scenarios.json",  # backward compatibility
+    SCRIPT_DIR / "scenarios.json",  # backward compatibility
 ]
 SOAP_FIELDS = ["subjective", "objective", "assessment", "plan"]
 
