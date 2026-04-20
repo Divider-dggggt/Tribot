@@ -83,13 +83,17 @@ export const UsersTable = (): ReactElement => {
           </Typography>
         </Box>
         <Button
-          variant="outlined"
+          variant="contained"
           onClick={handleOpenCreateForm}
           sx={{
-            px: 2,
-            py: 1,
+            width: { xs: "100%", sm: "auto" },
+            minWidth: { sm: 130 },
+            px: 2.5,
+            py: 1.1,
             borderRadius: 2,
-            fontWeight: "bold",
+            fontSize: "0.95rem",
+            fontWeight: 700,
+            whiteSpace: "nowrap",
           }}
         >
           Add User
