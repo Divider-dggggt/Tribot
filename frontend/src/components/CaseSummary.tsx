@@ -6,7 +6,7 @@ import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { API_BASE_URL } from "../utils/constants";
 import { CaseObject } from "../types/case";
 import { formatCaseDateTime } from "../utils/date";
-import { getDecodedToken } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { UserRole } from "../types/user";
 import { OverrideDialog } from "./OverrideDialog";
 
@@ -45,12 +45,10 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
 
   useEffect(() => {
     const fetchTriageCase = async (): Promise<void> => {
-      const accessToken = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/cases/${caseId}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/cases/${caseId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
 
@@ -65,11 +63,11 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
     return <CircularProgress />;
   }
 
-  const triageCasePriority = parseAtsToLevel(triageCase.ats_classification);
+  const triageCasePriority = parseAtsToLevel(triageCase.ats_category);
   const priorityColor = getPriorityColor(triageCasePriority);
-  const confidencePercentage = Math.round((triageCase.confidence_score ?? 0) * 100);
+  const confidencePercentage = Math.round((triageCase.pred_confidence ?? 0) * 100);
   const hasSafetyOverride = triageCase.severity_flagged;
-  const flaggedKeywordsText = triageCase.severity_flags.map(flag => flag.flag_reason).join(",");
+  const flaggedKeywordsText = triageCase.flag_notes ?? "";
   const hasFlaggedKeywords = flaggedKeywordsText.length > 0;
   const atsLabel = ATSLevel[triageCasePriority];
 
@@ -113,7 +111,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 Patient Name
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                {triageCase.name}
+                {triageCase.patient_name}
               </Typography>
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -169,7 +167,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                 {atsLabel}
               </Typography>
               <Chip
-                label={triageCase.clinician_override_at != null
+                label={triageCase.override_ats != null
                   ? "Clinician Override"
                   : (triageCase.severity_flagged ? "Safety Rule Override" : `Confidence ${confidencePercentage}%`)}
                 sx={{
@@ -189,7 +187,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
               border: hasSafetyOverride ? "1px solid #fcd34d" : "1px solid #bfdbfe",
             }}
           >
-            {triageCase.clinician_override_at != null
+            {triageCase.override_ats != null
               ? "Clinician override applied to this case."
               : (
                 hasSafetyOverride
@@ -197,8 +195,20 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
                   : "No safety rule override was applied."
               )
             }
-            {hasFlaggedKeywords ? ` Trigger indicators: ${flaggedKeywordsText}` : ""}
+            {triageCase.override_reason && <><br/>Override Reason: {triageCase.override_reason}</>}
+            {hasFlaggedKeywords ? <><br/>Severity Notes: {flaggedKeywordsText}</> : ""}
           </Alert>
+          <Divider sx={{ mb: 2 }} />
+          <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
+            Brief Summary
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ whiteSpace: "pre-line", lineHeight: 1.7, mb: 3 }}
+          >
+            {triageCase.brief_summary.trim() || "No brief summary is available."}
+          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
             SOAP Summary
@@ -219,7 +229,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             color="text.secondary"
             sx={{ whiteSpace: "pre-line", lineHeight: 1.7 }}
           >
-            {triageCase.case_details}
+            {triageCase.case_dialogue}
           </Typography>
         </CardContent>
       </Card>
@@ -241,17 +251,15 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
       >
         Override
       </Button>}
-      <Button 
+      {userRole === UserRole.Clinician && <Button 
         variant="contained" 
         fullWidth 
         size="large"
         onClick={() => {
-          const accessToken = localStorage.getItem("access_token");
-          void fetch(`${API_BASE_URL}/cases/${triageCase.case_id}/${triageCase.resolved_at == null ? "resolve" : "reopen"}`, {
+          void fetchWithAuth(`${API_BASE_URL}/cases/${triageCase.case_id}/${triageCase.resolved_at == null ? "resolve" : "reopen"}`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
-              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             },
           }).then(() => {
             onBack();
@@ -266,7 +274,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
         }}
       >
         {triageCase.resolved_at == null ? "Resolve" : "Reopen"}
-      </Button>
+      </Button>}
       <OverrideDialog
         open={isOverriding}
         onClose={() => {

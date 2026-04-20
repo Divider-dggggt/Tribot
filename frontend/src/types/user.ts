@@ -1,7 +1,7 @@
 export enum UserRole {
-  Admin = "Admin",
-  Clinician = "Clinician",
-  Researcher = "Researcher",
+  Admin = "admin",
+  Clinician = "clinician",
+  Researcher = "researcher",
 }
 
 export interface User {
@@ -10,6 +10,7 @@ export interface User {
   role: UserRole;
   id: number;
   created_at: string;
+  deactivated_at?: string | null;
 }
 
 export interface AccessTokenPayload {

@@ -10,7 +10,9 @@ import {
 import { ATSLevel } from "../types/triage";
 import { Controller, useForm } from "react-hook-form";
 import { API_BASE_URL } from "../utils/constants";
+import { dangerTextButtonSx } from "../utils/buttonStyles";
 import { FloatingTextField } from "./FloatingTextField";
+import { fetchWithAuth } from "../utils/auth";
 
 interface OverrideDialogProps {
   open: boolean;
@@ -27,21 +29,26 @@ export const OverrideDialog = ({
   initialValue,
   caseId,
 }: OverrideDialogProps): ReactElement => {
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues: { atsOverride: initialValue }
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { submitCount },
+  } = useForm({
+    defaultValues: { atsOverride: initialValue, atsReason: "" }
   });
 
-  const onSubmit = async (data: { atsOverride: ATSLevel }): Promise<void> => {
+  const onSubmit = async (data: { atsOverride: ATSLevel, atsReason: string }): Promise<void> => {
     if (data.atsOverride !== initialValue) {
-      const accessToken = localStorage.getItem("access_token");
-      await fetch(`${API_BASE_URL}/cases/${caseId}/ats`, {
+      await fetchWithAuth(`${API_BASE_URL}/cases/${caseId}/ats`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
-          ats_classification: data.atsOverride + 1,
+          override_ats: data.atsOverride + 1,
+          ...(data.atsReason && { override_reason: data.atsReason })
         }),
       }).then(() => {
         onSuccess();
@@ -74,6 +81,7 @@ export const OverrideDialog = ({
                 required
                 error={!!error}
                 helperText={error?.message}
+                requiredErrorSubmitCount={error?.type === "required" ? submitCount : 0}
               >
                 <MenuItem value={ATSLevel["ATS-1"]}>ATS 1</MenuItem>
                 <MenuItem value={ATSLevel["ATS-2"]}>ATS 2</MenuItem>
@@ -83,9 +91,22 @@ export const OverrideDialog = ({
               </FloatingTextField>
             )}
           />
+          <FloatingTextField
+            fullWidth
+            label="Override Reason"
+            multiline
+            rows={4}
+            {...register("atsReason")}
+            sx={{ mt: 2 }}
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button
+            onClick={onCancel}
+            sx={dangerTextButtonSx}
+          >
+            Cancel
+          </Button>
           <Button type="submit" variant="contained">Override</Button>
         </DialogActions>
       </form>

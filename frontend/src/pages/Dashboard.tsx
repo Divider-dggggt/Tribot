@@ -28,27 +28,13 @@ import { getPriorityColor } from "../utils/color";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime, parseCaseDateTime } from "../utils/date";
 import { UserRole } from "../types/user";
-import { getDecodedToken } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
 import { API_BASE_URL } from "../utils/constants";
 import { DashboardCaseObject } from "../types/case";
-
-// Simple Plus Icon
-const PlusIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <line x1="5" y1="12" x2="19" y2="12"></line>
-  </svg>
-);
-
-const SortIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="4" y1="7" x2="14" y2="7"></line>
-    <line x1="4" y1="12" x2="18" y2="12"></line>
-    <line x1="4" y1="17" x2="10" y2="17"></line>
-    <polyline points="18 5 20 3 22 5"></polyline>
-    <line x1="20" y1="3" x2="20" y2="13"></line>
-  </svg>
-);
+import AddIcon from "@mui/icons-material/Add";
+import SortRoundedIcon from "@mui/icons-material/SortRounded";
+import DoneIcon from "@mui/icons-material/Done";
+import UndoIcon from "@mui/icons-material/Undo";
 
 type SortOption = "severity" | "createdTime" | "alphabetical";
 
@@ -121,34 +107,35 @@ export const Dashboard = (): ReactElement => {
     .map((item, originalIndex) => ({ item, originalIndex }))
     .sort((a, b) => {
       if (sortOption === "severity") {
-        return a.item.ats_classification - b.item.ats_classification;
+        return a.item.ats_category - b.item.ats_category;
       }
       if (sortOption === "createdTime") {
         const aTimestamp = getCaseTimestamp(a.item.created_at, a.originalIndex);
         const bTimestamp = getCaseTimestamp(b.item.created_at, b.originalIndex);
         return bTimestamp - aTimestamp;
       }
-      const nameCompareResult = compareCaseNameWithPriority(a.item.name, b.item.name);
+      const nameCompareResult = compareCaseNameWithPriority(a.item.patient_name, b.item.patient_name);
       return nameCompareResult !== 0 ? nameCompareResult : a.originalIndex - b.originalIndex;
     })
     .map(({ item }) => item);
 
-  useEffect(() => {
-    const fetchCases = async (): Promise<void> => {
-      setIsLoading(true);
-      const accessToken = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
+  const fetchCases = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/cases${caseView === "resolved-cases" ? "?resolved=true" : ""}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
       const cases = await response.json() as DashboardCaseObject[];
       setTriageCases(cases);
+    } finally {
       setIsLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     if (isViewingDashboard) {
       fetchCases();
     }
@@ -223,7 +210,7 @@ export const Dashboard = (): ReactElement => {
           fontWeight: 'bold'
         }}
       >
-        <PlusIcon />
+        <AddIcon sx={{ mr: 1 }} />
         Create New Case
       </Button>}
 
@@ -262,7 +249,14 @@ export const Dashboard = (): ReactElement => {
       </ToggleButtonGroup>
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
-        <CardContent sx={{ p: 0 }}>
+        <CardContent
+          sx={{
+            p: 0,
+            "&:last-child": {
+              pb: 0,
+            },
+          }}
+        >
           <Box sx={{ p: 2, borderBottom: '1px solid #e5e7eb', display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
             <Box>
               <Typography variant="h6" fontWeight="bold">
@@ -283,7 +277,7 @@ export const Dashboard = (): ReactElement => {
                   color: "#6b7280",
                 }}
               >
-                <SortIcon />
+                <SortRoundedIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
           </Box>
@@ -308,6 +302,9 @@ export const Dashboard = (): ReactElement => {
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
                     Severity
                   </TableCell>
+                  {userRole === UserRole.Clinician && <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>
+                    Actions
+                  </TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -319,7 +316,8 @@ export const Dashboard = (): ReactElement => {
                   </TableRow>
                 )}
                 {sortedTriageCases.map((item, index) => {
-                  const atsPriority = item.ats_classification - 1;
+                  const atsPriority = item.ats_category - 1;
+                  const hoursSinceCreation = (new Date().getTime() - new Date(item.created_at).getTime()) / 3_600_000;
                   return (
                     <TableRow
                       key={`${item.medicare_number},${index}`}
@@ -334,14 +332,23 @@ export const Dashboard = (): ReactElement => {
                     >
                       <TableCell component="th" scope="row" sx={{ py: 1.8 }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#111827" }}>
-                          {item.name}
+                          {item.patient_name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#9ca3af" }}>
                           {item.medicare_number}
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
-                        {formatCaseDateTime(new Date(item.created_at))}
+                        <Typography variant="subtitle2">
+                          {formatCaseDateTime(new Date(item.created_at))}
+                        </Typography>
+                        {hoursSinceCreation > 4 && caseView === "open-cases" && <Typography
+                          variant="caption"
+                          color="warning"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {Math.round(hoursSinceCreation)} hours ago
+                        </Typography>}
                       </TableCell>
                       <TableCell>
                         <Chip
@@ -356,6 +363,23 @@ export const Dashboard = (): ReactElement => {
                           }}
                         />
                       </TableCell>
+                      {userRole === UserRole.Clinician && <TableCell>
+                        <Tooltip title={caseView === "resolved-cases" ? "Reopen Case" : "Resolve Case"}>
+                          <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            void fetchWithAuth(`${API_BASE_URL}/cases/${item.case_id}/${caseView === "resolved-cases" ? "reopen" : "resolve"}`, {
+                              method: "PATCH",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                            }).then(() => {
+                              fetchCases();
+                            });
+                          }}>
+                            {caseView === "resolved-cases" ? <UndoIcon /> : <DoneIcon />}
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>}
                     </TableRow>
                   );
                 })}
