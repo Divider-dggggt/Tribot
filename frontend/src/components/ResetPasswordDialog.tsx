@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useState } from "react";
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -10,7 +11,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { fetchWithAuth } from "../utils/auth";
-import { dangerTextButtonSx } from "../utils/buttonStyles";
+import { DANGER_COLORS } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 import { PasswordField } from "./PasswordField";
 
@@ -129,77 +130,113 @@ export const ResetPasswordDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
-      <DialogTitle>Reset Password</DialogTitle>
-      <DialogContent sx={{ pt: 1 }}>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          border: "1px solid #ede9fe",
+          boxShadow: "0 18px 40px rgba(17, 24, 39, 0.15)",
+        },
+      }}
+    >
+      <DialogTitle sx={{ pt: 3, px: 3, pb: 1.25, fontSize: "2rem", fontWeight: 700, color: "#111827" }}>
+        Reset Password
+      </DialogTitle>
+      <DialogContent sx={{ pt: 1, px: 3, pb: 1 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2.25 }}>
           Signed in as {signedInEmail ?? "Unknown user"}
         </Typography>
         {formError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
             {formError}
           </Alert>
         )}
         <form id="reset-password-form" onSubmit={handleSubmit(handleResetPassword)} noValidate>
-          <PasswordField
-            fullWidth
-            label="Current Password"
-            required
-            size="small"
-            sx={{ mb: 2 }}
-            autoComplete="current-password"
-            error={Boolean(errors.currentPassword)}
-            helperText={errors.currentPassword?.message}
-            requiredErrorSubmitCount={errors.currentPassword?.type === "required" ? submitCount : 0}
-            {...register("currentPassword", {
-              required: "Please enter your current password.",
-            })}
-          />
-          <PasswordField
-            fullWidth
-            label="New Password"
-            required
-            size="small"
-            sx={{ mb: 2 }}
-            autoComplete="new-password"
-            error={Boolean(errors.newPassword)}
-            helperText={errors.newPassword?.message}
-            requiredErrorSubmitCount={errors.newPassword?.type === "required" ? submitCount : 0}
-            {...register("newPassword", {
-              required: "Please enter a new password.",
-              minLength: {
-                value: 6,
-                message: "Password must be 6-72 characters.",
-              },
-              maxLength: {
-                value: 72,
-                message: "Password must be 6-72 characters.",
-              },
-            })}
-          />
-          <PasswordField
-            fullWidth
-            label="Confirm New Password"
-            required
-            size="small"
-            autoComplete="new-password"
-            error={Boolean(errors.confirmPassword)}
-            helperText={errors.confirmPassword?.message}
-            requiredErrorSubmitCount={errors.confirmPassword?.type === "required" ? submitCount : 0}
-            {...register("confirmPassword", {
-              required: "Please confirm your new password.",
-              validate: (value, formValues) => (
-                value === formValues.newPassword || "Passwords do not match."
-              ),
-            })}
-          />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <PasswordField
+              fullWidth
+              label="Current Password"
+              required
+              size="small"
+              autoComplete="current-password"
+              error={Boolean(errors.currentPassword)}
+              helperText={errors.currentPassword?.message}
+              requiredErrorSubmitCount={errors.currentPassword?.type === "required" ? submitCount : 0}
+              {...register("currentPassword", {
+                required: "Please enter your current password.",
+              })}
+            />
+            <PasswordField
+              fullWidth
+              label="New Password"
+              required
+              size="small"
+              autoComplete="new-password"
+              error={Boolean(errors.newPassword)}
+              helperText={errors.newPassword?.message}
+              requiredErrorSubmitCount={errors.newPassword?.type === "required" ? submitCount : 0}
+              {...register("newPassword", {
+                required: "Please enter a new password.",
+                minLength: {
+                  value: 6,
+                  message: "Password must be 6-72 characters.",
+                },
+                maxLength: {
+                  value: 72,
+                  message: "Password must be 6-72 characters.",
+                },
+              })}
+            />
+            <PasswordField
+              fullWidth
+              label="Confirm New Password"
+              required
+              size="small"
+              autoComplete="new-password"
+              error={Boolean(errors.confirmPassword)}
+              helperText={errors.confirmPassword?.message}
+              requiredErrorSubmitCount={errors.confirmPassword?.type === "required" ? submitCount : 0}
+              {...register("confirmPassword", {
+                required: "Please confirm your new password.",
+                validate: (value, formValues) => (
+                  value === formValues.newPassword || "Passwords do not match."
+                ),
+              })}
+            />
+          </Box>
         </form>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2.5 }}>
+      <DialogActions
+        sx={{
+          px: 3,
+          pb: 3,
+          pt: 1.5,
+          gap: 1.5,
+          flexDirection: { xs: "column-reverse", sm: "row" },
+        }}
+      >
         <Button
           onClick={handleClose}
           disabled={isSubmitting}
-          sx={dangerTextButtonSx}
+          variant="outlined"
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            borderRadius: 2,
+            py: 1.1,
+            px: 2.5,
+            color: "#374151",
+            borderColor: "#d1d5db",
+            transition: "all 160ms ease",
+            "&:hover": {
+              color: DANGER_COLORS.hoverText,
+              borderColor: DANGER_COLORS.hoverBorder,
+              backgroundColor: DANGER_COLORS.hoverBackground,
+            },
+          }}
         >
           Cancel
         </Button>
@@ -208,6 +245,14 @@ export const ResetPasswordDialog = ({
           form="reset-password-form"
           variant="contained"
           disabled={isSubmitting}
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            minWidth: { sm: 180 },
+            borderRadius: 2,
+            py: 1.1,
+            px: 2.75,
+            fontWeight: 700,
+          }}
         >
           {isSubmitting ? "Updating..." : "Update Password"}
         </Button>

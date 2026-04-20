@@ -188,31 +188,44 @@ export const Dashboard = (): ReactElement => {
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-          Dashboard
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          Welcome back, {signedInAccount}
-        </Typography>
-      </Box>
-
-      {userRole === UserRole.Clinician && <Button 
-        variant="contained" 
-        fullWidth 
-        size="large"
-        onClick={() => navigate('/new-case')}
-        sx={{ 
-          py: 2,
-          mb: 4,
-          borderRadius: 2,
-          fontSize: '1.1rem',
-          fontWeight: 'bold'
+      <Box
+        sx={{
+          mb: 3.5,
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "flex-end" },
+          gap: 2,
         }}
       >
-        <AddIcon sx={{ mr: 1 }} />
-        Create New Case
-      </Button>}
+        <Box>
+          <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
+            Dashboard
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Welcome back, {signedInAccount}
+          </Typography>
+        </Box>
+        {userRole === UserRole.Clinician && (
+          <Button
+            variant="contained"
+            onClick={() => navigate("/new-case")}
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              minWidth: { sm: 220 },
+              px: 2.5,
+              py: 1.1,
+              borderRadius: 2,
+              fontSize: "0.98rem",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+            }}
+          >
+            <AddIcon sx={{ mr: 0.75, fontSize: 18 }} />
+            Create New Case
+          </Button>
+        )}
+      </Box>
 
       <ToggleButtonGroup
         value={caseView}

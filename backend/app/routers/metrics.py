@@ -15,7 +15,7 @@ MODEL_EVAL_PATH = (
         / "model_eval.json"
 )
 
-MODEL_NAME = "sample_model_eval"
+MODEL_NAME = "deberta"
 
 @router.get("/model-metrics")
 def get_model_metrics(user=Depends(role_required("researcher"))):

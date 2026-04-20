@@ -15,6 +15,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { API_BASE_URL } from './utils/constants';
 import GroupIcon from '@mui/icons-material/Group';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -353,6 +354,23 @@ function Layout() {
                   <GroupIcon />
                 </ListItemIcon>
                 <ListItemText primary="Users" primaryTypographyProps={{ fontWeight: location.pathname === '/users' ? 'bold' : 'medium' }} />
+              </ListItemButton>
+            </ListItem>}
+
+            {userRole === UserRole.Researcher && <ListItem disablePadding sx={{ mt: 1 }}>
+              <ListItemButton 
+                component={Link} 
+                to="/metrics"
+                selected={location.pathname === '/metrics'}
+                sx={{
+                  mx: 1,
+                  borderRadius: 2,
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Metrics" primaryTypographyProps={{ fontWeight: location.pathname === '/metrics' ? 'bold' : 'medium' }} />
               </ListItemButton>
             </ListItem>}
           </List>
