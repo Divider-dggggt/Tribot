@@ -11,6 +11,7 @@ import { UserRole } from "../types/user";
 import { OverrideDialog } from "./OverrideDialog";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { UndoOverrideDialog } from "./UndoOverrideDialog";
 
 interface CaseSummaryProps {
   caseId: number;
@@ -44,6 +45,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const [triageCase, setTriageCase] = useState<CaseObject | undefined>();
   const userRole = getDecodedToken()?.role;
   const [isOverriding, setIsOverriding] = useState<boolean>(false);
+  const [isUndoingOverride, setIsUndoingOverride] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTriageCase = async (): Promise<void> => {
@@ -281,6 +283,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
             fontSize: '1.1rem',
             fontWeight: 'bold'
           }}
+          onClick={() => setIsUndoingOverride(true)}
         >
           Undo Override
         </Button>}
@@ -318,6 +321,16 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           setTriageCase(undefined);
         }}
         initialValue={triageCasePriority}
+        caseId={triageCase.case_id}
+      />
+      <UndoOverrideDialog
+        open={isUndoingOverride}
+        onClose={() => {
+          setIsUndoingOverride(false);
+        }}
+        onSuccess={() => {
+          setTriageCase(undefined);
+        }}
         caseId={triageCase.case_id}
       />
     </Box>
