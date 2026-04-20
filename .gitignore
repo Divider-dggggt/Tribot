@@ -35,8 +35,9 @@ docker-data
 # =========================
 # Pipeline
 # =========================
-
-
+pipeline/baseline_classification_model/generated_scenarios_3000.json
+pipeline/baseline_classification_model/scenarios.json
+pipeline/baseline_classification_model/temp
 
 # =========================
 # other

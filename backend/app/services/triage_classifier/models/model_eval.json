@@ -1,14 +1,45 @@
 {
-  "Triage_1": {
-    "f1_score": 0.82,
-    "precision": 0.84,
-    "recall": 0.8,
-    "conf_mat": {
-      "true_positive": 120,
-      "true_negative": 95,
-      "false_positive": 18,
-      "false_negative": 22
-    }
+  "baseline_model": {
+    "f1_score": 0.41482960151802656,
+    "precision": 0.474910394265233,
+    "recall": 0.44,
+    "confusion_matrix": [
+      [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        15,
+        2,
+        0
+      ],
+      [
+        0,
+        3,
+        13,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        4,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
   },
   "deberta": {
     "f1_score": 0.9018169454644364,
