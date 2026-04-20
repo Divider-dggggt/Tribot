@@ -9,8 +9,8 @@ from app.services.triage_classifier.triage_classifier_service import classify_tr
 
 router = APIRouter()
 CLASSIFICATION_MODEL = 'deberta'
-SOAP_PLACEHOLDER = "Generating clinical summary...check back in 10 seconds!"
-BRIEF_PLACEHOLDER = "Generating brief summary...check back in 10 seconds!"
+SOAP_PLACEHOLDER = "Generating clinical summary..."
+BRIEF_PLACEHOLDER = "Generating brief summary..."
 
 def anonymise_case_for_researcher(case: dict) -> dict:
     anonymised_case = case.copy()
