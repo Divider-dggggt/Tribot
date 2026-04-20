@@ -16,6 +16,8 @@ def authenticate_user(email: str, password: str):
     user = db.get_user_by_email(email)
     if not user:
         return None
+    if user["deactivated_at"] is not None:
+        return None
     if not pwd_context.verify(password, user["password"]):
         return None
     return user
@@ -46,7 +48,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
         user = db.get_user_by_id(user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found or deactivated")
+            raise HTTPException(status_code=404, detail="User not found")
+        if user["deactivated_at"] is not None:
+            raise HTTPException(status_code=403, detail="Account is deactivated")
 
         if token_iat and user.get("password_changed_at"):
             password_changed_at = user["password_changed_at"].timestamp()
@@ -57,11 +61,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
-
-#def admin_required(user=Depends(get_current_user)):
-#    if user["role"] != "admin":
-#        raise HTTPException(status_code=403, detail="Admin access required")
-#    return user
 
 def role_required(*roles):
     allowed_roles = {role.lower() for role in roles}
