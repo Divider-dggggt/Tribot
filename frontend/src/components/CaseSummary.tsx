@@ -223,7 +223,7 @@ export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h5" fontWeight="bold" sx={{ mb: 1.5 }}>
-            SOAP Summary
+            Clinical Summary
           </Typography>
           <Markdown
             remarkPlugins={[remarkGfm]}
