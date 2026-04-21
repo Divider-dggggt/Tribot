@@ -110,7 +110,7 @@ export const Metrics = (): ReactElement => {
               Confusion Matrix
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Rows represent actual ATS labels, columns represent predicted ATS labels.
+              Rows represent actual ATS categories, columns represent predicted ATS categories.
             </Typography>
           </Box>
 
@@ -144,98 +144,108 @@ export const Metrics = (): ReactElement => {
                   overflowX: "auto",
                 }}
               >
-                <Box sx={{ width: "max-content", mx: "auto" }}>
+                <Box sx={{ width: "max-content", mx: "auto", display: "flex", alignItems: "center", gap: 1.25 }}>
                   <Typography
                     variant="caption"
-                    sx={{ display: "block", mb: 1, color: "#6b7280", textAlign: "center", fontWeight: 600 }}
-                  >
-                    Predicted Label
-                  </Typography>
-                  <Box
-                    component="table"
                     sx={{
-                      borderCollapse: "separate",
-                      borderSpacing: "6px",
+                      color: "#6b7280",
+                      textAlign: "center",
+                      fontWeight: 600,
+                      lineHeight: 1.35,
+                      minWidth: 62,
                     }}
                   >
-                    <Box component="thead">
-                      <Box component="tr">
-                        <Box component="th" />
-                        {matrixLabels.map((label) => (
-                          <Box
-                            key={`predicted-${label}`}
-                            component="th"
-                            sx={{
-                              minWidth: 64,
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1.2,
-                              bgcolor: "#f3f4f6",
-                              color: "#4b5563",
-                              textAlign: "center",
-                              fontSize: "0.75rem",
-                              fontWeight: 700,
-                            }}
-                          >
-                            {label}
+                    Actual
+                    <br />
+                    Category
+                  </Typography>
+                  <Box>
+                    <Typography
+                      variant="caption"
+                      sx={{ display: "block", mb: 1, color: "#6b7280", textAlign: "center", fontWeight: 600 }}
+                    >
+                      Predicted Category
+                    </Typography>
+                    <Box
+                      component="table"
+                      sx={{
+                        borderCollapse: "separate",
+                        borderSpacing: "6px",
+                      }}
+                    >
+                      <Box component="thead">
+                        <Box component="tr">
+                          <Box component="th" />
+                          {matrixLabels.map((label) => (
+                            <Box
+                              key={`predicted-${label}`}
+                              component="th"
+                              sx={{
+                                minWidth: 64,
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 1.2,
+                                bgcolor: "#f3f4f6",
+                                color: "#4b5563",
+                                textAlign: "center",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                              }}
+                            >
+                              {label}
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+                      <Box component="tbody">
+                        {matrixLabels.map((actualLabel, rowIndex) => (
+                          <Box key={`actual-row-${actualLabel}`} component="tr">
+                            <Box
+                              component="th"
+                              sx={{
+                                minWidth: 78,
+                                px: 1.25,
+                                py: 1,
+                                borderRadius: 1.2,
+                                bgcolor: "#f3f4f6",
+                                color: "#4b5563",
+                                textAlign: "center",
+                                fontSize: "0.78rem",
+                                fontWeight: 700,
+                              }}
+                            >
+                              {actualLabel}
+                            </Box>
+                            {matrixLabels.map((predictedLabel, colIndex) => {
+                              const value = matrixData[rowIndex]?.[colIndex] ?? 0;
+                              const isDiagonal = rowIndex === colIndex;
+                              const intensity = maxMatrixValue === 0 ? 0 : value / maxMatrixValue;
+                              const textColor = intensity > 0.42 ? "#ffffff" : "#374151";
+                              return (
+                                <Box
+                                  key={`${actualLabel}-${predictedLabel}`}
+                                  component="td"
+                                  sx={{
+                                    width: 64,
+                                    height: 48,
+                                    borderRadius: 1.2,
+                                    textAlign: "center",
+                                    fontSize: "0.85rem",
+                                    fontWeight: isDiagonal ? 700 : 600,
+                                    color: textColor,
+                                    bgcolor: getMatrixCellBackground(value, maxMatrixValue, isDiagonal),
+                                    boxShadow: isDiagonal ? "inset 0 0 0 1px rgba(109, 40, 217, 0.2)" : "none",
+                                  }}
+                                >
+                                  {value}
+                                </Box>
+                              );
+                            })}
                           </Box>
                         ))}
                       </Box>
                     </Box>
-                    <Box component="tbody">
-                      {matrixLabels.map((actualLabel, rowIndex) => (
-                        <Box key={`actual-row-${actualLabel}`} component="tr">
-                          <Box
-                            component="th"
-                            sx={{
-                              minWidth: 78,
-                              px: 1.25,
-                              py: 1,
-                              borderRadius: 1.2,
-                              bgcolor: "#f3f4f6",
-                              color: "#4b5563",
-                              textAlign: "center",
-                              fontSize: "0.78rem",
-                              fontWeight: 700,
-                            }}
-                          >
-                            {actualLabel}
-                          </Box>
-                          {matrixLabels.map((predictedLabel, colIndex) => {
-                            const value = matrixData[rowIndex]?.[colIndex] ?? 0;
-                            const isDiagonal = rowIndex === colIndex;
-                            const intensity = maxMatrixValue === 0 ? 0 : value / maxMatrixValue;
-                            const textColor = intensity > 0.42 ? "#ffffff" : "#374151";
-                            return (
-                              <Box
-                                key={`${actualLabel}-${predictedLabel}`}
-                                component="td"
-                                sx={{
-                                  width: 64,
-                                  height: 48,
-                                  borderRadius: 1.2,
-                                  textAlign: "center",
-                                  fontSize: "0.85rem",
-                                  fontWeight: isDiagonal ? 700 : 600,
-                                  color: textColor,
-                                  bgcolor: getMatrixCellBackground(value, maxMatrixValue, isDiagonal),
-                                  boxShadow: isDiagonal ? "inset 0 0 0 1px rgba(109, 40, 217, 0.2)" : "none",
-                                }}
-                              >
-                                {value}
-                              </Box>
-                            );
-                          })}
-                        </Box>
-                      ))}
-                    </Box>
                   </Box>
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "block", mt: 1.2, color: "#6b7280", textAlign: "center", fontWeight: 600 }}
-                  >
-                    Actual Label
-                  </Typography>
                 </Box>
               </Box>
 
