@@ -469,38 +469,49 @@ def build_severity_flag_notes(
 ) -> str:
     parts = []
 
+    # ATS at the front
     if final_ats is not None:
         parts.append(f"ATS {final_ats}")
 
+    # Overrides (clean wording)
     if overrides:
-        override_names = [o["name"] for o in overrides]
-        parts.append(f"overrides: {', '.join(override_names)}")
+        override_names = [
+            o["name"].replace("_", " ") for o in overrides
+        ]
+        parts.append(f"override: {', '.join(override_names)}")
 
     for pres_name, data in presentations.items():
-        section_bits = []
+        readable_name = pres_name.replace("_", " ")
 
         base_matches = data.get("base_matches", [])
-        if base_matches:
-            section_bits.append(f"base: {', '.join(base_matches)}")
 
         upward_values = []
         for matches in data.get("upward_modifiers", {}).values():
             upward_values.extend(matches)
-        if upward_values:
-            upward_values = list(dict.fromkeys(upward_values))
-            section_bits.append(f"up: {', '.join(upward_values)}")
 
         downward_values = []
         for matches in data.get("downward_modifiers", {}).values():
             downward_values.extend(matches)
-        if downward_values:
-            downward_values = list(dict.fromkeys(downward_values))
-            section_bits.append(f"down: {', '.join(downward_values)}")
 
-        if section_bits:
-            parts.append(f"{pres_name} [{' ; '.join(section_bits)}]")
+        # de-duplicate
+        upward_values = list(dict.fromkeys(upward_values))
+        downward_values = list(dict.fromkeys(downward_values))
+
+        section_parts = []
+
+        if base_matches:
+            section_parts.append(", ".join(base_matches))
+
+        if upward_values:
+            section_parts.append(f"with {', '.join(upward_values)}")
+
+        if downward_values:
+            section_parts.append(f"(reduced by {', '.join(downward_values)})")
+
+        if section_parts:
+            parts.append(f"{readable_name}: {' '.join(section_parts)}")
         else:
-            parts.append(pres_name)
+            parts.append(readable_name)
 
     if not parts:
         return "No severity flags detected."
