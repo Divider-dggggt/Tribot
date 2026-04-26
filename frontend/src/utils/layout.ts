@@ -1,1 +1,3 @@
-export const PAGE_CONTENT_MAX_WIDTH = 1120;
+export const PAGE_CONTENT_MAX_WIDTH = 980;
+export const USER_DIALOG_MAX_WIDTH = 800;
+export const RESET_PASSWORD_DIALOG_MAX_WIDTH = 420;

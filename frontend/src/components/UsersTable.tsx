@@ -18,7 +18,14 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 import { formatCaseDateTime } from "../utils/date";
 import { CreateUserForm } from "./CreateUserForm";
-import { fetchWithAuth } from "../utils/auth";
+import { fetchWithAuth, getDecodedToken } from "../utils/auth";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
+import Tooltip from "@mui/material/Tooltip";
+import { EditUserForm } from "./EditUserForm";
+import { DeleteUserConfirmation } from "./DeleteUserConfirmation";
+import { DANGER_COLORS } from "../utils/buttonStyles";
 
 const getRoleChipStyles = (role: UserRole) => {
   if (role === UserRole.Admin) {
@@ -31,10 +38,19 @@ const getRoleChipStyles = (role: UserRole) => {
 };
 
 export const UsersTable = (): ReactElement => {
+  const selfUserId = getDecodedToken()?.user_id;
   const [users, setUsers] = useState<User[]>([]);
   const [isCreatingUser, setIsCreatingUser] = useState<boolean>(false);
   const handleOpenCreateForm = () => setIsCreatingUser(true);
   const handleCloseCreateForm = () => setIsCreatingUser(false);
+  const [deletingUserId, setDeletingUserId] = useState<number | undefined>();
+  const isDeletingUser = deletingUserId != null;
+  const handleOpenDeleteDialog = (userId: number) => setDeletingUserId(userId);
+  const handleCloseDeleteDialog = () => setDeletingUserId(undefined);
+  const [editingUserId, setEditingUserId] = useState<number | undefined>();
+  const isEditingUser = editingUserId != null;
+  const handleOpenEditForm = (userId: number) => setEditingUserId(userId);
+  const handleCloseEditForm = () => setEditingUserId(undefined);
 
   useEffect(() => {
     const fetchUsers = async (): Promise<void> => {
@@ -48,10 +64,10 @@ export const UsersTable = (): ReactElement => {
       setUsers(users);
     };
 
-    if (!isCreatingUser) {
+    if (!isCreatingUser && !isEditingUser && !isDeletingUser) {
       fetchUsers();
     }
-  }, [isCreatingUser]);
+  }, [isCreatingUser, isEditingUser, isDeletingUser]);
 
   return (
     <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
@@ -68,20 +84,31 @@ export const UsersTable = (): ReactElement => {
           </Typography>
         </Box>
         <Button
-          variant="outlined"
+          variant="contained"
           onClick={handleOpenCreateForm}
           sx={{
-            px: 2,
-            py: 1,
+            width: { xs: "100%", sm: "auto" },
+            minWidth: { sm: 130 },
+            px: 2.5,
+            py: 1.1,
             borderRadius: 2,
-            fontWeight: "bold",
+            fontSize: "0.95rem",
+            fontWeight: 700,
+            whiteSpace: "nowrap",
           }}
         >
           Add User
         </Button>
       </Stack>
       <Card elevation={0} sx={{ border: "1px solid #e5e7eb", borderRadius: 2 }}>
-        <CardContent sx={{ p: 0 }}>
+        <CardContent
+          sx={{
+            p: 0,
+            "&:last-child": {
+              pb: 0,
+            },
+          }}
+        >
           <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid #e5e7eb" }}>
             <Typography variant="h6" fontWeight="bold">
               User Directory
@@ -98,6 +125,7 @@ export const UsersTable = (): ReactElement => {
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>Email</TableCell>
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>Role</TableCell>
                   <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }}>Created</TableCell>
+                  <TableCell sx={{ color: "#6b7280", fontWeight: 700, borderBottomColor: "#e5e7eb" }} align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -136,6 +164,28 @@ export const UsersTable = (): ReactElement => {
                     <TableCell sx={{ color: "#6b7280", whiteSpace: "nowrap" }}>
                       {formatCaseDateTime(new Date(user.created_at))}
                     </TableCell>
+                    <TableCell align="center">
+                      <Tooltip title="Edit User">
+                        <IconButton onClick={() => handleOpenEditForm(user.id)}>
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      {selfUserId !== user.id && <Tooltip title="Deactivate User">
+                        <IconButton
+                          onClick={() => handleOpenDeleteDialog(user.id)}
+                          sx={{
+                            color: "#6b7280",
+                            transition: "all 160ms ease",
+                            "&:hover": {
+                              color: DANGER_COLORS.hoverText,
+                              backgroundColor: DANGER_COLORS.hoverBackground,
+                            },
+                          }}
+                        >
+                          <DoDisturbOnIcon />
+                        </IconButton>
+                      </Tooltip>}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -146,6 +196,14 @@ export const UsersTable = (): ReactElement => {
       <CreateUserForm
         open={isCreatingUser}
         onClose={handleCloseCreateForm}
+      />
+      <EditUserForm
+        userId={editingUserId}
+        onClose={handleCloseEditForm}
+      />
+      <DeleteUserConfirmation
+        userId={deletingUserId}
+        onClose={handleCloseDeleteDialog}
       />
     </Box>
   );

@@ -7,6 +7,7 @@ import Layout from "./Layout";
 import { UserRole } from "./types/user";
 import { getDecodedToken, isAuthenticated } from "./utils/auth";
 import { UsersTable } from "./components/UsersTable";
+import { Metrics } from "./pages/Metrics";
 
 const RoleRestriction = ({ role, children }: { role: UserRole, children: ReactElement }): ReactElement => {
   if (getDecodedToken()?.role !== role) {
@@ -53,6 +54,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/new-case" element={<RoleRestriction role={UserRole.Clinician}><CaseForm /></RoleRestriction>} />
             <Route path="/users" element={<RoleRestriction role={UserRole.Admin}><UsersTable /></RoleRestriction>} />
+            <Route path="/metrics" element={<RoleRestriction role={UserRole.Researcher}><Metrics /></RoleRestriction>} />
           </Route>
         </Route>
 

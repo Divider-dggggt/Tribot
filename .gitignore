@@ -17,6 +17,8 @@ backend/.mypy_cache
 backend/.venv
 launch.json
 backend/app/services/soap_generator/scenarios.json
+backend/app/services/RAG/handbook_rag_function_project/scenarios.json
+backend/app/services/RAG/assets/emergency_triage_education_kit_-_second_edition.pdf
 
 __pycache__/
 
@@ -33,12 +35,14 @@ docker-data
 # =========================
 # Pipeline
 # =========================
-
-
+pipeline/baseline_classification_model/generated_scenarios_3000.json
+pipeline/baseline_classification_model/scenarios.json
+pipeline/baseline_classification_model/temp
 
 # =========================
 # other
 # =========================
 
 .env
+backend/.env
 .DS_Store

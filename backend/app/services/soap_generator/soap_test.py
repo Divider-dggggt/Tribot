@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test soap_generator using scenarios from scenarios.json.
+Test soap_generator using scenarios from services/sample_data/scenarios.json.
 Run from backend with PYTHONPATH=. or from repo root with PYTHONPATH=backend.
 """
 from pathlib import Path
@@ -20,7 +20,11 @@ from app.services.soap_generator import init_soap_generator, generate_soap
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = SCRIPT_DIR / "config.yaml"
-SCENARIOS_PATH = SCRIPT_DIR / "scenarios.json"
+SCENARIOS_CANDIDATES = [
+    SCRIPT_DIR.parent / "sample_data" / "scenarios.json",
+    SCRIPT_DIR.parent / "triage_classifier" / "sample_data" / "scenarios.json",  # backward compatibility
+    SCRIPT_DIR / "scenarios.json",  # backward compatibility
+]
 SOAP_FIELDS = ["subjective", "objective", "assessment", "plan"]
 
 
@@ -84,10 +88,13 @@ def _generated_sections(result: dict) -> dict[str, str]:
 
 
 def load_scenarios() -> list[dict]:
-    if not SCENARIOS_PATH.exists():
-        print(f"Scenarios file not found: {SCENARIOS_PATH}")
+    scenarios_path = next((p for p in SCENARIOS_CANDIDATES if p.exists()), None)
+    if scenarios_path is None:
+        print("Scenarios file not found. Tried:")
+        for p in SCENARIOS_CANDIDATES:
+            print(f"  - {p}")
         sys.exit(1)
-    with SCENARIOS_PATH.open("r", encoding="utf-8") as f:
+    with scenarios_path.open("r", encoding="utf-8") as f:
         data = json.load(f)
     if not isinstance(data, list):
         print("scenarios.json must be a JSON array.")

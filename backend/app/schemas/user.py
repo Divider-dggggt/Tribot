@@ -16,6 +16,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     name: str | None = None
     email: EmailStr | None = None
+    old_password: str | None = None
     password: str | None = None
     role: str | None = None
 
@@ -23,3 +24,4 @@ class UserUpdate(BaseModel):
 class UserOut(UserBase):
     id: int
     created_at: datetime
+    deactivated_at: datetime | None = None

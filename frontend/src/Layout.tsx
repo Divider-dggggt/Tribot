@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -11,54 +11,74 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { API_BASE_URL } from './utils/constants';
 import GroupIcon from '@mui/icons-material/Group';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import LockResetOutlinedIcon from '@mui/icons-material/LockResetOutlined';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { clearAuthSession, getAccessToken, getDecodedToken } from './utils/auth';
+import { dangerMenuItemHoverSx } from './utils/buttonStyles';
 import { UserRole } from './types/user';
-
-// Simple SVG Icons
-const DashboardIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7"></rect>
-    <rect x="14" y="3" width="7" height="7"></rect>
-    <rect x="14" y="14" width="7" height="7"></rect>
-    <rect x="3" y="14" width="7" height="7"></rect>
-  </svg>
-);
-
-const NewCaseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    <polyline points="14 2 14 8 20 8"></polyline>
-    <line x1="12" y1="18" x2="12" y2="12"></line>
-    <line x1="9" y1="15" x2="15" y2="15"></line>
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-    <circle cx="12" cy="7" r="4"></circle>
-  </svg>
-);
-
-const LogoutIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-    <polyline points="16 17 21 12 16 7"></polyline>
-    <line x1="21" y1="12" x2="9" y2="12"></line>
-  </svg>
-);
+import { AuthTransitionOverlay } from './components/AuthTransitionOverlay';
+import { ResetPasswordDialog } from './components/ResetPasswordDialog';
+import { BrandIcon } from './components/BrandIcon';
 
 const drawerWidth = 240;
+const LOGOUT_NAVIGATION_DELAY_MS = 450;
+const ACCOUNT_MENU_HOVER_BG = '#f5f3ff';
+const ACCOUNT_MENU_HOVER_TEXT = '#6d28d9';
+const ACCOUNT_TRIGGER_BORDER = '#e5e7eb';
+const ACCOUNT_TRIGGER_ACTIVE_BORDER = '#c4b5fd';
+const ACCOUNT_TRIGGER_HOVER_BORDER = '#d8b4fe';
+const ACCOUNT_TRIGGER_HOVER_BG = '#faf5ff';
+const ROLE_BADGE_STYLES: Record<UserRole, { backgroundColor: string; color: string }> = {
+  [UserRole.Admin]: {
+    backgroundColor: '#e9e1ff',
+    color: '#5b2ecb',
+  },
+  [UserRole.Clinician]: {
+    backgroundColor: '#d3efdf',
+    color: '#166534',
+  },
+  [UserRole.Researcher]: {
+    backgroundColor: '#e0f2fe',
+    color: '#0c4a6e',
+  },
+};
 
 function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState<boolean>(false);
+  const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(null);
+  const decodedToken = getDecodedToken();
   const signedInEmail = localStorage.getItem('user_email');
-  const userRole = getDecodedToken()?.role;
+  const userRole = decodedToken?.role;
+  const userId = decodedToken?.user_id ?? null;
+  const roleBadgeStyle = userRole ? ROLE_BADGE_STYLES[userRole] : null;
+  const isAccountMenuOpen = accountMenuAnchor != null;
+
+  const handleOpenAccountMenu = (event: React.MouseEvent<HTMLElement>): void => {
+    setAccountMenuAnchor(event.currentTarget);
+  };
+
+  const handleCloseAccountMenu = (): void => {
+    setAccountMenuAnchor(null);
+  };
 
   const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
     const accessToken = getAccessToken();
 
     try {
@@ -73,6 +93,9 @@ function Layout() {
     } catch {
       // Ignore network errors and clear local session anyway.
     } finally {
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, LOGOUT_NAVIGATION_DELAY_MS);
+      });
       clearAuthSession();
       navigate('/login', { replace: true });
     }
@@ -96,18 +119,149 @@ function Layout() {
         }}
       >
         <Toolbar sx={{ justifyContent: 'flex-end' }}>
-          <Button color="inherit" sx={{ textTransform: 'none', mr: 2 }}>
-            <UserIcon />
-            {signedInEmail ?? 'Signed In User'}
-          </Button>
           <Button
             color="inherit"
-            sx={{ textTransform: 'none' }}
-            onClick={handleLogout}
+            sx={{
+              textTransform: 'none',
+              px: 1.2,
+              py: 0.55,
+              borderRadius: 999,
+              minHeight: 44,
+              border: '1px solid',
+              borderColor: isAccountMenuOpen ? ACCOUNT_TRIGGER_ACTIVE_BORDER : ACCOUNT_TRIGGER_BORDER,
+              backgroundColor: isAccountMenuOpen ? ACCOUNT_TRIGGER_HOVER_BG : '#fff',
+              transition: 'all 180ms ease',
+              '&:hover': {
+                borderColor: ACCOUNT_TRIGGER_HOVER_BORDER,
+                backgroundColor: ACCOUNT_TRIGGER_HOVER_BG,
+              },
+            }}
+            onClick={handleOpenAccountMenu}
+            aria-controls={isAccountMenuOpen ? 'account-menu' : undefined}
+            aria-expanded={isAccountMenuOpen ? 'true' : undefined}
+            aria-haspopup="true"
           >
-            <LogoutIcon />
-            Logout
+            <Box
+              component="span"
+              sx={{
+                width: 30,
+                height: 30,
+                borderRadius: '50%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mr: 1,
+                color: ACCOUNT_MENU_HOVER_TEXT,
+                backgroundColor: ACCOUNT_MENU_HOVER_BG,
+              }}
+            >
+              <PersonOutlineIcon sx={{ fontSize: 18 }} />
+            </Box>
+            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5 }}>
+              <Box
+                component="span"
+                sx={{
+                  maxWidth: { xs: 140, sm: 190, md: 230 },
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  color: '#374151',
+                  fontWeight: 500,
+                }}
+              >
+                {signedInEmail ?? 'Signed In User'}
+              </Box>
+              {userRole && roleBadgeStyle ? (
+                <Box
+                  component="span"
+                  sx={{
+                    px: 1.5,
+                    py: 0.35,
+                    borderRadius: 999,
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    backgroundColor: roleBadgeStyle.backgroundColor,
+                    color: roleBadgeStyle.color,
+                  }}
+                >
+                  {userRole}
+                </Box>
+              ) : null}
+              <Box
+                component="span"
+                sx={{
+                  color: isAccountMenuOpen ? ACCOUNT_MENU_HOVER_TEXT : '#6b7280',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  transition: 'transform 150ms ease, color 150ms ease',
+                  transform: isAccountMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                }}
+              >
+                <ExpandMoreRoundedIcon sx={{ fontSize: 18 }} />
+              </Box>
+            </Box>
           </Button>
+          <Menu
+            id="account-menu"
+            anchorEl={accountMenuAnchor}
+            open={isAccountMenuOpen}
+            onClose={handleCloseAccountMenu}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            slotProps={{
+              paper: {
+                sx: {
+                  mt: 1,
+                  minWidth: 220,
+                  p: 0.75,
+                  borderRadius: 2.5,
+                  border: '1px solid #ede9fe',
+                  boxShadow: '0 16px 36px rgba(15, 23, 42, 0.14)',
+                },
+              },
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                handleCloseAccountMenu();
+                setIsResetPasswordOpen(true);
+              }}
+              disabled={isLoggingOut}
+              sx={{
+                py: 1.1,
+                px: 1.4,
+                borderRadius: 1.5,
+                fontWeight: 500,
+                color: '#374151',
+                '&:hover': {
+                  color: ACCOUNT_MENU_HOVER_TEXT,
+                  backgroundColor: ACCOUNT_MENU_HOVER_BG,
+                },
+              }}
+            >
+              <LockResetOutlinedIcon sx={{ mr: 1, fontSize: 20 }} />
+              Reset Password
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleCloseAccountMenu();
+                void handleLogout();
+              }}
+              disabled={isLoggingOut}
+              sx={{
+                py: 1.1,
+                px: 1.4,
+                borderRadius: 1.5,
+                fontWeight: 500,
+                color: '#374151',
+                ...dangerMenuItemHoverSx,
+              }}
+            >
+              <LogoutOutlinedIcon sx={{ mr: 1, fontSize: 20 }} />
+              {isLoggingOut ? 'Logging out...' : 'Logout'}
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
@@ -133,9 +287,10 @@ function Layout() {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              color: '#7c3aed',
-              fontWeight: 'bold',
-              fontSize: '1.2rem',
+              color: '#111827',
+              fontWeight: 700,
+              letterSpacing: 0.4,
+              fontSize: '1.1rem',
               textDecoration: 'none',
               borderRadius: 1,
               '&:hover': {
@@ -143,11 +298,9 @@ function Layout() {
               },
             }}
           >
-            <div style={{ width: 32, height: 32, backgroundColor: '#7c3aed', borderRadius: 8, marginRight: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-              </svg>
-            </div>
+            <Box sx={{ mr: 1, display: 'inline-flex' }}>
+              <BrandIcon size={32} iconSize={18} />
+            </Box>
             TRIBOT
           </Box>
         </Toolbar>
@@ -164,7 +317,7 @@ function Layout() {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
-                  <DashboardIcon />
+                  <DashboardOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: location.pathname === '/dashboard' ? 'bold' : 'medium' }} />
               </ListItemButton>
@@ -181,7 +334,7 @@ function Layout() {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
-                  <NewCaseIcon />
+                  <NoteAddOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText primary="New Case" primaryTypographyProps={{ fontWeight: location.pathname === '/new-case' ? 'bold' : 'medium' }} />
               </ListItemButton>
@@ -203,6 +356,23 @@ function Layout() {
                 <ListItemText primary="Users" primaryTypographyProps={{ fontWeight: location.pathname === '/users' ? 'bold' : 'medium' }} />
               </ListItemButton>
             </ListItem>}
+
+            {userRole === UserRole.Researcher && <ListItem disablePadding sx={{ mt: 1 }}>
+              <ListItemButton 
+                component={Link} 
+                to="/metrics"
+                selected={location.pathname === '/metrics'}
+                sx={{
+                  mx: 1,
+                  borderRadius: 2,
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Metrics" primaryTypographyProps={{ fontWeight: location.pathname === '/metrics' ? 'bold' : 'medium' }} />
+              </ListItemButton>
+            </ListItem>}
           </List>
         </Box>
       </Drawer>
@@ -215,6 +385,18 @@ function Layout() {
         <Toolbar /> {/* Spacer for fixed AppBar */}
         <Outlet />
       </Box>
+      <AuthTransitionOverlay
+        open={isLoggingOut}
+        variant="logout"
+        title="Signing out"
+        subtitle="Securing your session..."
+      />
+      <ResetPasswordDialog
+        open={isResetPasswordOpen}
+        onClose={() => setIsResetPasswordOpen(false)}
+        signedInEmail={signedInEmail}
+        userId={userId}
+      />
     </Box>
   );
 }

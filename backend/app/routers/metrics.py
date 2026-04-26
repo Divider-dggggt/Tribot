@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.core.security import admin_required
+from app.core.security import role_required
 
 router = APIRouter()
 
@@ -15,16 +15,14 @@ MODEL_EVAL_PATH = (
         / "model_eval.json"
 )
 
+MODEL_NAME = "deberta"
 
-@router.get("/model-metrics/{model_name}")
-def get_model_metrics(model_name: str, admin=Depends(admin_required)):
+@router.get("/model-metrics")
+def get_model_metrics(user=Depends(role_required("researcher"))):
     with MODEL_EVAL_PATH.open() as f:
         data = json.load(f)
 
-    if model_name not in data:
-        raise HTTPException(status_code=404, detail="Model not found")
-
     return {
-        "model_name": model_name,
-        "metrics": data[model_name],
+        "model_name": MODEL_NAME,
+        "metrics": data[MODEL_NAME],
     }

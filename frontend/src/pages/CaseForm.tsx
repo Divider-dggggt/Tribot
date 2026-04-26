@@ -20,24 +20,11 @@ import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { FloatingTextField } from "../components/FloatingTextField";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
 import { formatCaseDateTime } from "../utils/date";
+import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
 import { API_BASE_URL } from "../utils/constants";
 import { fetchWithAuth } from "../utils/auth";
-
-// Simple Send Icon
-const SendIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <line x1="22" y1="2" x2="11" y2="13"></line>
-    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-  </svg>
-);
-
-// Simple X Icon
-const XIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-);
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 interface CaseFormValues {
   patientID: string;
@@ -54,8 +41,6 @@ interface CaseFormValues {
   respirationRate?: number;
   bloodPressure?: string;
 }
-
-type RequiredFieldName = "patientID" | "patientName" | "details";
 
 const parseAtsToLevel = (atsClassification: number): ATSLevel => {
   const boundedAts = Math.min(5, Math.max(1, Math.round(atsClassification)));
@@ -192,27 +177,11 @@ export const CaseForm = (): ReactElement => {
     watch,
     setError,
     clearErrors,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, submitCount },
     control,
   } = useForm<CaseFormValues>();
   const navigate = useNavigate();
   const details = watch('details', '');
-  const requiredFieldNames: RequiredFieldName[] = ["patientID", "patientName", "details"];
-
-  const isRequiredFieldName = (value: string): value is RequiredFieldName => (
-    requiredFieldNames.includes(value as RequiredFieldName)
-  );
-
-  const handleInvalidCapture = (event: FormEvent<HTMLFormElement>) => {
-    const target = event.target as HTMLInputElement | HTMLTextAreaElement | null;
-    if (!target?.name || !isRequiredFieldName(target.name) || !target.validity.valueMissing) {
-      return;
-    }
-    setError(target.name, {
-      type: "required",
-      message: "Required",
-    });
-  };
 
   const onSubmit = async (data: CaseFormValues) => {
     clearErrors("root.serverError");
@@ -235,9 +204,11 @@ export const CaseForm = (): ReactElement => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: data.patientName,
+          patient_name: data.patientName,
           medicare_number: data.patientID.replace("/", ""),
-          case_details: allDetails.join("\n"),
+          case_dialogue: allDetails.join("\n"),
+          ...(data.age && { age: data.age }),
+          ...(data.gender && { gender: data.gender }),
         }),
       });
 
@@ -261,7 +232,7 @@ export const CaseForm = (): ReactElement => {
   };
 
   return (
-    <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: 'auto' }}>
+    <Box sx={{ maxWidth: PAGE_CONTENT_MAX_WIDTH, mx: "auto" }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
           Create New Case
@@ -273,7 +244,7 @@ export const CaseForm = (): ReactElement => {
 
       <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 2 }}>
         <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-          <form onSubmit={handleSubmit(onSubmit)} onInvalidCapture={handleInvalidCapture}>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
               * Required fields
             </Typography>
@@ -298,6 +269,9 @@ export const CaseForm = (): ReactElement => {
                     render={({ field }) => (
                       <FloatingTextField
                         label="Medicare Card Number"
+                        name={field.name}
+                        inputRef={field.ref}
+                        placeholder="1234567890/1"
                         value={field.value ?? ""}
                         onBlur={field.onBlur}
                         onChange={(event) => {
@@ -309,6 +283,7 @@ export const CaseForm = (): ReactElement => {
                         fullWidth
                         required
                         size="small"
+                        requiredErrorSubmitCount={errors.patientID?.type === "required" ? submitCount : 0}
                         variant="outlined"
                         inputProps={{
                           inputMode: "numeric",
@@ -329,6 +304,7 @@ export const CaseForm = (): ReactElement => {
                     })}
                     error={!!errors.patientName}
                     helperText={errors.patientName?.message as string}
+                    requiredErrorSubmitCount={errors.patientName?.type === "required" ? submitCount : 0}
                     variant="outlined"
                     size="small"
                   />
@@ -353,6 +329,7 @@ export const CaseForm = (): ReactElement => {
                 rows={8}
                 error={!!errors.details}
                 helperText={errors.details?.message as string}
+                requiredErrorSubmitCount={errors.details?.type === "required" ? submitCount : 0}
               />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
                 {details.length} characters
@@ -560,7 +537,7 @@ export const CaseForm = (): ReactElement => {
                 {isSubmitting ? (
                   <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
                 ) : (
-                  <SendIcon />
+                  <SendRoundedIcon sx={{ mr: 1 }} />
                 )}
                 {isSubmitting ? "Submitting..." : "Submit for Triage"}
               </Button>
@@ -570,17 +547,14 @@ export const CaseForm = (): ReactElement => {
                 onClick={() => navigate('/dashboard')}
                 sx={{ 
                   minWidth: 140,
-                  color: '#374151',
-                  borderColor: '#d1d5db',
                   fontWeight: 'medium',
                   px: 4,
                   py: 1.5,
-                  borderRadius: 2
+                  borderRadius: 2,
+                  ...dangerOutlinedButtonSx,
                 }}
               >
-                <Box component="span" sx={{ color: '#dc2626', display: 'inline-flex' }}>
-                  <XIcon />
-                </Box>
+                <CloseRoundedIcon sx={{ mr: 1 }} />
                 Cancel
               </Button>
             </Stack>

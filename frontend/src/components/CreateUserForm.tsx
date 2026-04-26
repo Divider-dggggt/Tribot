@@ -5,26 +5,27 @@ import { AuthLogo } from "./AuthLogo";
 import { FloatingTextField } from "./FloatingTextField";
 import { PasswordField } from "./PasswordField";
 import { UserRole } from "../types/user";
-import { API_BASE_URL } from "../utils/constants";
+import { dangerOutlinedButtonSx } from "../utils/buttonStyles";
+import { API_BASE_URL, ROLE_PERMISSIONS } from "../utils/constants";
+import { USER_DIALOG_MAX_WIDTH } from "../utils/layout";
 import { fetchWithAuth } from "../utils/auth";
 
-const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
-  [UserRole.Admin]: [
-    "View all patient records",
-    "Access evaluation tools",
-    "Generate reports",
-    "Administrative access",
-  ],
-  [UserRole.Clinician]: [
-    "Create new cases",
-    "Override AI predictions",
-    "Access evaluation tools",
-  ],
-  [UserRole.Researcher]: [
-    "Generate reports",
-    "View all patient records",
-    "Access evaluation tools",
-  ],
+const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: string }> = {
+  [UserRole.Admin]: {
+    text: "#6d28d9",
+    bg: "#ede9fe",
+    border: "#c4b5fd",
+  },
+  [UserRole.Clinician]: {
+    text: "#166534",
+    bg: "#dcfce7",
+    border: "#86efac",
+  },
+  [UserRole.Researcher]: {
+    text: "#0c4a6e",
+    bg: "#e0f2fe",
+    border: "#7dd3fc",
+  },
 };
 
 const readCreateUserError = async (response: Response): Promise<string> => {
@@ -75,7 +76,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
     clearErrors,
     setError,
     watch,
-    formState: { errors },
+    formState: { errors, submitCount },
   } = useForm<CreateUserFormValues>({
     defaultValues,
   });
@@ -139,8 +140,8 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
       maxWidth="md"
       PaperProps={{
         sx: {
-          width: "min(900px, calc(100% - 32px))",
-          maxWidth: "900px",
+          width: `min(${USER_DIALOG_MAX_WIDTH}px, calc(100% - 32px))`,
+          maxWidth: `${USER_DIALOG_MAX_WIDTH}px`,
         },
       }}
     >
@@ -165,6 +166,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 size="small"
                 error={Boolean(errors.firstName)}
                 helperText={errors.firstName?.message}
+                requiredErrorSubmitCount={errors.firstName?.type === "required" ? submitCount : 0}
                 {...register("firstName", { required: "Required" })}
               />
             </Grid>
@@ -177,6 +179,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 size="small"
                 error={Boolean(errors.lastName)}
                 helperText={errors.lastName?.message}
+                requiredErrorSubmitCount={errors.lastName?.type === "required" ? submitCount : 0}
                 {...register("lastName", { required: "Required" })}
               />
             </Grid>
@@ -190,6 +193,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
             sx={{ mt: 2 }}
             error={Boolean(errors.email)}
             helperText={errors.email?.message}
+            requiredErrorSubmitCount={errors.email?.type === "required" ? submitCount : 0}
             {...register("email", {
               required: "Required",
               setValueAs: (value: string) => value.trim(),
@@ -212,6 +216,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{ mt: 2 }}
                 error={Boolean(errors.password)}
                 helperText={errors.password?.message}
+                requiredErrorSubmitCount={errors.password?.type === "required" ? submitCount : 0}
                 {...register("password", {
                   required: "Required",
                   minLength: {
@@ -236,6 +241,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{ mt: 2 }}
                 error={Boolean(errors.confirmPassword)}
                 helperText={errors.confirmPassword?.message}
+                requiredErrorSubmitCount={errors.confirmPassword?.type === "required" ? submitCount : 0}
                 {...register("confirmPassword", {
                   required: "Required",
                   validate: (value) => value === passwordValue || "Passwords do not match",
@@ -259,6 +265,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 0.75 }}>
                   {Object.values(UserRole).map((role) => {
                     const isSelected = role === field.value;
+                    const roleColors = ROLE_BUTTON_COLORS[role];
                     return (
                       <Button
                         key={role}
@@ -270,9 +277,15 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                           borderRadius: 2,
                           textTransform: "none",
                           py: 1.1,
-                          color: isSelected ? "#7e22ce" : "#374151",
-                          borderColor: isSelected ? "#9333ea" : "#d1d5db",
-                          backgroundColor: isSelected ? "#faf5ff" : "#fff",
+                          transition: "all 160ms ease",
+                          color: isSelected ? roleColors.text : "#374151",
+                          borderColor: isSelected ? roleColors.border : "#d1d5db",
+                          backgroundColor: isSelected ? roleColors.bg : "#fff",
+                          "&:hover": {
+                            color: roleColors.text,
+                            borderColor: roleColors.border,
+                            backgroundColor: roleColors.bg,
+                          },
                         }}
                       >
                         {role}
@@ -356,8 +369,7 @@ export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactEle
                 sx={{
                   borderRadius: 2,
                   py: 1.15,
-                  color: "#374151",
-                  borderColor: "#d1d5db",
+                  ...dangerOutlinedButtonSx,
                 }}
               >
                 Cancel

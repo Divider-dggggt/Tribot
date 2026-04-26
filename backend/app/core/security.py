@@ -16,6 +16,8 @@ def authenticate_user(email: str, password: str):
     user = db.get_user_by_email(email)
     if not user:
         return None
+    if user["deactivated_at"] is not None:
+        return None
     if not pwd_context.verify(password, user["password"]):
         return None
     return user
@@ -23,8 +25,12 @@ def authenticate_user(email: str, password: str):
 
 def create_access_token(data: dict):
     to_encode = data.copy()
+    now = datetime.utcnow()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+    to_encode.update({
+        "iat": now,
+        "exp": expire,
+    })
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -35,19 +41,34 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("user_id")
+        token_iat = payload.get("iat")
+
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
 
         user = db.get_user_by_id(user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found or deleted")
+            raise HTTPException(status_code=404, detail="User not found")
+        if user["deactivated_at"] is not None:
+            raise HTTPException(status_code=403, detail="Account is deactivated")
+
+        if token_iat and user.get("password_changed_at"):
+            password_changed_at = user["password_changed_at"].timestamp()
+            if token_iat < password_changed_at:
+                raise HTTPException(status_code=401, detail="Password changed. Please log in again")
 
         return user
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 
-def admin_required(user=Depends(get_current_user)):
-    if user["role"] != "Admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
+def role_required(*roles):
+    allowed_roles = {role.lower() for role in roles}
+
+    def dependency(user=Depends(get_current_user)):
+        user_role = str(user["role"]).lower()
+        if user_role not in allowed_roles:
+            raise HTTPException(status_code=403, detail=f"Access restricted to: {', '.join(roles)}")
+        return user
+
+    return dependency

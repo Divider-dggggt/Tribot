@@ -3,8 +3,10 @@ CREATE TABLE users (
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role TEXT CHECK (role IN ('Admin','Clinician','Researcher')) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role TEXT CHECK (role IN ('admin','clinician','researcher')) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    password_changed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    deactivated_at TIMESTAMPTZ NULL
 );
 
 INSERT INTO users (name, email, password, role) VALUES
@@ -12,45 +14,51 @@ INSERT INTO users (name, email, password, role) VALUES
 'Admin',
 'admin@example.com',
 '$argon2id$v=19$m=65536,t=3,p=4$TMnZO4fQWqsVovRey1kLgQ$1PRETjl0mi3jRUA0qmmPBwA5+MEYo6YIP8AOEyN4Jtc',
-'Admin'
+'admin'
 );
 
 CREATE TABLE cases (
     case_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
-    name TEXT NOT NULL,
+    patient_name TEXT NOT NULL,
     medicare_number TEXT NOT NULL,
-    case_details TEXT NOT NULL, --dialogues
     severity_flagged BOOLEAN DEFAULT FALSE,
-    -- user_override_category INT DEFAULT 0,
-    -- override_reason TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    resolved_at TIMESTAMP NULL
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMPTZ NULL,
+    ats_category INT NOT NULL CHECK (ats_category BETWEEN 1 AND 5),
+    ats_source TEXT NOT NULL CHECK (ats_source IN ('model', 'rule', 'override')),
+    override_ats INT NULL CHECK (override_ats BETWEEN 1 AND 5),
+    override_reason TEXT NULL,
+    override_at TIMESTAMPTZ NULL,
+    age INT NULL CHECK (age >= 0 AND age <= 150),
+    gender TEXT NULL CHECK (gender IN ('male', 'female', 'other'))
 );
 
-
-CREATE TABLE soap_summaries (
-    case_id INT PRIMARY KEY REFERENCES cases(case_id),
-    soap_summary TEXT
+CREATE TABLE case_dialogues (
+    case_id INT PRIMARY KEY REFERENCES cases(case_id) ON DELETE CASCADE,
+    case_dialogue TEXT NOT NULL
 );
 
-CREATE TABLE classification_model (
-    case_id INT REFERENCES cases(case_id),
-    model_name TEXT,
-    ats_classification INT, -- ATS category
-    confidence_score FLOAT,
-    clinician_override_at TIMESTAMP NULL,
-    PRIMARY KEY (case_id)
+CREATE TABLE clinical_summaries (
+    case_id INT PRIMARY KEY REFERENCES cases(case_id) ON DELETE CASCADE,
+    soap_summary TEXT,
+    brief_summary TEXT
+);
+
+CREATE TABLE model_predictions (
+    case_id INT PRIMARY KEY REFERENCES cases(case_id) ON DELETE CASCADE,
+    pred_ats INT NOT NULL CHECK (pred_ats BETWEEN 1 AND 5),
+    pred_confidence FLOAT CHECK (pred_confidence >= 0 AND pred_confidence <= 1),
+    model_used TEXT
 );
 
 CREATE TABLE severity_flags (
-    case_id INT REFERENCES cases(case_id),
-    flag_category INT NOT NULL, -- 1-5
-    flag_reason TEXT,
-    PRIMARY KEY (case_id, flag_category)
+    case_id INT PRIMARY KEY REFERENCES cases(case_id) ON DELETE CASCADE,
+    flag_ats INT NOT NULL CHECK (flag_ats BETWEEN 1 AND 5),
+    flag_notes TEXT
 );
 
 CREATE TABLE revoked_tokens (
     token TEXT PRIMARY KEY,
-    revoked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    revoked_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

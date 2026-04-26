@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -10,8 +10,10 @@ import {
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../components/AuthLogo";
+import { AuthTransitionOverlay } from "../components/AuthTransitionOverlay";
 import { FloatingTextField } from "../components/FloatingTextField";
 import { PasswordField } from "../components/PasswordField";
+import { consumeSessionExpiredTransition } from "../utils/auth";
 import { API_BASE_URL } from "../utils/constants";
 
 interface LoginResponse {
@@ -24,6 +26,9 @@ interface LoginFormValues {
   email: string;
   password: string;
 }
+
+const LOGIN_NAVIGATION_DELAY_MS = 600;
+const SESSION_EXPIRED_NOTICE_DELAY_MS = 900;
 
 const readLoginError = async (response: Response): Promise<string> => {
   try {
@@ -41,16 +46,35 @@ const readLoginError = async (response: Response): Promise<string> => {
 export const LoginPage = (): ReactElement => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoginTransitioning, setIsLoginTransitioning] = useState<boolean>(false);
+  const [isSessionExpiredTransitioning, setIsSessionExpiredTransitioning] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, submitCount },
   } = useForm<LoginFormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (!consumeSessionExpiredTransition()) {
+      return;
+    }
+
+    setIsSessionExpiredTransitioning(true);
+    const timer = window.setTimeout(() => {
+      setIsSessionExpiredTransitioning(false);
+    }, SESSION_EXPIRED_NOTICE_DELAY_MS);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, []);
+
+  const isInteractionBlocked = isSubmitting || isLoginTransitioning || isSessionExpiredTransitioning;
 
   const handleSignIn = async (values: LoginFormValues): Promise<void> => {
     setErrorMessage(null);
@@ -78,8 +102,13 @@ export const LoginPage = (): ReactElement => {
       localStorage.setItem("user_role", data.role);
       localStorage.setItem("user_email", trimmedEmail);
 
+      setIsLoginTransitioning(true);
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, LOGIN_NAVIGATION_DELAY_MS);
+      });
       navigate("/dashboard", { replace: true });
     } catch (error) {
+      setIsLoginTransitioning(false);
       setErrorMessage(error instanceof Error ? error.message : "Unable to sign in right now.");
     }
   };
@@ -122,8 +151,10 @@ export const LoginPage = (): ReactElement => {
               placeholder="Enter your email"
               size="small"
               sx={{ mb: 2.5 }}
+              disabled={isInteractionBlocked}
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
+              requiredErrorSubmitCount={errors.email?.type === "required" ? submitCount : 0}
               {...register("email", {
                 required: "Please enter your email.",
                 setValueAs: (value: string) => value.trim(),
@@ -140,8 +171,10 @@ export const LoginPage = (): ReactElement => {
               placeholder="Enter your password"
               size="small"
               sx={{ mb: 2.5 }}
+              disabled={isInteractionBlocked}
               error={Boolean(errors.password)}
               helperText={errors.password?.message}
+              requiredErrorSubmitCount={errors.password?.type === "required" ? submitCount : 0}
               {...register("password", {
                 required: "Please enter your password.",
               })}
@@ -151,7 +184,7 @@ export const LoginPage = (): ReactElement => {
               type="submit"
               fullWidth
               variant="contained"
-              disabled={isSubmitting}
+              disabled={isInteractionBlocked}
               sx={{
                 borderRadius: 2,
                 py: 1.2,
@@ -159,14 +192,32 @@ export const LoginPage = (): ReactElement => {
                 fontSize: "1rem",
               }}
             >
-              {isSubmitting ? (
+              {isInteractionBlocked ? (
                 <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
               ) : null}
-              {isSubmitting ? "Signing In..." : "Sign In"}
+              {isSessionExpiredTransitioning
+                ? "Session expired"
+                : isLoginTransitioning
+                  ? "Preparing workspace..."
+                  : isSubmitting
+                    ? "Signing In..."
+                    : "Sign In"}
             </Button>
           </Box>
         </CardContent>
       </Card>
+      <AuthTransitionOverlay
+        open={isSessionExpiredTransitioning}
+        variant="expired"
+        title="Session expired"
+        subtitle="Please sign in again."
+      />
+      <AuthTransitionOverlay
+        open={isLoginTransitioning}
+        variant="login"
+        title="Login successful"
+        subtitle="Taking you to the dashboard..."
+      />
     </Box>
   );
 };
