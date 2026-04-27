@@ -99,6 +99,7 @@ def test_create_case_invalid_gender_returns_422(client):
 
     assert response.status_code == 422
 
+
 def test_create_case_allows_missing_age_and_gender(client, monkeypatch):
     def fake_classify_triage(case_dialogue):
         return {
@@ -151,3 +152,20 @@ def test_create_case_allows_missing_age_and_gender(client, monkeypatch):
     assert data["gender"] is None
     assert data["ats_category"] == 3
     assert data["ats_source"] == "model"
+
+
+def test_create_case_duplicate_medicare_returns_409(client, monkeypatch):
+    monkeypatch.setattr(
+        "app.routers.cases.db.has_open_case_for_medicare",
+        lambda medicare_number: True,
+    )
+
+    response = client.post("/cases", json={
+        "patient_name": "John Doe",
+        "medicare_number": "12345678901",
+        "case_dialogue": "Patient reports chest pain.",
+        "age": 45,
+        "gender": "male",
+    })
+
+    assert response.status_code == 409
