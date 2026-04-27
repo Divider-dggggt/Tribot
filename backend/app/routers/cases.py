@@ -153,6 +153,8 @@ def create_case_endpoint(
             "brief_summary": brief_summary_for_response,
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         error_text = str(e)
         raise HTTPException(status_code=500, detail=f"Failed to create case: {error_text}")
