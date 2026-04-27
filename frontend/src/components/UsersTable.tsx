@@ -37,6 +37,9 @@ const getRoleChipStyles = (role: UserRole) => {
   return { bgcolor: "#e0f2fe", color: "#0c4a6e" };
 };
 
+/**
+ * Renders a table of users (admins, clinicians, researchers) with actionable buttons for user management.
+ */
 export const UsersTable = (): ReactElement => {
   const selfUserId = getDecodedToken()?.user_id;
   const [users, setUsers] = useState<User[]>([]);

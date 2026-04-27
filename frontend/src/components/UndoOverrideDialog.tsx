@@ -16,6 +16,15 @@ interface UndoOverrideDialogProps {
   caseId: number;
 }
 
+/**
+ * Renders a dialog for undoing a case override.
+ * @param {Object} props The component props.
+ * @param {boolean} props.open Whether the dialog is open.
+ * @param {function} props.onClose The callback function for closing the dialog.
+ * @param {function} props.onSuccess The callback function for successful case undo override action.
+ * @param {number} props.caseId The ID of the case to be overridden.
+ * @returns {JSX.Element} A case undo override dialog.
+ */
 export const UndoOverrideDialog = ({
   open,
   onClose,

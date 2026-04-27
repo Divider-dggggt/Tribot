@@ -48,6 +48,15 @@ const readApiError = async (response: Response): Promise<string> => {
   return `Request failed with status ${response.status}`;
 };
 
+/**
+ * Renders a dialog for resetting user's own password.
+ * @param {Object} props The component props.
+ * @param {boolean} props.open Whether the dialog is open.
+ * @param {function} props.onClose The callback function for closing the dialog.
+ * @param {string} props.signedInEmail The email of the user.
+ * @param {number} props.userId The ID of the user.
+ * @returns {JSX.Element} A reset password dialog.
+ */
 export const ResetPasswordDialog = ({
   open,
   onClose,

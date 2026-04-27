@@ -17,6 +17,13 @@ interface DeleteUserConfirmationProps {
   onClose: () => void;
 }
 
+/**
+ * Renders a confirmation dialog for deleting a user.
+ * @param {Object} props The component props.
+ * @param {number} props.userId The ID of the user to be deleted.
+ * @param {function} props.onClose The callback function for closing the dialog.
+ * @returns {JSX.Element} A user deletion confirmation dialog.
+ */
 export const DeleteUserConfirmation = ({
   userId,
   onClose,

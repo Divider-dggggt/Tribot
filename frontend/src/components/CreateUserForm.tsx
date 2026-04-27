@@ -59,6 +59,13 @@ interface CreateUserFormProps {
   onClose: () => void;
 }
 
+/**
+ * Renders a form for creating a new user.
+ * @param {Object} props The component props.
+ * @param {boolean} props.open Whether the user creation form is open.
+ * @param {function} props.onClose The callback function for closing the form.
+ * @returns {JSX.Element} A user creation form component.
+ */
 export const CreateUserForm = ({ open, onClose }: CreateUserFormProps): ReactElement => {
   const defaultValues: CreateUserFormValues = {
     firstName: "",

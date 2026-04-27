@@ -89,6 +89,9 @@ const compareCaseNameWithPriority = (aName: string, bName: string): number => {
   });
 };
 
+/**
+ * Renders a dashboard page displaying all open and resolved triage cases.
+ */
 export const Dashboard = (): ReactElement => {
   const location = useLocation();
   const isViewingDashboard = location.search === "";

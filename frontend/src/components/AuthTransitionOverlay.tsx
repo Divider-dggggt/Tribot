@@ -46,6 +46,15 @@ const iconPulse = keyframes`
   }
 `;
 
+/**
+ * A transition overlay detailing any authentication in action.
+ * @param {Object} props The component props.
+ * @param {boolean} props.open Whether the overlay is open.
+ * @param {AuthTransitionOverlayVariant} props.variant What type of authentication action is actioned.
+ * @param {string} props.title The title displayed when the overlay is open.
+ * @param {string} props.subtitle The subtitle displayed when the overlay is open.
+ * @returns {JSX.Element} An authentication transition overlay element.
+ */
 export const AuthTransitionOverlay = ({
   open,
   variant,
