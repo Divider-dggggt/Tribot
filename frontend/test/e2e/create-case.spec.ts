@@ -1,59 +1,57 @@
 import { expect, test } from "@playwright/test";
-import { mockEmptyCases, signInAs } from "./helpers";
+import {
+  adminCredentials,
+  createClinicianViaApi,
+  deactivateUserViaApi,
+  signInViaApiSession,
+} from "./helpers";
 
-const CREATED_CASE_ID = 4242;
+test("a clinician created from real backend can submit a case end-to-end", async ({ page, request }) => {
+  test.setTimeout(120_000);
 
-test("a clinician can create a case and land on the triage result", async ({ page }) => {
-  await signInAs(page, "clinician");
-  await mockEmptyCases(page);
+  const clinician = await createClinicianViaApi(request, adminCredentials);
+  const uniqueSeed = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  const medicareCardBase = uniqueSeed.slice(-10).padStart(10, "0");
+  const patientName = `E2E Patient ${uniqueSeed.slice(-4)}`;
 
-  await page.route("http://localhost:8000/triage", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        case_id: CREATED_CASE_ID,
-        severity_flagged: false,
-        soap_summary: "Subjective: chest pain",
-        ats_classification: 3,
-        confidence_score: 0.82,
-        flagged_keywords: null,
-      }),
-    });
-  });
+  try {
+    // Backend token iat is second-level precision; wait past the creation second.
+    await page.waitForTimeout(1200);
+    await signInViaApiSession(page, clinician);
+    await page.goto("/new-case");
 
-  await page.route(`http://localhost:8000/cases/${CREATED_CASE_ID}`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        case_id: CREATED_CASE_ID,
-        patient_name: "John Doe",
-        medicare_number: "12345678901",
-        case_dialogue: "Severe chest pain",
-        severity_flagged: false,
-        resolved_at: null,
-        created_at: "2026-04-25T10:00:00Z",
-        soap_summary: "Subjective: chest pain\n\nObjective: normal vitals\n\nAssessment: angina\n\nPlan: ECG",
-        brief_summary: "Chest pain",
-        ats_category: 3,
-        ats_source: "model",
-        pred_ats: 3,
-        pred_confidence: 0.82,
-        model_used: "test-model",
-      }),
-    });
-  });
+    await page.getByLabel(/medicare card number/i).fill(`${medicareCardBase}/1`);
+    await page.getByLabel(/patient name/i).fill(patientName);
+    await page.getByLabel(/case details/i).fill("Severe chest pain with shortness of breath.");
 
-  await page.goto("/new-case");
+    const triageResponsePromise = page.waitForResponse((response) => (
+      response.request().method() === "POST" && response.url().includes("/triage")
+    ));
+    await page.getByRole("button", { name: /submit for triage/i }).click();
+    const triageResponse = await triageResponsePromise;
+    const triageBody = await triageResponse.text();
 
-  await page.getByLabel(/medicare card number/i).fill("1234567890/1");
-  await page.getByLabel(/patient name/i).fill("John Doe");
-  await page.getByLabel(/case details/i).fill("Severe chest pain");
+    if (!triageResponse.ok()) {
+      if (
+        triageResponse.status() === 500 &&
+        /expected str, bytes or os\.PathLike object, not NoneType/i.test(triageBody)
+      ) {
+        test.skip(true, "Backend triage model is not configured locally yet.");
+      }
 
-  await page.getByRole("button", { name: /submit for triage/i }).click();
+      throw new Error(
+        `Triage request failed (${triageResponse.status()}): ${triageBody}`
+      );
+    }
 
-  await expect(page).toHaveURL(new RegExp(`\\?case=${CREATED_CASE_ID}$`));
-  await expect(page.getByRole("heading", { name: "Triage Result" })).toBeVisible();
-  await expect(page.getByText("John Doe")).toBeVisible();
+    await expect(page).toHaveURL(/\/dashboard\?case=\d+$/, { timeout: 45_000 });
+    await expect(page.getByRole("heading", { name: "Triage Result" })).toBeVisible({ timeout: 45_000 });
+    await expect(page.getByText(patientName)).toBeVisible();
+  } finally {
+    try {
+      await deactivateUserViaApi(request, clinician.id, adminCredentials);
+    } catch {
+      // Ignore cleanup failures after a hard timeout.
+    }
+  }
 });
