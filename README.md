@@ -114,6 +114,22 @@ React uses Vite hot reload
 
 ---
 
+## Backend Testing
+
+Run all tests:
+```
+docker compose exec backend pytest -v
+```
+
+Run all tests and see coverage
+```
+docker compose exec backend pytest --cov=app --cov-report=term-missing --cov-config=.coveragerc
+```
+
+See [Backend Test Report](backend/tests/be-test-report.md)
+
+---
+
 ## Troubleshooting
 
 Rebuild containers:
