@@ -275,3 +275,52 @@ def test_undo_ats_override_no_restore_available_returns_400(client, monkeypatch)
 
     assert response.status_code == 400
     assert response.json()["detail"] == "No model or rule ATS available to restore"
+
+
+def test_get_resolved_cases(client, monkeypatch):
+    from datetime import datetime
+
+    monkeypatch.setattr("app.routers.cases.db.get_resolved_cases", lambda: [
+        {
+            "case_id": 20,
+            "user_id": 1,
+            "patient_name": "Resolved Patient",
+            "medicare_number": "12345678901",
+            "severity_flagged": False,
+            "created_at": datetime.now(),
+            "resolved_at": datetime.now(),
+            "ats_category": 4,
+            "ats_source": "model",
+            "override_ats": None,
+            "override_reason": None,
+            "age": None,
+            "gender": None,
+        }
+    ])
+
+    response = client.get("/cases?resolved=true")
+
+    assert response.status_code == 200
+    assert response.json()[0]["resolved_at"] is not None
+
+
+def test_generate_summary_fast_response_returns_placeholder(client, monkeypatch):
+    monkeypatch.setattr("app.routers.cases.db.get_case_by_id", lambda case_id: {
+        "case_id": case_id,
+        "case_dialogue": "Patient reports chest pain.",
+    })
+
+    monkeypatch.setattr("app.routers.cases.deidentify_dialogue", lambda text: {"deidentified_text": text})
+    monkeypatch.setattr("app.routers.cases.db.upsert_clinical_summary", lambda **kwargs: {
+        "case_id": kwargs["case_id"],
+        "soap_summary": kwargs["soap_summary"],
+        "brief_summary": kwargs["brief_summary"],
+    })
+
+    response = client.post("/cases/1/summary?fast_response=true")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["soap_summary"] == "Generating clinical summary..."
+    assert data["brief_summary"] == "Generating brief summary..."
+    assert data["message"] == "Clinical summary generation started"

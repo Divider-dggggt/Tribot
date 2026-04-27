@@ -59,3 +59,45 @@ def test_researcher_get_case_anonymises_identity(monkeypatch):
     assert data["patient_name"] == "[REDACTED]"
     assert data["medicare_number"] == "[REDACTED]"
     assert "[PATIENT_NAME]" in data["case_dialogue"]
+
+
+def test_researcher_get_cases_anonymises_list(monkeypatch):
+    app.dependency_overrides[get_current_user] = researcher_user
+
+    from datetime import datetime
+
+    monkeypatch.setattr("app.routers.cases.db.get_open_cases", lambda: [
+        {
+            "case_id": 1,
+            "user_id": 1,
+            "patient_name": "John Smith",
+            "medicare_number": "12345678901",
+            "case_dialogue": "This is John Smith.",
+            "severity_flagged": True,
+            "created_at": datetime.now(),
+            "resolved_at": None,
+            "ats_category": 2,
+            "ats_source": "rule",
+            "override_ats": None,
+            "override_reason": None,
+            "age": 45,
+            "gender": "male",
+        }
+    ])
+
+    monkeypatch.setattr(
+        "app.routers.cases.deidentify_dialogue",
+        lambda text: {"deidentified_text": "This is [PATIENT_NAME]."}
+    )
+
+    from fastapi.testclient import TestClient
+    with TestClient(app) as test_client:
+        response = test_client.get("/cases")
+
+    app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data[0]["patient_name"] == "[REDACTED]"
+    assert data[0]["medicare_number"] == "[REDACTED]"
+    assert data[0]["case_dialogue"] == "This is [PATIENT_NAME]."
