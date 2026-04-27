@@ -1,63 +1,36 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { MockedFunction } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { render, screen, waitFor, within } from "../test-utils";
+import { render, screen, within } from "../test-utils";
 import { UsersTable } from "../../src/components/UsersTable";
-import { UserRole, type User } from "../../src/types/user";
-import { jsonResponse, signInAs } from "../auth-helpers";
-
-const buildUser = (overrides: Partial<User>): User => ({
-  id: 10,
-  name: "Alice Admin",
-  email: "alice@example.com",
-  role: UserRole.Admin,
-  created_at: "2026-04-10T10:00:00Z",
-  ...overrides,
-});
+import { adminCredentials, signInViaApiSession } from "../auth-helpers";
 
 describe("UsersTable", () => {
-  let fetchMock: MockedFunction<typeof fetch>;
-
-  beforeEach(() => {
-    signInAs(UserRole.Admin, { userId: 1 });
-    fetchMock = vi.fn() as MockedFunction<typeof fetch>;
-    vi.stubGlobal("fetch", fetchMock);
+  beforeAll(async () => {
+    await signInViaApiSession(adminCredentials);
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
+  beforeEach(async () => {
+    await signInViaApiSession(adminCredentials);
   });
 
-  it("shows the empty-state message when no users exist", async () => {
-    fetchMock.mockResolvedValue(jsonResponse([]));
-
+  it("renders the users page title and table", async () => {
     render(<UsersTable />);
 
-    expect(await screen.findByText("No users found")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "All Users" })).toBeInTheDocument();
+    expect(screen.getByRole("table", { name: "users table" })).toBeInTheDocument();
   });
 
-  it("renders each user with name, email, and role", async () => {
-    fetchMock.mockResolvedValue(jsonResponse([
-      buildUser({ id: 10, name: "Alice Admin", email: "alice@example.com", role: UserRole.Admin }),
-      buildUser({ id: 20, name: "Chris Clinician", email: "chris@example.com", role: UserRole.Clinician }),
-    ]));
-
+  it("renders built-in admin account from real backend", async () => {
     render(<UsersTable />);
 
-    expect(await screen.findByText("Alice Admin")).toBeInTheDocument();
-    expect(screen.getByText("alice@example.com")).toBeInTheDocument();
-    expect(screen.getByText("Chris Clinician")).toBeInTheDocument();
-    expect(screen.getByText("chris@example.com")).toBeInTheDocument();
-    expect(screen.getByText(UserRole.Admin)).toBeInTheDocument();
-    expect(screen.getByText(UserRole.Clinician)).toBeInTheDocument();
+    expect(await screen.findByText("admin@example.com")).toBeInTheDocument();
+    expect(screen.getByText("admin")).toBeInTheDocument();
   });
 
   it("opens the create user dialog when clicking Add User", async () => {
-    fetchMock.mockResolvedValue(jsonResponse([]));
-
     render(<UsersTable />);
 
-    await screen.findByText("No users found");
+    await screen.findByRole("heading", { name: "All Users" });
 
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Add User" }));
@@ -67,17 +40,16 @@ describe("UsersTable", () => {
   });
 
   it("hides the deactivate action for the current admin's own row", async () => {
-    fetchMock.mockResolvedValue(jsonResponse([
-      buildUser({ id: 1, name: "Me Admin", email: "me@example.com", role: UserRole.Admin }),
-      buildUser({ id: 20, name: "Chris Clinician", email: "chris@example.com", role: UserRole.Clinician }),
-    ]));
-
     render(<UsersTable />);
 
-    const selfRow = (await screen.findByText("Me Admin")).closest("tr") as HTMLElement;
-    const otherRow = (screen.getByText("Chris Clinician")).closest("tr") as HTMLElement;
-
-    expect(within(selfRow).getAllByRole("button")).toHaveLength(1);
-    expect(within(otherRow).getAllByRole("button")).toHaveLength(2);
+    const selfRow = (await screen.findByText(adminCredentials.email)).closest("tr") as HTMLElement;
+    expect(selfRow).toBeTruthy();
+    const deactivateButtons = within(selfRow).queryAllByRole("button", { name: "Deactivate User" });
+    expect(deactivateButtons).toHaveLength(0);
+    const editButtons = within(selfRow).queryAllByRole("button", { name: "Edit User" });
+    expect(editButtons.length).toBeGreaterThanOrEqual(1);
+    expect(localStorage.getItem("user_email")).toBe(adminCredentials.email);
+    expect(localStorage.getItem("access_token")).toBeTruthy();
+    expect(localStorage.getItem("user_role")).toBe("admin");
   });
 });

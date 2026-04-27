@@ -8,8 +8,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:run:docker": "vitest run",
-    "test:coverage:docker": "vitest run --coverage",
+    "test:run:docker": "VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run",
+    "test:coverage:docker": "VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run --coverage",
     "test:e2e:docker": "PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://backend:8000 E2E_API_BASE_URL=http://backend:8000 playwright test",
     "test:e2e": "playwright test"
   },
