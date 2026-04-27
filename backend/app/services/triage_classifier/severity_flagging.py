@@ -193,7 +193,7 @@ UPWARD_MODIFIERS = {
             r"\bdiaphoretic\b",
             r"\bsweaty\b",
         ],
-        "applies_to": {"chest_pain"},
+        "applies_to": {"cardiac_chest_pain", "non_cardiac_chest_pain_possible"},
     },
     "respiratory_distress": {
         "score": 2,
