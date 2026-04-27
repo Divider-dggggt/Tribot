@@ -230,3 +230,48 @@ def test_generate_case_summary_missing_dialogue(client, monkeypatch):
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Case dialogue not found"
+
+
+def test_generate_case_summary_failure_returns_500(client, monkeypatch):
+    monkeypatch.setattr("app.routers.cases.db.get_case_by_id", lambda case_id: {
+        "case_id": case_id,
+        "case_dialogue": "Patient reports chest pain."
+    })
+
+    monkeypatch.setattr(
+        "app.routers.cases.deidentify_dialogue",
+        lambda text: {"deidentified_text": text}
+    )
+
+    def fake_generate_soap_summary(text):
+        raise RuntimeError("summary failed")
+
+    monkeypatch.setattr(
+        "app.routers.cases.generate_soap_summary",
+        fake_generate_soap_summary
+    )
+
+    response = client.post("/cases/1/summary")
+
+    assert response.status_code == 500
+    assert "Failed to generate summary" in response.json()["detail"]
+
+
+def test_undo_ats_override_case_not_found(client, monkeypatch):
+    monkeypatch.setattr("app.routers.cases.db.undo_ats_override", lambda case_id: None)
+
+    response = client.patch("/cases/999/ats/undo")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Case not found"
+
+
+def test_undo_ats_override_no_restore_available_returns_400(client, monkeypatch):
+    monkeypatch.setattr("app.routers.cases.db.undo_ats_override", lambda case_id: {
+        "error": "No model or rule ATS available to restore"
+    })
+
+    response = client.patch("/cases/1/ats/undo")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "No model or rule ATS available to restore"
