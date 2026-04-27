@@ -11,6 +11,11 @@ export interface CreatedClinician extends UserCredentials {
   id: number;
 }
 
+export interface CreatedUser extends UserCredentials {
+  id: number;
+  role: "admin" | "clinician" | "researcher";
+}
+
 export const adminCredentials: UserCredentials = {
   email: process.env.E2E_ADMIN_EMAIL ?? "admin@example.com",
   password: process.env.E2E_ADMIN_PASSWORD ?? "admin123",
@@ -117,10 +122,41 @@ export const createClinicianViaApi = async (
   request: APIRequestContext,
   adminCreds: UserCredentials = adminCredentials,
 ): Promise<CreatedClinician> => {
+  const createdUser = await createUserViaApi(request, {
+    adminCreds,
+    role: "clinician",
+    namePrefix: "E2E Clinician",
+    emailPrefix: "clinician",
+    password: "Clinician123",
+  });
+
+  return {
+    id: createdUser.id,
+    email: createdUser.email,
+    password: createdUser.password,
+  };
+};
+
+export const createUserViaApi = async (
+  request: APIRequestContext,
+  options: {
+    role: "admin" | "clinician" | "researcher";
+    adminCreds?: UserCredentials;
+    namePrefix: string;
+    emailPrefix: string;
+    password: string;
+  },
+): Promise<CreatedUser> => {
+  const {
+    role,
+    adminCreds = adminCredentials,
+    namePrefix,
+    emailPrefix,
+    password,
+  } = options;
   const adminAccessToken = await getAdminAccessToken(request, adminCreds);
   const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-  const clinicianPassword = "Clinician123";
-  const clinicianEmail = `clinician.${uniqueSuffix}@example.com`;
+  const email = `${emailPrefix}.${uniqueSuffix}@example.com`;
 
   const createUserResponse = await request.post(`${BACKEND_BASE_URL}/users`, {
     headers: {
@@ -128,29 +164,41 @@ export const createClinicianViaApi = async (
       "Content-Type": "application/json",
     },
     data: {
-      name: `E2E Clinician ${uniqueSuffix}`,
-      email: clinicianEmail,
-      role: "clinician",
-      password: clinicianPassword,
+      name: `${namePrefix} ${uniqueSuffix}`,
+      email,
+      role,
+      password,
     },
   });
 
   if (!createUserResponse.ok()) {
     const details = await createUserResponse.text();
-    throw new Error(`Create clinician failed (${createUserResponse.status()}): ${details}`);
+    throw new Error(`Create ${role} failed (${createUserResponse.status()}): ${details}`);
   }
 
   const createdUser = await createUserResponse.json() as { id?: number };
   if (typeof createdUser.id !== "number") {
-    throw new Error("Create clinician response did not include user id.");
+    throw new Error(`Create ${role} response did not include user id.`);
   }
 
   return {
     id: createdUser.id,
-    email: clinicianEmail,
-    password: clinicianPassword,
+    email,
+    password,
+    role,
   };
 };
+
+export const createResearcherViaApi = async (
+  request: APIRequestContext,
+  adminCreds: UserCredentials = adminCredentials,
+): Promise<CreatedUser> => createUserViaApi(request, {
+  adminCreds,
+  role: "researcher",
+  namePrefix: "E2E Researcher",
+  emailPrefix: "researcher",
+  password: "Researcher123",
+});
 
 export const deactivateUserViaApi = async (
   request: APIRequestContext,
