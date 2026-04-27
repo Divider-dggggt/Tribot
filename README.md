@@ -116,34 +116,9 @@ React uses Vite hot reload
 
 ## Frontend Testing
 
-Frontend tests live in `frontend/test/`, at the same level as `frontend/src/`:
+Frontend testing details are documented in:
 
-- `frontend/test/components/` and `frontend/test/pages/` — Vitest + React Testing Library component tests.
-- `frontend/test/e2e/` — Playwright end-to-end tests.
-- `frontend/test/setup.ts` and `frontend/test/test-utils.tsx` — shared test setup and render helpers.
-
-Install dependencies (first time only):
-
-```
-cd frontend
-yarn install
-```
-
-Run component tests (Vitest):
-
-```
-yarn test        # watch mode
-yarn test:run    # single run
-```
-
-Run end-to-end tests (Playwright):
-
-```
-yarn playwright install chromium   # first time only
-yarn test:e2e
-```
-
-`yarn test:e2e` automatically starts the Vite dev server on `http://127.0.0.1:5173`, so the frontend container does not need to be running.
+- [Frontend Testing Guide](frontend/README.md)
 
 ---
 
