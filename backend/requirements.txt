@@ -36,3 +36,8 @@ requests
 # soap benchmark
 pypdf>=4.0.0
 rapidfuzz>=3.0.0
+
+# tests
+pytest
+pytest-cov
+httpx
