@@ -15,7 +15,6 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { FloatingTextField } from "../components/FloatingTextField";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
@@ -170,7 +169,6 @@ const formatBloodPressureInput = (rawValue: string): string => {
 };
 
 export const CaseForm = (): ReactElement => {
-  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
