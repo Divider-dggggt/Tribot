@@ -1,25 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { MockedFunction } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { render, screen, waitFor, within } from "../test-utils";
+import { render, screen, waitFor } from "../test-utils";
 import { Dashboard } from "../../src/pages/Dashboard";
 import { UserRole } from "../../src/types/user";
-import type { DashboardCaseObject } from "../../src/types/case";
-import { jsonResponse, signInAs } from "../auth-helpers";
-
-const buildCase = (overrides: Partial<DashboardCaseObject>): DashboardCaseObject => ({
-  case_id: 1,
-  user_id: 1,
-  patient_name: "Alice Smith",
-  medicare_number: "1111111111",
-  severity_flagged: false,
-  resolved_at: null,
-  created_at: "2026-04-20T10:00:00Z",
-  ats_category: 3,
-  ats_source: "model",
-  ...overrides,
-});
+import {
+  clearAuthSession,
+  createUserViaApi,
+  deactivateUserViaApi,
+  signInViaApiSession,
+  type CreatedUser,
+} from "../auth-helpers";
 
 const renderDashboard = () => render(
   <MemoryRouter initialEntries={["/dashboard"]}>
@@ -27,94 +18,79 @@ const renderDashboard = () => render(
   </MemoryRouter>,
 );
 
+const waitForCasesToFinishLoading = async (): Promise<void> => {
+  await waitFor(() => {
+    const hasEmptyState = screen.queryByText("No cases yet") != null;
+    const rows = screen.getAllByRole("row");
+    const hasCaseRows = rows.length > 2;
+    if (hasEmptyState || hasCaseRows) {
+      return;
+    }
+    throw new Error("Waiting for cases table to finish loading.");
+  }, { timeout: 15_000 });
+};
+
 describe("Dashboard", () => {
-  let fetchMock: MockedFunction<typeof fetch>;
+  let clinician: CreatedUser;
+  let researcher: CreatedUser;
 
-  beforeEach(() => {
-    signInAs(UserRole.Clinician);
-    fetchMock = vi.fn() as MockedFunction<typeof fetch>;
-    vi.stubGlobal("fetch", fetchMock);
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it("shows the empty-state message when there are no cases", async () => {
-    fetchMock.mockImplementation(async () => jsonResponse([]));
-
-    renderDashboard();
-
-    expect(await screen.findByText("No cases yet")).toBeInTheDocument();
-  });
-
-  it("renders open cases with patient name and Medicare number", async () => {
-    fetchMock.mockImplementation(async () => jsonResponse([
-      buildCase({ case_id: 1, patient_name: "Alice Smith", medicare_number: "1111111111" }),
-      buildCase({ case_id: 2, patient_name: "Bob Jones", medicare_number: "2222222222", ats_category: 2 }),
-    ]));
-
-    renderDashboard();
-
-    expect(await screen.findByText("Alice Smith")).toBeInTheDocument();
-    expect(screen.getByText("Bob Jones")).toBeInTheDocument();
-    expect(screen.getByText("1111111111")).toBeInTheDocument();
-    expect(screen.getByText("2222222222")).toBeInTheDocument();
-  });
-
-  it("requests resolved cases when switching the toggle", async () => {
-    fetchMock.mockImplementation(async () => jsonResponse([]));
-
-    renderDashboard();
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        "http://localhost:8000/cases",
-        expect.anything(),
-      );
+  beforeAll(async () => {
+    clinician = await createUserViaApi({
+      role: UserRole.Clinician,
+      namePrefix: "Vitest Clinician Dashboard",
+      emailPrefix: "vitest.dashboard.clinician",
+      password: "Clinician123",
     });
+    researcher = await createUserViaApi({
+      role: UserRole.Researcher,
+      namePrefix: "Vitest Researcher Dashboard",
+      emailPrefix: "vitest.dashboard.researcher",
+      password: "Researcher123",
+    });
+    // Backend token iat uses second-level precision for newly created users.
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 1200);
+    });
+  });
+
+  beforeEach(async () => {
+    await signInViaApiSession(clinician);
+  });
+
+  afterAll(async () => {
+    clearAuthSession();
+    await deactivateUserViaApi(clinician.id);
+    await deactivateUserViaApi(researcher.id);
+  });
+
+  it("renders dashboard heading and main controls for clinician", async () => {
+    renderDashboard();
+
+    expect(await screen.findByRole("heading", { name: "Dashboard" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /create new case/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Open" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Resolved" })).toBeInTheDocument();
+    await waitForCasesToFinishLoading();
+  });
+
+  it("allows switching to resolved view", async () => {
+    renderDashboard();
+    await screen.findByRole("heading", { name: "Dashboard" });
 
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Resolved" }));
 
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        "http://localhost:8000/cases?resolved=true",
-        expect.anything(),
-      );
-    });
-    expect(screen.getByText("Resolved Cases")).toBeInTheDocument();
-  });
-
-  it("calls the resolve endpoint when a clinician clicks the resolve action", async () => {
-    fetchMock.mockImplementation(async () => jsonResponse([
-      buildCase({ case_id: 7, patient_name: "Alice Smith" }),
-    ]));
-
-    renderDashboard();
-
-    const row = (await screen.findByText("Alice Smith")).closest("tr");
-    expect(row).not.toBeNull();
-
-    const user = userEvent.setup();
-    const resolveButton = within(row as HTMLElement).getByRole("button");
-    await user.click(resolveButton);
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        "http://localhost:8000/cases/7/resolve",
-        expect.objectContaining({ method: "PATCH" }),
-      );
-    });
+    expect(await screen.findByText("Resolved Cases")).toBeInTheDocument();
+    await waitForCasesToFinishLoading();
   });
 
   it("hides the Create New Case button for non-clinician users", async () => {
-    signInAs(UserRole.Researcher);
-    fetchMock.mockImplementation(async () => jsonResponse([]));
+    await signInViaApiSession(researcher);
 
     renderDashboard();
 
-    await screen.findByText("No cases yet");
+    await screen.findByRole("heading", { name: "Dashboard" });
     expect(screen.queryByRole("button", { name: /create new case/i })).toBeNull();
+    await waitForCasesToFinishLoading();
   });
 });

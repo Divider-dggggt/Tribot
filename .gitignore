@@ -8,6 +8,7 @@ frontend/.vite
 frontend/.env
 frontend/playwright-report
 frontend/test-results
+frontend/coverage
 
 # =========================
 # Python

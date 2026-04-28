@@ -22,6 +22,16 @@ interface OverrideDialogProps {
   caseId: number;
 }
 
+/**
+ * Renders a dialog for overriding a case's ATS classification.
+ * @param {Object} props The component props.
+ * @param {boolean} props.open Whether the dialog is open.
+ * @param {function} props.onClose The callback function for closing the dialog.
+ * @param {function} props.onSuccess The callback function for successful case override.
+ * @param {ATSLevel} props.initialValue The initial ATS classification of the case being overridden.
+ * @param {number} props.caseId The ID of the case to be overridden.
+ * @returns {JSX.Element} A case override dialog.
+ */
 export const OverrideDialog = ({
   open,
   onClose,

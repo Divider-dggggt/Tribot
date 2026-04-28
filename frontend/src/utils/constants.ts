@@ -1,6 +1,10 @@
 import { UserRole } from "../types/user";
 
-export const API_BASE_URL = "http://localhost:8000";
+const envApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+export const API_BASE_URL = (envApiBaseUrl && envApiBaseUrl.length > 0
+  ? envApiBaseUrl
+  : "http://localhost:8000").replace(/\/+$/, "");
 
 export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   [UserRole.Admin]: [

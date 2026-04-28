@@ -45,6 +45,9 @@ const getMatrixCellBackground = (value: number, maxValue: number, isDiagonal: bo
   return `rgba(147, 51, 234, ${alpha.toFixed(3)})`;
 };
 
+/**
+ * Renders a page for displaying model metrics including a 5x5 confusion matrix.
+ */
 export const Metrics = (): ReactElement => {
   const [metrics, setMetrics] = useState<ModelMetricsAPIResponse | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
