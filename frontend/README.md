@@ -42,12 +42,35 @@ docker compose exec frontend yarn test:coverage:docker
 docker compose exec frontend yarn test:e2e:docker
 ```
 
+6) Run merged coverage (Vitest + Playwright e2e):
+
+```
+docker compose exec frontend yarn test:coverage:merged:docker
+```
+
 ## Coverage Report
 
-After `test:coverage:docker`, coverage outputs are generated in:
+After `test:coverage:docker` (Vitest only) or `test:coverage:merged:docker` (Vitest + Playwright), coverage outputs are generated in:
 
 - `frontend/coverage/`
 - `frontend/coverage/lcov-report/index.html`
+
+## Merge Unit + E2E Coverage
+
+Run locally:
+
+```
+yarn test:coverage:merged
+```
+
+For Docker usage, reuse step 6 above.
+
+This command:
+
+- runs Vitest coverage and writes raw Istanbul JSON into `.nyc_output/`
+- runs Playwright e2e with runtime instrumentation (`VITE_COVERAGE=true`)
+- collects browser coverage from each e2e test into `.nyc_output/`
+- merges everything with `nyc` and writes final reports to `coverage/`
 
 Open the coverage report in your browser:
 
@@ -61,3 +84,6 @@ xdg-open frontend/coverage/lcov-report/index.html
 # Windows (PowerShell / CMD)
 start frontend/coverage/lcov-report/index.html
 ```
+
+### Frontend Test Coverage
+![Frontend Test Coverage](../images/front-end-test-coverage.png)

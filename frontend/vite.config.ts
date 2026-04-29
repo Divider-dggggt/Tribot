@@ -1,10 +1,28 @@
 import { defineConfig, defaultExclude } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import type { PluginOption } from "vite";
 
 const apiProxyTarget = process.env.VITE_API_PROXY_TARGET ?? "http://localhost:8000";
+const coveragePlugins: PluginOption[] = [];
+
+if (process.env.VITE_COVERAGE === "true") {
+  try {
+    const { default: istanbul } = await import("vite-plugin-istanbul");
+    coveragePlugins.push(istanbul({
+      exclude: ["test/**"],
+      extension: [".ts", ".tsx"],
+      requireEnv: true,
+      checkProd: false,
+    }));
+  } catch {
+    throw new Error(
+      "VITE_COVERAGE=true but vite-plugin-istanbul is missing. Run yarn install and restart the frontend container."
+    );
+  }
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), ...coveragePlugins],
   server: {
     host: true,
     port: 5173,
@@ -12,7 +30,7 @@ export default defineConfig({
       "/api": {
         target: apiProxyTarget,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (proxyPath: string) => proxyPath.replace(/^\/api/, ""),
       },
     },
   },
@@ -29,5 +47,5 @@ export default defineConfig({
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/main.tsx"],
     },
-  }
+  },
 });

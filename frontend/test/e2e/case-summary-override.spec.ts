@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./coverage-fixture";
+import type { Page } from "@playwright/test";
 import {
   adminCredentials,
   createClinicianViaApi,
@@ -18,7 +19,7 @@ const extractCaseIdFromUrl = (urlString: string): number => {
 };
 
 const createCaseThroughUi = async (
-  page: Parameters<typeof test>[0]["page"],
+  page: Page,
   input: {
     patientName: string;
     medicare: string;
