@@ -132,6 +132,27 @@ Expected outputs include:
 
 Warning: if you re-run the same command with the same `--output_dir`, files in `sprint2_setfit/runs/minilm_run` can be overwritten or mixed with the new run. Use a new output directory such as `sprint2_setfit/runs/minilm_run_2` to keep previous results.
 
+Final trained SetFit model path:
+
+```
+pipeline/sprint2_setfit/runs/minilm_run/final_model
+```
+
+Backend service expected SetFit model path:
+
+```
+backend/app/services/triage_classifier/models/sprint2_setfit_model
+```
+
+After training, manually copy the contents of `final_model/` into `backend/app/services/triage_classifier/models/sprint2_setfit_model/` if you want the backend SetFit classifier to use the newly trained model. From the repository root, the copy operation would be:
+
+```
+rm -rf backend/app/services/triage_classifier/models/sprint2_setfit_model
+cp -R pipeline/sprint2_setfit/runs/minilm_run/final_model backend/app/services/triage_classifier/models/sprint2_setfit_model
+```
+
+Warning: this replaces the backend SetFit model currently used by `backend/app/services/triage_classifier/sprint2_setfit_classifier.py`. Back up the existing `backend/app/services/triage_classifier/models/sprint2_setfit_model` directory first if you need to keep it.
+
 Run SetFit inference after training:
 
 ```
@@ -191,6 +212,27 @@ Expected outputs include:
 - Hugging Face trainer checkpoint folders
 
 Warning: if you re-run the same command with the same `--output_dir`, trainer checkpoints and output files in `sprint2_deberta/runs/deberta_multiclass/run1` can be overwritten or mixed with the new run. Use a new output directory such as `run2` to preserve previous results. Full DeBERTa training is compute-heavy and may download model weights on first run.
+
+Final trained DeBERTa model path:
+
+```
+pipeline/sprint2_deberta/runs/deberta_multiclass/run1/best_model
+```
+
+Backend service expected DeBERTa model path:
+
+```
+backend/app/services/triage_classifier/models/sprint2_deberta_model
+```
+
+After training, manually copy the contents of `best_model/` into `backend/app/services/triage_classifier/models/sprint2_deberta_model/` if you want the backend DeBERTa classifier to use the newly trained model. From the repository root, the copy operation would be:
+
+```
+rm -rf backend/app/services/triage_classifier/models/sprint2_deberta_model
+cp -R pipeline/sprint2_deberta/runs/deberta_multiclass/run1/best_model backend/app/services/triage_classifier/models/sprint2_deberta_model
+```
+
+Warning: this replaces the backend DeBERTa model currently used by `backend/app/services/triage_classifier/sprint2_deberta_classifier.py`. Back up the existing `backend/app/services/triage_classifier/models/sprint2_deberta_model` directory first if you need to keep it.
 
 For a lighter wiring check, reduce the run:
 
