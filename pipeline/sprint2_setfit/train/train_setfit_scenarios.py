@@ -328,11 +328,7 @@ def plot_confusion(y_true: np.ndarray, y_pred: np.ndarray, out_path: Path) -> No
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
-
-def evaluate_split(model: SetFitModel, df: pd.DataFrame, split_name: str, output_dir: Path) -> Dict[str, float]:
-    y_true = df["label"].to_numpy()
-    y_pred = np.asarray(model.predict(df["text"].tolist()))
-    metrics = compute_metrics(y_true, y_pred)
+def build_sample_model_eval(y_true: np.ndarray, y_pred: np.ndarray) -> Dict:
     report = classification_report(
         y_true,
         y_pred,
@@ -341,6 +337,49 @@ def evaluate_split(model: SetFitModel, df: pd.DataFrame, split_name: str, output
         output_dict=True,
         zero_division=0,
     )
+    cm = confusion_matrix(y_true, y_pred, labels=list(range(len(LABELS))))
+
+    weighted = report["weighted avg"]
+
+    return {
+        "sample_model_eval": {
+            "f1_score": float(weighted["f1-score"]),
+            "precision": float(weighted["precision"]),
+            "recall": float(weighted["recall"]),
+            "confusion_matrix": cm.tolist(),
+        }
+    }
+
+
+# def evaluate_split(model: SetFitModel, df: pd.DataFrame, split_name: str, output_dir: Path) -> Dict[str, float]:
+#     y_true = df["label"].to_numpy()
+#     y_pred = np.asarray(model.predict(df["text"].tolist()))
+#     metrics = compute_metrics(y_true, y_pred)
+#     report = classification_report(
+#         y_true,
+#         y_pred,
+#         labels=list(range(len(LABELS))),
+#         target_names=[str(x) for x in LABELS],
+#         output_dict=True,
+#         zero_division=0,
+#     )
+
+#     pred_df = df.copy()
+#     pred_df["pred_label_idx"] = y_pred
+#     pred_df["pred_ats"] = [INDEX_TO_LABEL[int(x)] for x in y_pred]
+#     pred_df["true_ats"] = [INDEX_TO_LABEL[int(x)] for x in y_true]
+#     pred_df.to_csv(output_dir / f"{split_name}_predictions.csv", index=False)
+
+#     save_json(metrics, output_dir / f"{split_name}_metrics.json")
+#     save_json(report, output_dir / f"{split_name}_classification_report.json")
+#     plot_confusion(y_true, y_pred, output_dir / f"{split_name}_confusion.png")
+#     return metrics
+
+def evaluate_split(model: SetFitModel, df: pd.DataFrame, split_name: str, output_dir: Path) -> Dict:
+    y_true = df["label"].to_numpy()
+    y_pred = np.asarray(model.predict(df["text"].tolist()), dtype=int)
+
+    metrics = build_sample_model_eval(y_true, y_pred)
 
     pred_df = df.copy()
     pred_df["pred_label_idx"] = y_pred
@@ -349,7 +388,6 @@ def evaluate_split(model: SetFitModel, df: pd.DataFrame, split_name: str, output
     pred_df.to_csv(output_dir / f"{split_name}_predictions.csv", index=False)
 
     save_json(metrics, output_dir / f"{split_name}_metrics.json")
-    save_json(report, output_dir / f"{split_name}_classification_report.json")
     plot_confusion(y_true, y_pred, output_dir / f"{split_name}_confusion.png")
     return metrics
 
@@ -450,13 +488,12 @@ def main() -> None:
     model_dir = out_dir / "final_model"
     model.save_pretrained(str(model_dir))
 
-    metrics = {
-        "recommended_metric": "val_macro_f1",
-        "train": evaluate_split(model, train_df, "train", out_dir),
-        "val": evaluate_split(model, val_df, "val", out_dir),
-        "test": evaluate_split(model, test_df, "test", out_dir),
-    }
-    save_json(metrics, out_dir / "summary_metrics.json")
+    train_metrics = evaluate_split(model, train_df, "train", out_dir)
+    val_metrics = evaluate_split(model, val_df, "val", out_dir)
+    test_metrics = evaluate_split(model, test_df, "test", out_dir)
+
+    summary_metrics = val_metrics
+    save_json(summary_metrics, out_dir / "summary_metrics.json")    
     save_json(
         {
             "input_jsons": run_cfg.input_jsons,
@@ -472,8 +509,7 @@ def main() -> None:
     )
 
     print("Training complete.")
-    print(json.dumps(metrics, ensure_ascii=False, indent=2))
-
+    print(json.dumps(summary_metrics, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
     main()

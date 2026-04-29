@@ -117,11 +117,11 @@ In practice, DeBERTa is currently the strongest pure classifier, while RAG is th
 
 ### RAG:
 
-Under **backend/app/services/triage_classifier/RAG/configs/llm_config.yaml**, replace Url, model with your own API url and model. Under **backend/.env** replace LLM_API_KEY= with your own API key.
+Under **backend/app/services/triage_classifier/RAG/configs/llm_config.yaml**, replace Url, model with your own API url and model. Under the project-root **.env** replace LLM_API_KEY= with your own API key.
 
 ### SOAP Generation
 
-Under **backend/app/services/soap_generator/config.yaml** replace url, model with your own API url and model, Under **backend/.env** replace LLM_API_KEY= with your own API key.
+Under **backend/app/services/soap_generator/config.yaml** replace url, model with your own API url and model, Under the project-root **.env** replace LLM_API_KEY= with your own API key.
 
 
 # Severity Flagging Algorithm
@@ -165,3 +165,76 @@ The output includes the de-identified dialogue, a list of detected sensitive ite
 This module generates structured clinical summaries in SOAP format (Subjective, Objective, Assessment, Plan) from emergency triage dialogue using an LLM-first pipeline: `generate_soap(payload)` validates a `SOAPRequest`, resolves the configured OpenAI-compatible model endpoint from `config.yaml` and `LLM_API_KEY`, injects scenario metadata and dialogue into a strict clinical prompt, calls the model at low temperature, extracts JSON from the response, normalizes missing or unstable fields into the expected SOAP schema, and validates the final result with Pydantic before returning `scenario_number`, `summary_header`, `soap`, and `brief_summary`. The generated SOAP object separates patient-reported subjective information, clinician-observed objective findings, preliminary assessment, and plan, with fallback defaults such as "Awaiting medical assessment." when no plan is stated. 
 
 The `benchmark/` package evaluates generated SOAP outputs against heuristic gold annotations built from sample scenarios: it flattens both gold and predicted SOAP notes into facts, uses hybrid TF-IDF character n-gram plus RapidFuzz matching, and reports structure validity, must-fact recall, supported-fact precision, section placement, clinical adequacy, safety score, and an optional ETEK (Emergency Triage Education Kit) handbook-alignment score. The main benchmark score is a weighted combination of structure, required clinical fact coverage, unsupported-content control, correct SOAP section placement, clinical completeness, and safety checks such as negation flips, missing numeric details, and missing urgency language for ATS 1-2 cases.
+
+
+# Docker Usage for SOAP Generation and RAG
+
+This project is run through Docker. From the repository root, start or rebuild the full stack first:
+
+```bash
+docker compose up --build
+```
+
+The backend service runs with the backend source mounted at `/app`. Commands for ML services should therefore be executed through `docker compose exec` inside the backend service instead of directly through a host Python environment. Runtime environment variables are loaded by Docker Compose from the project-root `.env` file.
+
+## SOAP Generation in Docker
+
+The SOAP generator creates structured SOAP notes from emergency triage dialogue using an LLM-first pipeline: it validates a `SOAPRequest`, resolves the OpenAI-compatible model endpoint from `app/services/soap_generator/config.yaml` and `LLM_API_KEY`, injects dialogue into a strict clinical prompt, calls the model, extracts JSON, normalizes the result into the SOAP schema, and validates it with Pydantic.
+
+Run a single smoke test scenario:
+
+```bash
+docker compose exec -T backend python app/services/soap_generator/soap_test.py --index 0
+```
+
+Run all SOAP sample scenarios:
+
+```bash
+docker compose exec -T backend python app/services/soap_generator/soap_test.py --all
+```
+
+Run all SOAP sample scenarios with the lightweight ROUGE-L smoke evaluation:
+
+```bash
+docker compose exec -T backend python app/services/soap_generator/soap_test.py --all --eval
+```
+
+Run the formal SOAP benchmark:
+
+```bash
+docker compose exec -T backend sh -lc "cd /app/app/services/soap_generator/benchmark && PYTHONPATH=. python scripts/evaluate_generated_json.py --gold data/gold_annotations.json --pred data/generated_outputs_from_samples.json --handbook_dir data/handbook_index --out_json data/evaluation_results_generated_samples.json"
+```
+
+The SOAP benchmark flattens gold and predicted SOAP notes into facts, compares them with hybrid TF-IDF character n-gram plus RapidFuzz matching, and reports structure validity, must-fact recall, supported-fact precision, section placement, clinical adequacy, safety score, and optional ETEK handbook alignment.
+
+## RAG in Docker
+
+The RAG service provides ATS handbook retrieval, handbook-fit normalization, and LLM-based triage inference through `ingest_handbook` and `llm_rag_predict`. Its Docker path is `/app/app/services/triage_classifier/RAG`.
+
+If needed, recreate the RAG app config from the example:
+
+```bash
+docker compose exec -T backend sh -lc "cd /app/app/services/triage_classifier/RAG && cp configs/app_config.example.yaml configs/app_config.yaml"
+```
+
+Build or refresh the handbook retrieval indices:
+
+```bash
+docker compose exec -T backend sh -lc "cd /app/app/services/triage_classifier/RAG && python -c \"from handbook_rag_function_project.pipeline import ingest_handbook; print(ingest_handbook('configs/app_config.yaml'))\""
+```
+
+Call the LLM/RAG branch:
+
+```bash
+docker compose exec -T backend sh -lc "cd /app/app/services/triage_classifier/RAG && python -" <<'PY'
+from handbook_rag_function_project.pipeline import llm_rag_predict
+
+result = llm_rag_predict(
+    "28 weeks pregnant, severe headache, visual disturbance, vomiting, BP 180/115.",
+    "configs/app_config.yaml"
+)
+print(result)
+PY
+```
+
+Configure RAG by editing `backend/app/services/triage_classifier/RAG/configs/app_config.yaml` and `backend/app/services/triage_classifier/RAG/configs/llm_config.yaml` on the host. Configure SOAP generation by editing `backend/app/services/soap_generator/config.yaml`. The LLM API key should be supplied through `LLM_API_KEY` in the project `.env`, which is passed into the backend container by Docker Compose.

@@ -31,6 +31,7 @@ sentence-transformers==5.1.1
 rank-bm25
 faiss-cpu
 pymupdf
+pyyaml
 requests
 
 # soap benchmark
