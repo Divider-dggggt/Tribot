@@ -4,7 +4,7 @@
 
 ## Overview
 
-This document summarizes the current comparison of four approaches for ATS triage classification from nurse–patient dialogue:
+This summarizes the current comparison of four approaches for ATS triage classification from nurse–patient dialogue:
 
 - Baseline model
 - SetFit
@@ -159,3 +159,9 @@ Name masking is handled carefully to preserve speaker labels such as Nurse:, Doc
 The de-identification behaviour is configurable through simple masking flags, allowing selected entity types such as age, dates, times, or names to be retained when clinically relevant. This is useful because age and date of birth may be required for triage or clinical context, while other identifiers should still be removed.
 
 The output includes the de-identified dialogue, a list of detected sensitive items, and a boolean flag indicating whether any de-identification was applied.
+
+# Clinicial Summary Generator
+
+This module generates structured clinical summaries in SOAP format (Subjective, Objective, Assessment, Plan) from emergency triage dialogue using an LLM-first pipeline: `generate_soap(payload)` validates a `SOAPRequest`, resolves the configured OpenAI-compatible model endpoint from `config.yaml` and `LLM_API_KEY`, injects scenario metadata and dialogue into a strict clinical prompt, calls the model at low temperature, extracts JSON from the response, normalizes missing or unstable fields into the expected SOAP schema, and validates the final result with Pydantic before returning `scenario_number`, `summary_header`, `soap`, and `brief_summary`. The generated SOAP object separates patient-reported subjective information, clinician-observed objective findings, preliminary assessment, and plan, with fallback defaults such as "Awaiting medical assessment." when no plan is stated. 
+
+The `benchmark/` package evaluates generated SOAP outputs against heuristic gold annotations built from sample scenarios: it flattens both gold and predicted SOAP notes into facts, uses hybrid TF-IDF character n-gram plus RapidFuzz matching, and reports structure validity, must-fact recall, supported-fact precision, section placement, clinical adequacy, safety score, and an optional ETEK (Emergency Triage Education Kit) handbook-alignment score. The main benchmark score is a weighted combination of structure, required clinical fact coverage, unsupported-content control, correct SOAP section placement, clinical completeness, and safety checks such as negation flips, missing numeric details, and missing urgency language for ATS 1-2 cases.
