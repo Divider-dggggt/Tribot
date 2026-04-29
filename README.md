@@ -7,6 +7,12 @@ This project contains a full-stack application using:
 - PostgreSQL
 - Docker
 
+### System Architecture
+![System Architecture](images/system-architecture.png)
+
+### Database Design
+![Database Design](images/db-design.png)
+
 ## Requirements
 
 Install the following:
@@ -60,6 +66,8 @@ http://localhost:8000
 
 Backend API Docs  
 http://localhost:8000/docs
+or
+see [API Documentation](backend/API_DOCUMENTATION.md)
 
 PostgreSQL  
 localhost:5432
@@ -79,6 +87,15 @@ Remove containers and database volume:
 ```
 docker compose down -v
 ```
+
+---
+
+## How It Works
+
+Details on the algortihms and ML services can be found in [Tribot Services](backend/app/services/TRIBOT_SERVICES.md)
+
+### ML Services
+![ML Services](images/ml-services.png)
 
 ---
 
@@ -121,12 +138,12 @@ Run all tests - unit tests and integration tests:
 docker compose exec backend pytest -v
 ```
 
-Run all tests and see coverage
+Run all tests and see coverage (78%)
 ```
 docker compose exec backend pytest --cov=app --cov-report=term-missing --cov-config=.coveragerc
 ```
 
-See [Backend Test Report](backend/tests/be-test-report.md)
+See [Backend Test Report](backend/tests/BE_TEST_REPORT.md)
 
 ---
 
@@ -135,6 +152,7 @@ See [Backend Test Report](backend/tests/be-test-report.md)
 Frontend testing details are documented in:
 
 - [Frontend Testing Guide](frontend/README.md)
+- Coverage: Over 80% for Vitest and End to End
 
 ---
 
