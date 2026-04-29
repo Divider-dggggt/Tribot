@@ -200,6 +200,11 @@ Query params:
 - `fast_response` default `true`
 - `generate_summary` default `true`
 
+Case status behaviour:
+- New cases are created as open cases
+- `resolved_at` is `null` when a case is first created
+- the case remains open until a clinician marks it as resolved
+
 Business rules:
 - A new case cannot be created if the same Medicare number already has an open case
 - Medicare number must be exactly 11 digits
@@ -259,8 +264,13 @@ Access:
 - Any authenticated user
 
 Query params:
-- `resolved=false` returns open cases
+- `resolved=false` by default, which returns open cases
 - `resolved=true` returns resolved cases
+
+Resolved field behaviour:
+- `resolved_at` is `null` for open cases by default
+- `resolved_at` is populated with a timestamp only when the case is marked as resolved
+- If a resolved case is reopened, `resolved_at` is set back to `null`
 
 Researcher behaviour:
 - `patient_name` is returned as `[REDACTED]`
@@ -291,6 +301,8 @@ Response:
   "resolved_at": "2026-04-29T02:00:00+00:00"
 }
 ```
+When a case is resolved, `resolved_at` is updated with the resolution timestamp.
+
 
 ### `PATCH /cases/{case_id}/reopen`
 ### `PATCH /triage/{case_id}/reopen`
@@ -299,6 +311,9 @@ Reopen a resolved case.
 
 Access:
 - `clinician`
+
+When a case is reopened, `resolved_at` is reset to `null`.
+
 
 ### `PATCH /cases/{case_id}/ats`
 ### `PATCH /triage/{case_id}/ats`
