@@ -8,10 +8,10 @@ This project contains a full-stack application using:
 - Docker
 
 ### System Architecture
-![System Architecture](system-architecture.png)
+![System Architecture](images/system-architecture.png)
 
 ### Database Design
-![Database Design](db-design.png)
+![Database Design](images/db-design.png)
 
 ## Requirements
 
@@ -95,7 +95,7 @@ docker compose down -v
 Details on the algortihms and ML services can be found in [Tribot Services](backend/app/services/TRIBOT_SERVICES.md)
 
 ### ML Services
-![ML Services](ml-services.png)
+![ML Services](images/ml-services.png)
 
 ---
 
@@ -138,7 +138,7 @@ Run all tests - unit tests and integration tests:
 docker compose exec backend pytest -v
 ```
 
-Run all tests and see coverage
+Run all tests and see coverage (78%)
 ```
 docker compose exec backend pytest --cov=app --cov-report=term-missing --cov-config=.coveragerc
 ```
@@ -152,6 +152,7 @@ See [Backend Test Report](backend/tests/BE_TEST_REPORT.md)
 Frontend testing details are documented in:
 
 - [Frontend Testing Guide](frontend/README.md)
+- Coverage: Over 80% for Vitest and End to End
 
 ---
 

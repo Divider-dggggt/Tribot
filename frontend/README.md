@@ -61,3 +61,6 @@ xdg-open frontend/coverage/lcov-report/index.html
 # Windows (PowerShell / CMD)
 start frontend/coverage/lcov-report/index.html
 ```
+
+### Frontend Test Coverage
+![Frontend Test Coverage](../images/front-end-test-coverage.png)
