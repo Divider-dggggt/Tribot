@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./coverage-fixture";
 import { adminCredentials, loginThroughUi } from "./helpers";
 
 test("redirects protected pages to login when the user is not authenticated", async ({ page }) => {

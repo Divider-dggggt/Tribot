@@ -8,8 +8,10 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:coverage:merged": "rm -rf coverage .nyc_output .nyc_output_merged && mkdir -p .nyc_output .nyc_output_merged && vitest run --coverage --coverage.reporter=json --coverage.reportsDirectory=.nyc_output && PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://localhost:8000 E2E_API_BASE_URL=http://localhost:8000 E2E_COVERAGE=1 VITE_COVERAGE=true playwright test && nyc merge .nyc_output .nyc_output_merged/coverage-final.json && nyc report --temp-dir .nyc_output_merged --report-dir coverage --reporter=text --reporter=html --reporter=lcov --reporter=json-summary",
     "test:run:docker": "VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run",
     "test:coverage:docker": "VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run --coverage",
+    "test:coverage:merged:docker": "if [ ! -d node_modules/vite-plugin-istanbul ] || [ ! -d node_modules/nyc ]; then yarn install; fi && rm -rf coverage .nyc_output .nyc_output_merged && mkdir -p .nyc_output .nyc_output_merged && VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run --coverage --coverage.reporter=json --coverage.reportsDirectory=.nyc_output && PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://backend:8000 E2E_API_BASE_URL=http://backend:8000 E2E_COVERAGE=1 VITE_COVERAGE=true playwright test && nyc merge .nyc_output .nyc_output_merged/coverage-final.json && nyc report --temp-dir .nyc_output_merged --report-dir coverage --reporter=text --reporter=html --reporter=lcov --reporter=json-summary",
     "test:e2e:docker": "PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://backend:8000 E2E_API_BASE_URL=http://backend:8000 playwright test",
     "test:e2e": "playwright test"
   },
@@ -38,8 +40,10 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "3.2.4",
     "jsdom": "^29.0.2",
+    "nyc": "^18.0.0",
     "typescript": "^5.5.0",
     "vite": "^7.2.4",
+    "vite-plugin-istanbul": "^8.0.0",
     "vitest": "^3.2.4"
   },
   "resolutions": {
