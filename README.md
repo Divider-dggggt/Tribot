@@ -64,7 +64,12 @@ POSTGRES_DB=your_postgres_db_name
 LLM_API_KEY=your_llm_api_key
 ```
 
-4. Start the application:
+4. Place necessary model(s) in relevant folder
+- [Download deberta model](https://drive.google.com/file/d/1TIaPlBFxFNoYJ-Z4qeqnJkWv7ieJddc6/view?usp=drive_link)
+- [Download setfit model](https://drive.google.com/file/d/1_lQJrk8fYz6p0BwRvxrh9mUoZdJP6qWY/view?usp=sharing)
+- Place model content in respective directories under `backend/app/services/triage_classifier/models`. See [Backend Structure](BACKEND_STRUCTURE.md) for reference.
+
+5. Start the application:
 
 ```
 docker compose up --build
@@ -158,6 +163,12 @@ Edit code locally.
 Changes automatically reload:
 
 React uses Vite hot reload  
+
+---
+
+## Pipeline for Model Training
+
+See [Pipeline details](pipeline/README.md)
 
 ---
 
