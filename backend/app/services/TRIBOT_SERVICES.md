@@ -1,4 +1,6 @@
-# ATS Triage Model Comparison README
+# TRIBOT ML Services
+
+# ATS Triage Model Comparison
 
 ## Overview
 
@@ -120,3 +122,40 @@ Under **backend/app/services/triage_classifier/RAG/configs/llm_config.yaml**, re
 ### SOAP Generation
 
 Under **backend/app/services/soap_generator/config.yaml** replace url, model with your own API url and model, Under **backend/.env** replace LLM_API_KEY= with your own API key.
+
+
+# Severity Flagging Algorithm
+
+The severity flagging module provides a rule-based safety layer for triage classification. It is designed to identify potentially high-risk clinical presentations from the patient dialogue and recommend an ATS category independently of the ML classifier.
+
+The algorithm uses a presentation-based scoring approach:
+
+1. **Detect base presentations**  
+   The dialogue is scanned for key clinical presentations such as chest pain, shortness of breath, stroke-like symptoms, seizure, severe bleeding, allergic reaction, syncope/loss of consciousness, and possible infection/sepsis.
+
+2. **Apply modifier rules**  
+   Once a presentation is detected, the algorithm checks for related risk factors and clinical features. These can increase severity, such as reduced consciousness, respiratory distress, cardiac risk factors, immunosuppression, anticoagulant use, head injury, or haemodynamic concern. Reassuring features may slightly reduce severity, but are applied conservatively.
+
+3. **Apply hard overrides**  
+   Certain critical findings bypass normal scoring and directly assign a high-priority ATS category. Examples include respiratory arrest, airway compromise, ongoing/prolonged seizure, cardiac arrest, severe shock, or acute stroke indicators.
+
+4. **Map score to ATS category**  
+   The final score is converted into a provisional ATS recommendation. Higher severity scores map to more urgent ATS categories, where ATS 1 is the most urgent and ATS 5 is the least urgent.
+
+5. **Return explainable output**  
+   The function returns the recommended ATS category, matched presentations, modifiers, overrides, and a short `severity_flag_notes` string for frontend display. This helps clinicians understand why a case was flagged.
+
+This rule-based layer is not intended to replace clinical judgement or the ML classifier. Instead, it acts as an explainable safety mechanism to reduce the risk of under-triage when high-risk features are present in the dialogue.
+
+
+# Patient de-identification
+
+The backend includes a rule-based patient de-identification step that removes or masks common personally identifiable information from clinical dialogue before downstream processing. It uses regular expressions to detect sensitive entities such as names, dates, dates of birth, times, email addresses, phone numbers, ID numbers, addresses, and ages.
+
+Detected entities are replaced with standard placeholders such as `[NAME]`, `[DOB]`, `[DATE]`, `[PHONE]`, `[EMAIL]`, `[ADDRESS]`, and `[AGE]`. The function also records which items were detected, what text was matched, and what replacement was applied, allowing the system to audit whether de-identification occurred.
+
+Name masking is handled carefully to preserve speaker labels such as Nurse:, Doctor:, Patient:, and Carer: while still masking likely patient or person names in dialogue. Introductory phrases such as “My name is…” or “This is…” are handled separately so only the name portion is replaced.
+
+The de-identification behaviour is configurable through simple masking flags, allowing selected entity types such as age, dates, times, or names to be retained when clinically relevant. This is useful because age and date of birth may be required for triage or clinical context, while other identifiers should still be removed.
+
+The output includes the de-identified dialogue, a list of detected sensitive items, and a boolean flag indicating whether any de-identification was applied.

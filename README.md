@@ -7,6 +7,12 @@ This project contains a full-stack application using:
 - PostgreSQL
 - Docker
 
+### System Architecture
+![System Architecture](system-architecture.png)
+
+### Database Design
+![Database Design](db-design.png)
+
 ## Requirements
 
 Install the following:
@@ -60,6 +66,8 @@ http://localhost:8000
 
 Backend API Docs  
 http://localhost:8000/docs
+or
+see [API Documentation](backend/API_DOCUMENTATION.md)
 
 PostgreSQL  
 localhost:5432
@@ -79,6 +87,15 @@ Remove containers and database volume:
 ```
 docker compose down -v
 ```
+
+---
+
+## How It Works
+
+Details on the algortihms and ML services can be found in [Tribot Services](backend/app/services/TRIBOT_SERVICES.md)
+
+### ML Services
+![ML Services](ml-services.png)
 
 ---
 
@@ -126,7 +143,7 @@ Run all tests and see coverage
 docker compose exec backend pytest --cov=app --cov-report=term-missing --cov-config=.coveragerc
 ```
 
-See [Backend Test Report](backend/tests/be-test-report.md)
+See [Backend Test Report](backend/tests/BE_TEST_REPORT.md)
 
 ---
 
