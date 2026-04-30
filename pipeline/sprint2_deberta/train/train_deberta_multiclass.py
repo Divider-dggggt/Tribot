@@ -176,6 +176,39 @@ def compute_metrics(eval_pred):
     }
 
 
+# def save_summary(out_dir: Path, trainer: Trainer, model, tokenizer, val_df: pd.DataFrame, args: argparse.Namespace) -> None:
+#     val_ds = JsonDataset(val_df, tokenizer, args.max_length)
+#     pred_output = trainer.predict(val_ds)
+#     logits = pred_output.predictions
+#     labels = pred_output.label_ids
+#     preds = np.argmax(logits, axis=-1)
+
+#     summary = compute_metrics((logits, labels))
+#     summary["confusion_matrix"] = confusion_matrix(labels, preds, labels=list(range(len(LABELS)))).tolist()
+#     summary["classification_report"] = classification_report(
+#         labels,
+#         preds,
+#         labels=list(range(len(LABELS))),
+#         target_names=[str(x) for x in LABELS],
+#         output_dict=True,
+#         zero_division=0,
+#     )
+
+#     pred_df = val_df.copy()
+#     pred_df["pred_label_id"] = preds
+#     pred_df["pred_ats"] = [ID_TO_LABEL[int(x)] for x in preds]
+#     pred_df["true_ats"] = [ID_TO_LABEL[int(x)] for x in labels]
+#     pred_df.to_csv(out_dir / "val_predictions.csv", index=False)
+
+#     with open(out_dir / "summary_metrics.json", "w", encoding="utf-8") as f:
+#         json.dump(summary, f, ensure_ascii=False, indent=2)
+
+#     with open(out_dir / "label_mapping.json", "w", encoding="utf-8") as f:
+#         json.dump({"label_to_id": LABEL_TO_ID, "id_to_label": ID_TO_LABEL}, f, ensure_ascii=False, indent=2)
+
+#     with open(out_dir / "run_args.json", "w", encoding="utf-8") as f:
+#         json.dump(vars(args), f, ensure_ascii=False, indent=2)
+
 def save_summary(out_dir: Path, trainer: Trainer, model, tokenizer, val_df: pd.DataFrame, args: argparse.Namespace) -> None:
     val_ds = JsonDataset(val_df, tokenizer, args.max_length)
     pred_output = trainer.predict(val_ds)
@@ -183,16 +216,7 @@ def save_summary(out_dir: Path, trainer: Trainer, model, tokenizer, val_df: pd.D
     labels = pred_output.label_ids
     preds = np.argmax(logits, axis=-1)
 
-    summary = compute_metrics((logits, labels))
-    summary["confusion_matrix"] = confusion_matrix(labels, preds, labels=list(range(len(LABELS)))).tolist()
-    summary["classification_report"] = classification_report(
-        labels,
-        preds,
-        labels=list(range(len(LABELS))),
-        target_names=[str(x) for x in LABELS],
-        output_dict=True,
-        zero_division=0,
-    )
+    sample_model_eval = build_sample_model_eval(labels, preds)
 
     pred_df = val_df.copy()
     pred_df["pred_label_id"] = preds
@@ -201,13 +225,35 @@ def save_summary(out_dir: Path, trainer: Trainer, model, tokenizer, val_df: pd.D
     pred_df.to_csv(out_dir / "val_predictions.csv", index=False)
 
     with open(out_dir / "summary_metrics.json", "w", encoding="utf-8") as f:
-        json.dump(summary, f, ensure_ascii=False, indent=2)
+        json.dump(sample_model_eval, f, ensure_ascii=False, indent=2)
 
     with open(out_dir / "label_mapping.json", "w", encoding="utf-8") as f:
         json.dump({"label_to_id": LABEL_TO_ID, "id_to_label": ID_TO_LABEL}, f, ensure_ascii=False, indent=2)
 
     with open(out_dir / "run_args.json", "w", encoding="utf-8") as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=2)
+
+def build_sample_model_eval(y_true, y_pred):
+    report = classification_report(
+        y_true,
+        y_pred,
+        labels=[0, 1, 2, 3, 4],
+        target_names=["1", "2", "3", "4", "5"],
+        output_dict=True,
+        zero_division=0,
+    )
+    cm = confusion_matrix(y_true, y_pred, labels=[0, 1, 2, 3, 4])
+
+    weighted = report["weighted avg"]
+
+    return {
+        "sample_model_eval": {
+            "f1_score": float(weighted["f1-score"]),
+            "precision": float(weighted["precision"]),
+            "recall": float(weighted["recall"]),
+            "confusion_matrix": cm.tolist(),
+        }
+    }
 
 
 def main() -> None:

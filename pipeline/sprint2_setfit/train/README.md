@@ -1,162 +1,63 @@
-# ATS Triage SetFit Training Project
+# ATS Triage SetFit Training
 
-This project trains a local SetFit text classifier for ATS 1-5 triage classification from the uploaded JSON dataset.
+This project trains a SetFit classifier for ATS 1-5 triage classification from scenario-format JSON files. It is intended to run inside the shared pipeline Docker container described in `pipeline/README.md`.
 
-## What this project does
+## Docker Start
 
-- Reads the JSON dataset at `generated_triage_dataset_200.json`
-- Uses `dialogue_text` as the default model input
-- Builds a stratified train / validation / test split from that single file
-- Trains a SetFit classifier
-- Saves:
-  - the split files
-  - the trained model
-  - train / val / test metrics
-  - confusion matrices
-  - per-example prediction CSV files
-
-## Important note about 8x4090
-
-For a dataset this small, **data-parallel multi-GPU training is not the best use of the machine**.
-
-The recommended setup is:
-
-- use **one GPU per training run**
-- use the remaining GPUs to run **parallel sweeps** over different sentence-transformer backbones and random seeds
-
-That is why this repo includes:
-
-- `train_setfit.py` for one training run
-- `multi_gpu_sweep.py` to launch independent experiments across all 8 GPUs
-
-## Recommended first run
-
-Use the default logistic-regression SetFit head first.
-That is the default SetFit head and the recommended starting point.
-
-## Directory layout
-
-```text
-triage_setfit_project/
-├── README.md
-├── requirements.txt
-├── train_setfit.py
-├── infer.py
-├── multi_gpu_sweep.py
-└── scripts/
-    ├── run_train.sh
-    └── run_sweep_8gpu.sh
-```
-
-## 1. Create environment
+From the `pipeline/` directory, start the container first:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+docker build -t pipeline-env .
+docker run -dit -v $(pwd):/app --name pipeline-container pipeline-env
 ```
 
-If you prefer conda:
+All commands below are run from the host with `docker exec`, while paths are relative to `/app` inside the container.
+
+## Train
+
+Recommended SetFit run:
 
 ```bash
-conda create -n triage-setfit python=3.10 -y
-conda activate triage-setfit
-pip install -r requirements.txt
-```
-
-## 2. Single-run training
-
-```bash
-bash scripts/run_train.sh /mnt/data/generated_triage_dataset_200.json runs/minilm_run
-```
-
-Equivalent direct command:
-
-```bash
-CUDA_VISIBLE_DEVICES=0 python train_setfit.py \
-  --input_json /mnt/data/generated_triage_dataset_200.json \
-  --output_dir runs/minilm_run \
+docker exec -it pipeline-container python sprint2_setfit/train/train_setfit_scenarios.py \
+  --input_jsons baseline_classification_model/generated_scenarios_3000.json \
+  --external_val_jsons baseline_classification_model/scenarios.json \
+  --output_dir sprint2_setfit/runs/minilm_run \
   --model_name sentence-transformers/all-MiniLM-L6-v2 \
   --batch_size 32 \
   --num_epochs 4 \
   --num_iterations 20 \
   --seed 42 \
-  --head_type logistic
+  --head_type logistic \
+  --strip_conclusion_lines
 ```
 
-## 3. Run 8-GPU parallel sweep
+The script reads one or more labelled scenario JSON files, builds train/validation/test splits, trains a SetFit model, and evaluates train, validation, and test splits.
+
+## Inference
+
+After training, the trained model is saved under `final_model/` in the selected output directory. Run a single dialogue:
 
 ```bash
-bash scripts/run_sweep_8gpu.sh /mnt/data/generated_triage_dataset_200.json runs/sweep
-```
-
-This launches one training job per GPU and writes logs + outputs into separate folders.
-
-## 4. Try a stronger backbone
-
-```bash
-CUDA_VISIBLE_DEVICES=1 python train_setfit.py \
-  --input_json /mnt/data/generated_triage_dataset_200.json \
-  --output_dir runs/mpnet_run \
-  --model_name sentence-transformers/all-mpnet-base-v2 \
-  --batch_size 32 \
-  --num_epochs 4 \
-  --num_iterations 20 \
-  --seed 42 \
-  --head_type logistic
-```
-
-## 5. Optional differentiable head
-
-Only try this after the logistic baseline is stable.
-
-```bash
-CUDA_VISIBLE_DEVICES=0 python train_setfit.py \
-  --input_json /mnt/data/generated_triage_dataset_200.json \
-  --output_dir runs/diff_head_run \
-  --model_name sentence-transformers/all-MiniLM-L6-v2 \
-  --batch_size 32 \
-  --num_epochs 4 \
-  --num_iterations 20 \
-  --seed 42 \
-  --head_type differentiable \
-  --end_to_end
-```
-
-## 6. Inference
-
-Single dialogue:
-
-```bash
-python infer.py \
-  --model_dir runs/minilm_run/model \
+docker exec -it pipeline-container python sprint2_setfit/train/infer.py \
+  --model_dir sprint2_setfit/runs/minilm_run/final_model \
   --text "Nurse: You look breathless. Patient: My asthma is much worse and I can barely speak."
 ```
 
-Batch inference from JSON list:
+Batch inference from a JSON list:
 
 ```bash
-python infer.py \
-  --model_dir runs/minilm_run/model \
-  --input_json sample_inputs.json \
-  --output_json predictions.json
+docker exec -it pipeline-container python sprint2_setfit/train/infer.py \
+  --model_dir sprint2_setfit/runs/minilm_run/final_model \
+  --input_json sprint2_setfit/sample_inputs.json \
+  --output_json sprint2_setfit/runs/minilm_run/predictions.json
 ```
 
-Accepted batch JSON formats:
+Accepted batch JSON records can contain either `text` or `dialogue_text`.
 
-```json
-[
-  {"text": "Nurse: ... Patient: ..."},
-  {"dialogue_text": "Nurse: ... Parent: ..."}
-]
-```
+## Outputs
 
-## Output files
+The output directory, for example `pipeline/sprint2_setfit/runs/minilm_run`, contains:
 
-Each run directory contains files like:
-
-- `run_config.json`
 - `train_split.json`
 - `val_split.json`
 - `test_split.json`
@@ -164,42 +65,18 @@ Each run directory contains files like:
 - `val_metrics.json`
 - `test_metrics.json`
 - `summary_metrics.json`
-- `*_predictions.csv`
-- `*_confusion_matrix.png`
-- `model/`
+- `train_predictions.csv`
+- `val_predictions.csv`
+- `test_predictions.csv`
+- `*_confusion.png`
+- `run_config_used.json`
+- `final_model/`
 
-## What metric to optimize
+## Docker Stop
 
-For triage, do not choose the best model only by raw accuracy.
-Focus on:
+When finished:
 
-- `macro_f1`
-- class-wise recall for ATS 1 and ATS 2
-- `under_triage_rate`
-
-In this project:
-
-- **under-triage** means predicted ATS number is **greater than** true ATS number
-- **over-triage** means predicted ATS number is **less than** true ATS number
-
-Examples:
-
-- true ATS 2, predicted ATS 4 -> under-triage
-- true ATS 4, predicted ATS 2 -> over-triage
-
-## Suggested experiment order
-
-1. `all-MiniLM-L6-v2` + logistic head
-2. `all-mpnet-base-v2` + logistic head
-3. `BAAI/bge-small-en-v1.5` + logistic head
-4. only then test the differentiable head
-
-## Practical caveat
-
-This dataset looks synthetic / templated, so treat this pipeline as a solid technical baseline, not as a production-ready clinical model. Before real deployment, you would still need:
-
-- real-world noisy triage dialogues
-- external validation
-- safety thresholds
-- human-in-the-loop review
-- rule overrides for red-flag cases
+```bash
+docker stop pipeline-container
+docker rm pipeline-container
+```

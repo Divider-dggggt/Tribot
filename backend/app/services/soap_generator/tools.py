@@ -36,9 +36,9 @@ def get_soap_generator() -> SOAPGenerator:
 
 def generate_soap(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
-    项目内其他服务直接调用。
+    Other services in project can straighforwardly call。
 
-    payload 可包含：
+    payload can include：
     {
         "scenario_number": "001",
         "scenario_summary_header": "Febrile infant",
@@ -50,7 +50,7 @@ def generate_soap(payload: Dict[str, Any]) -> Dict[str, Any]:
         "model_index": 0
     }
 
-    或者直接指定：
+    or explicitly indicate：
     {
         "dialogue_text": "...",
         "endpoint_id": "ep-20250425135605-wzd28"
