@@ -114,6 +114,8 @@ docker compose down -v
 ## How It Works
 
 ### Features
+See [project requirements specification](TRIBOT_Triage_Module_PRD_COMP9900_W18C_Donut.pdf) for the original specifications.
+
 - Triage Classification Engine
     - Clinical Dialogue Input Handling
     - Triage Classification Model
@@ -125,6 +127,8 @@ docker compose down -v
 - Model Metric Breakdown
 
 Details on the algortihms and ML services can be found in [Tribot Services](backend/app/services/TRIBOT_SERVICES.md)
+
+Details on the Australasian Triage Scale (ATS) used in our project can be found in [Emergency Triage Education Kit](https://www.safetyandquality.gov.au/resources/emergency-triage-education-kit-etek-second-edition)
 
 ### ML Services
 ![ML Services](images/ml-services.png)
