@@ -40,6 +40,13 @@ const parseAtsToLevel = (atsClassification: number): ATSLevel => {
   return (boundedAts - 1) as ATSLevel;
 };
 
+/**
+ * Renders a case summary with details on triage classification.
+ * @param {Object} props The component props.
+ * @param {number} props.caseId The database ID of the case being summarised.
+ * @param {function} props.onBack The callback function for exiting the case summary.
+ * @returns {JSX.Element} A case summary component.
+ */
 export const CaseSummary = (props: CaseSummaryProps): ReactElement => {
   const { caseId, onBack } = props;
   const [triageCase, setTriageCase] = useState<CaseObject | undefined>();

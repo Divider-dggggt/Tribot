@@ -15,7 +15,6 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { ATSLevel, TriageApiResponse } from "../types/triage";
 import { FloatingTextField } from "../components/FloatingTextField";
 import { PAGE_CONTENT_MAX_WIDTH } from "../utils/layout";
@@ -169,8 +168,10 @@ const formatBloodPressureInput = (rawValue: string): string => {
   return `${digits.slice(0, 3)}/${digits.slice(3, 6)}`;
 };
 
+/**
+ * Renders a form page for creating a new triage case (for clinicians).
+ */
 export const CaseForm = (): ReactElement => {
-  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,

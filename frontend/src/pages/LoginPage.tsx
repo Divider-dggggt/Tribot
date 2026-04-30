@@ -43,6 +43,9 @@ const readLoginError = async (response: Response): Promise<string> => {
   return `Login failed with status ${response.status}`;
 };
 
+/**
+ * Renders a login page for users to authenticate app usage.
+ */
 export const LoginPage = (): ReactElement => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

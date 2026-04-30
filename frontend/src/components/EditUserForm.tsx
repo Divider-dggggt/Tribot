@@ -41,6 +41,13 @@ const ROLE_BUTTON_COLORS: Record<UserRole, { text: string; bg: string; border: s
   },
 };
 
+/**
+ * Renders a form for editing an existing user.
+ * @param {Object} props The component props.
+ * @param {number} props.userId The ID of the user to be edited.
+ * @param {function} props.onClose The callback function for closing the form.
+ * @returns {JSX.Element} A user editing form component.
+ */
 export const EditUserForm = ({ userId, onClose }: EditUserFormProps): ReactElement => {
   const open = userId != null;
   const selfUserId = getDecodedToken()?.user_id;

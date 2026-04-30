@@ -4,29 +4,49 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:merged": "rm -rf coverage .nyc_output .nyc_output_merged && mkdir -p .nyc_output .nyc_output_merged && vitest run --coverage --coverage.reporter=json --coverage.reportsDirectory=.nyc_output && PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://localhost:8000 E2E_API_BASE_URL=http://localhost:8000 E2E_COVERAGE=1 VITE_COVERAGE=true playwright test && nyc merge .nyc_output .nyc_output_merged/coverage-final.json && nyc report --temp-dir .nyc_output_merged --report-dir coverage --reporter=text --reporter=html --reporter=lcov --reporter=json-summary",
+    "test:run:docker": "VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run",
+    "test:coverage:docker": "VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run --coverage",
+    "test:coverage:merged:docker": "if [ ! -d node_modules/vite-plugin-istanbul ] || [ ! -d node_modules/nyc ]; then yarn install; fi && rm -rf coverage .nyc_output .nyc_output_merged && mkdir -p .nyc_output .nyc_output_merged && VITE_API_BASE_URL=http://backend:8000 VITEST_REAL_API_BASE_URL=http://backend:8000 vitest run --coverage --coverage.reporter=json --coverage.reportsDirectory=.nyc_output && PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://backend:8000 E2E_API_BASE_URL=http://backend:8000 E2E_COVERAGE=1 VITE_COVERAGE=true playwright test && nyc merge .nyc_output .nyc_output_merged/coverage-final.json && nyc report --temp-dir .nyc_output_merged --report-dir coverage --reporter=text --reporter=html --reporter=lcov --reporter=json-summary",
+    "test:e2e:docker": "PLAYWRIGHT_BASE_URL=http://localhost:4173 PLAYWRIGHT_WEB_SERVER_PORT=4173 PLAYWRIGHT_REUSE_SERVER=0 VITE_API_BASE_URL=/api VITE_API_PROXY_TARGET=http://backend:8000 E2E_API_BASE_URL=http://backend:8000 playwright test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@base-ui/react": "^1.3.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
-    "@reduxjs/toolkit": "^2.11.2",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.71.2",
     "react-markdown": "^10.1.0",
-    "react-redux": "^9.2.0",
     "react-router-dom": "^7.13.1",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.6.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "3.2.4",
+    "jsdom": "^29.0.2",
+    "nyc": "^18.0.0",
     "typescript": "^5.5.0",
+    "vite": "^7.2.4",
+    "vite-plugin-istanbul": "^8.0.0",
+    "vitest": "^3.2.4"
+  },
+  "resolutions": {
     "vite": "^7.2.4"
   }
 }

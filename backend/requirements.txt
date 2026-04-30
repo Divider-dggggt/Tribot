@@ -31,8 +31,14 @@ sentence-transformers==5.1.1
 rank-bm25
 faiss-cpu
 pymupdf
+pyyaml
 requests
 
 # soap benchmark
 pypdf>=4.0.0
 rapidfuzz>=3.0.0
+
+# tests
+pytest
+pytest-cov
+httpx
