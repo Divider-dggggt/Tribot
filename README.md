@@ -67,7 +67,9 @@ LLM_API_KEY=your_llm_api_key
 4. Place necessary model(s) in relevant folder
 - [Download deberta model](https://drive.google.com/file/d/1TIaPlBFxFNoYJ-Z4qeqnJkWv7ieJddc6/view?usp=drive_link)
 - [Download setfit model](https://drive.google.com/file/d/1_lQJrk8fYz6p0BwRvxrh9mUoZdJP6qWY/view?usp=sharing)
-- Place model content in respective directories under `backend/app/services/triage_classifier/models`. See [Backend Structure](BACKEND_STRUCTURE.md) for reference.
+- Place model content in respective directories under `backend/app/services/triage_classifier/models/`. See [Backend Structure](BACKEND_STRUCTURE.md) for reference.
+    - `backend/app/services/triage_classifier/models/sprint2_deberta_model/`
+    - `backend/app/services/triage_classifier/models/sprint2_setfit_model/`
 
 5. Start the application:
 
